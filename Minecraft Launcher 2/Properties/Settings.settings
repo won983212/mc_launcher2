@@ -1,7 +1,36 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Minecraft_Launcher_2.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="UpdateHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost/dataserver</Value>
+    </Setting>
+    <Setting Name="MemorySize" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Arguments" Type="System.String" Scope="User">
+      <Value Profile="(Default)">-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -Xmn128M -XX:-UseAdaptiveSizePolicy</Value>
+    </Setting>
+    <Setting Name="Minecraft_Dir" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UseDebug" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ClientVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">설치 필요</Value>
+    </Setting>
+    <Setting Name="LastLogined" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Unnamed</Value>
+    </Setting>
+    <Setting Name="LibraryURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://libraries.minecraft.net/</Value>
+    </Setting>
+    <Setting Name="AssetsURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://resources.download.minecraft.net/</Value>
+    </Setting>
+    <Setting Name="PreprocessMode" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>
