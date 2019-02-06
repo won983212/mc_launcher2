@@ -9,7 +9,15 @@
         <SolidColorBrush x:Key="DarkBlueBrush" Color="#FF1F2E70" />
         <SolidColorBrush x:Key="WhiteBrush" Color="#FFECECEC" />
         <SolidColorBrush x:Key="GrayBrush" Color="#FF707070" />
+        <SolidColorBrush x:Key="WarningYellow" Color="#FFAA5D00"/>
 
+        <DropShadowEffect x:Key="DefaultDropShadow" BlurRadius="5" Opacity="0.5" ShadowDepth="3" />
+
+        <Style x:Key="BlackCardBorder" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource BlackBrush}"/>
+            <Setter Property="Effect" Value="{StaticResource DefaultDropShadow}"/>
+        </Style>
+        
         <Style TargetType="ProgressBar">
             <Setter Property="Template">
                 <Setter.Value>
@@ -29,16 +37,37 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="3"/>
         </Style>
+
+        <Style x:Key="ImageButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Rectangle Fill="{TemplateBinding Background}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="#15ffffff"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Background" Value="Transparent"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         
         <Style TargetType="Button">
             <Setter Property="Background" Value="{StaticResource BlueBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource DarkBlueBrush}" />
             <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>

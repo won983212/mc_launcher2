@@ -31,7 +31,8 @@ namespace Minecraft_Launcher_2.Controls
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (double)value * 0.6;
+			int val = (int)((double)value * 0.6);
+			return val + val % 2;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

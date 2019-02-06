@@ -15,32 +15,62 @@
     <Border BorderBrush="Black" BorderThickness="1">
         <Grid>
             <Image Source="Resources/bg0.png" Stretch="Fill"/>
-            <Label VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="3" Foreground="{StaticResource GrayBrush}">
-                <Label.Effect>
-                    <DropShadowEffect />
-                </Label.Effect>
+            <Label VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="3" Foreground="{StaticResource GrayBrush}" Effect="{StaticResource DefaultDropShadow}">
                 설치 필요
             </Label>
-            <Border Margin="5" Padding="5" Background="{StaticResource BlackBrush}" VerticalAlignment="Top" HorizontalAlignment="Right">
+            <Border Style="{StaticResource BlackCardBorder}" Margin="5" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="1" ToolTip="데이터 서버와 연결할 수 없습니다. 서버가 닫혀있거나 잘못된 IP를 입력하지는 않았는지 확인하십시오.">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,3,0" Source="/Resources/warning.png" Width="18" Height="18"/>
+                        <TextBlock Foreground="{StaticResource WarningYellow}">서버와 연결할 수 없습니다.</TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="1" ToolTip="서버에 접속하기 위해서는 최신 버전으로 업데이트 해야합니다. 이는 권장사항이며 필수는 아니지만, 업데이트하지 않을 경우 서버에 접속하지 못할 수도 있습니다.">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,3,0" Source="/Resources/warning.png" Width="18" Height="18"/>
+                        <TextBlock Foreground="{StaticResource WarningYellow}">최신 버전이 존재합니다.</TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="1" ToolTip="컴퓨터에 마인크래프트가 설치되어있지 않습니다. 업데이트를 하지 않으면 시작할 수 없습니다.">
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,3,0" Source="/Resources/warning.png" Width="18" Height="18"/>
+                        <TextBlock Foreground="{StaticResource WarningYellow}">게임 최초 설치가 필요합니다.</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource BlackCardBorder}" Margin="5" Padding="5" VerticalAlignment="Top" HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
                     <control:Spinner Width="22" Height="22"/>
                     <Label Foreground="{StaticResource GrayBrush}">데이터 서버와 연결 중..</Label>
                 </StackPanel>
             </Border>
-            <Border Margin="10" Padding="8" Background="{StaticResource BlackBrush}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Border Style="{StaticResource BlackCardBorder}" Width="170" Margin="10" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBox Width="150"/>
-                    <Button Grid.Row="1" Margin="5,5,0,0" Height="25" Width="70" HorizontalAlignment="Right" FontSize="14" Content="시작"/>
+                    <TextBox Grid.ColumnSpan="2"/>
+                    <Button Grid.Row="1" Margin="0,5,0,0" Height="22" Content="시작"/>
+                    <Button Grid.Column="1" Grid.Row="1" Margin="5,5,0,0" Height="22" Content="종료" Click="Exit_Click"/>
+                    <CheckBox Grid.Row="2" Margin="0,5,0,0" VerticalAlignment="Center" Foreground="{StaticResource WhiteBrush}">업데이트</CheckBox>
+                    <Button Style="{StaticResource ImageButton}" Grid.Row="2" Grid.Column="1" Margin="0,5,0,0" HorizontalAlignment="Right">
+                        <Grid>
+                            <Image RenderOptions.BitmapScalingMode="HighQuality" Source="/Resources/setting.png" Width="18" Height="18"/>
+                            <Rectangle>
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="#FF575757"/>
+                                </Rectangle.Fill>
+                                <Rectangle.OpacityMask>
+                                    <ImageBrush ImageSource="/Resources/setting.png"/>
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Grid>
+                    </Button>
                 </Grid>
             </Border>
-            <Border Margin="10" Padding="8" Background="{StaticResource BlackBrush}" VerticalAlignment="Center" Visibility="Collapsed">
-                <Border.Effect>
-                    <DropShadowEffect/>
-                </Border.Effect>
+            <Border Style="{StaticResource BlackCardBorder}" Margin="10" Padding="8" VerticalAlignment="Center" Visibility="Collapsed">
                 <StackPanel>
                     <ProgressBar Height="15" Value="30"/>
                     <StackPanel Orientation="Horizontal">
