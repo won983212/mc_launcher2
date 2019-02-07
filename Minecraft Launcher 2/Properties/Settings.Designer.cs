@@ -50,7 +50,7 @@ namespace Minecraft_Launcher_2.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.h" +
-            "eapdump -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -Xmn128M -XX:-UseAdaptiv" +
+            "eapdump -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -Xmn256M -XX:-UseAdaptiv" +
             "eSizePolicy")]
         public string Arguments {
             get {
@@ -87,18 +87,6 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("설치 필요")]
-        public string ClientVersion {
-            get {
-                return ((string)(this["ClientVersion"]));
-            }
-            set {
-                this["ClientVersion"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Unnamed")]
         public string LastLogined {
             get {
@@ -124,18 +112,6 @@ namespace Minecraft_Launcher_2.Properties {
         public string AssetsURL {
             get {
                 return ((string)(this["AssetsURL"]));
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public short PreprocessMode {
-            get {
-                return ((short)(this["PreprocessMode"]));
-            }
-            set {
-                this["PreprocessMode"] = value;
             }
         }
     }

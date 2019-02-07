@@ -38,8 +38,19 @@ namespace Minecraft_Launcher_2
 			Println(text, true);
 		}
 
+		public void ShowWindow()
+		{
+			Dispatcher.Invoke(() =>
+			{
+				Show();
+			});
+		}
+
 		public void Println(string text, bool isError)
 		{
+			if (text == null)
+				return;
+
 			Dispatcher.Invoke(() =>
 			{
 				Paragraph p = new Paragraph();

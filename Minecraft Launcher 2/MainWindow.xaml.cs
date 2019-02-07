@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Minecraft_Launcher_2.Updater;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,26 +24,34 @@ namespace Minecraft_Launcher_2
 	{
 		private Properties.Settings settings = Properties.Settings.Default;
 		private WarningManager warnings;
+		private Launcher launcher;
 		private volatile bool connecting = false;
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			warnings = new WarningManager(this);
+			launcher = new Launcher();
+			launcher.Exit += Launcher_Exit;
 
-			CheckMinecraftFolder();
+			if (!(LauncherProfile.ClientProfile.Load() && Directory.Exists(settings.Minecraft_Dir))) // launcher_setting이 없거나 마크 폴더가 없으면 오류
+				warnings.ShowWarning(WarningManager.NeedInstall);
+
+			if (!Directory.Exists(System.IO.Path.Combine(settings.Minecraft_Dir, "assets"))) // assets가 없으면 오류
+				warnings.ShowWarning(WarningManager.NeedInstall);
+
+			if (!Directory.Exists(System.IO.Path.Combine(settings.Minecraft_Dir, "libraries"))) // libraries가 없으면 오류
+				warnings.ShowWarning(WarningManager.NeedInstall);
+
+			if (!File.Exists(System.IO.Path.Combine(settings.Minecraft_Dir, "minecraft.jar"))) // minecraft.jar가 없으면 오류
+				warnings.ShowWarning(WarningManager.NeedInstall);
+
+			lblInstalledVersion.Content = LauncherProfile.ClientProfile.ClientVersion;
 			LoadInfoFromServer();
 		}
 
 		public static ConsoleIO Monitor { get; private set; } = new ConsoleWindow();
-
-		private void CheckMinecraftFolder()
-		{
-			if(!Directory.Exists(settings.Minecraft_Dir))
-			{
-				warnings.ShowWarning(WarningManager.NeedInstall);
-			}
-		}
+		public string LatestPatchVersion { get; private set; } = null;
 
 		private void LoadInfoFromServer()
 		{
@@ -67,14 +76,13 @@ namespace Minecraft_Launcher_2
 			{
 				string[] parsed = e.Result.Split('\n');
 				string latest = parsed[0].Trim() + "#" + parsed[1].Trim();
-				pnlConnectionState.Visibility = Visibility.Collapsed;
-				chbUpdate.IsEnabled = true;
+				LatestPatchVersion = parsed[1].Trim();
+				Monitor.Info("Retrieved version from server: " + latest);
 
-				if (settings.ClientVersion != latest)
-				{
+				pnlConnectionState.Visibility = Visibility.Collapsed;
+
+				if (LauncherProfile.ClientProfile.ClientVersion != latest)
 					warnings.ShowWarning(WarningManager.Outdated);
-					chbUpdate.IsChecked = true;
-				}
 			}
 			else
 			{
@@ -84,9 +92,67 @@ namespace Minecraft_Launcher_2
 			connecting = false;
 		}
 
+		private void StartUpdate()
+		{
+			pnlLogin.IsEnabled = false;
+			pnlSettingInner.IsEnabled = false;
+			btnGameClear.IsEnabled = false;
+			btnSettingReset.IsEnabled = false;
+			pnlUpdateState.Visibility = Visibility.Visible;
+
+			MinecraftPatcher updater = new MinecraftPatcher(LatestPatchVersion);
+			updater.OnException += Updater_OnException;
+			updater.CurrentDownloadProgress += Updater_CurrentDownloadProgress;
+			updater.TotalDownloadProgress += Updater_TotalDownloadProgress;
+			updater.OnComplete += Updater_OnComplete;
+			updater.UpdateAsync();
+		}
+
+		private void Updater_OnComplete(object sender, int e)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				pnlUpdateState.Visibility = Visibility.Collapsed;
+				pnlLogin.IsEnabled = true;
+				pnlSettingInner.IsEnabled = true;
+				btnGameClear.IsEnabled = true;
+				btnSettingReset.IsEnabled = true;
+
+				lblInstalledVersion.Content = LauncherProfile.ClientProfile.ClientVersion;
+				warnings.HideWarning(WarningManager.NeedInstall);
+				warnings.HideWarning(WarningManager.Outdated);
+			});
+			launcher.Start();
+		}
+
+		private void Updater_TotalDownloadProgress(object sender, Tuple<double, string> e)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				tblTotalProgress.Text = "전체: " + (int)e.Item1 + "%";
+				tblTotalState.Text = e.Item2;
+				prgTotal.Value = e.Item1;
+			});
+		}
+
+		private void Updater_CurrentDownloadProgress(object sender, Tuple<double, string> e)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				tblCurrentProgress.Text = "현재: " + (int)e.Item1 + "%";
+				tblCurrentState.Text = e.Item2;
+				prgCurrent.Value = e.Item1;
+			});
+		}
+
+		private void Updater_OnException(object sender, Exception e)
+		{
+			Monitor.Error(e.ToString());
+		}
+
 		private void Window_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			if(e.ChangedButton == MouseButton.Left)
+			if (e.ChangedButton == MouseButton.Left)
 				DragMove();
 		}
 
@@ -110,6 +176,24 @@ namespace Minecraft_Launcher_2
 		{
 			Properties.Settings.Default.Reset();
 			Properties.Settings.Default.Save();
+			MessageBox.Show("리셋되었습니다.", "안내", MessageBoxButton.OK, MessageBoxImage.Information);
+		}
+
+		private void ClearAll_Click(object sender, RoutedEventArgs e)
+		{
+			MessageBoxResult res = MessageBox.Show("컴퓨터에 설치된 마인크래프트가 완전히 제거됩니다. 작업을 취소할 수 없으며 게임뿐만 아니라 설정파일, 스크린샷, 맵 등 사용자파일도 전부 삭제됩니다. 계속하시겠습니까?", "리셋 진행", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+			if (res == MessageBoxResult.Yes)
+			{
+				DeleteProgressWindow del = new DeleteProgressWindow();
+				del.Left = Left;
+				del.Top = Top + Height - 68;
+				del.ShowDialog();
+				LauncherProfile.ClientProfile.Reset();
+				lblInstalledVersion.Content = LauncherProfile.ClientProfile.ClientVersion;
+
+				warnings.ShowWarning(WarningManager.NeedInstall);
+				warnings.ShowWarning(WarningManager.Outdated);
+			}
 		}
 
 		private void OpenConsole_Click(object sender, RoutedEventArgs e)
@@ -130,18 +214,27 @@ namespace Minecraft_Launcher_2
 		{
 			LoadInfoFromServer();
 		}
-	}
 
-	internal class TimeoutWebClient : WebClient
-	{
-		public int Timeout { get; set; }
-
-		protected override WebRequest GetWebRequest(Uri address)
+		private void Start_Click(object sender, RoutedEventArgs e)
 		{
-			WebRequest w = base.GetWebRequest(address);
-			w.Timeout = Timeout;
-			((HttpWebRequest)w).ReadWriteTimeout = Timeout;
-			return w;
+			if (launcher.IsRunning())
+				MessageBox.Show("이미 게임이 실행중입니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
+			else
+			{
+				btnStart.IsEnabled = false;
+				if (warnings.HasWarning(WarningManager.NeedInstall) || warnings.HasWarning(WarningManager.Outdated))
+					StartUpdate();
+				else
+					launcher.Start();
+			}
+		}
+
+		private void Launcher_Exit(object sender, EventArgs e)
+		{
+			Dispatcher.Invoke(() =>
+			{
+				btnStart.IsEnabled = true;
+			});
 		}
 	}
 
@@ -163,11 +256,16 @@ namespace Minecraft_Launcher_2
 			actualElements.Add(NeedInstall, wnd.wrnNeedInstall);
 		}
 
+		public bool HasWarning(int id)
+		{
+			return (messages & id) != 0;
+		}
+
 		public void ShowWarning(int id)
 		{
 			if (messages == 0)
 				wnd.pnlWarnings.Visibility = Visibility.Visible;
-			if ((messages & id) != 0)
+			if (HasWarning(id))
 				return;
 			actualElements[id].Visibility = Visibility.Visible;
 			messages += id;
@@ -175,7 +273,7 @@ namespace Minecraft_Launcher_2
 
 		public void HideWarning(int id)
 		{
-			if ((messages & id) == 0)
+			if (!HasWarning(id))
 				return;
 			actualElements[id].Visibility = Visibility.Collapsed;
 			messages -= id;

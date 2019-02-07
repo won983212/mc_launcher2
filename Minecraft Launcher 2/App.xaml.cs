@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.Updater;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;

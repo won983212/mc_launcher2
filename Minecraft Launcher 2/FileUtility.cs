@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2
 {
-    public interface ConsoleIO
-    {
-		void Info(string text);
-		void Error(string text);
-		void ShowWindow();
+	static class FileUtility
+	{
 	}
 }
