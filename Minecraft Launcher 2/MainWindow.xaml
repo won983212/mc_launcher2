@@ -33,7 +33,7 @@
                     </StackPanel>
                     <StackPanel x:Name="wrnOutdated" Visibility="Collapsed" Orientation="Horizontal" Margin="1" ToolTip="서버에 접속하기 위해서는 최신 버전으로 업데이트 해야합니다. 업데이트하지 않을 경우 서버에 접속하지 못할 수도 있습니다.">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,3,0" Source="/Resources/warning.png" Width="18" Height="18"/>
-                        <TextBlock Foreground="{StaticResource WarningYellow}" VerticalAlignment="Center">최신 버전이 존재합니다.</TextBlock>
+                        <TextBlock Foreground="{StaticResource WarningYellow}" VerticalAlignment="Center">새로운 업데이트가 있습니다.</TextBlock>
                     </StackPanel>
                     <StackPanel x:Name="wrnNeedInstall" Visibility="Collapsed" Orientation="Horizontal" Margin="1" ToolTip="컴퓨터에 마인크래프트가 설치되어있지 않습니다. 업데이트를 하지 않으면 시작할 수 없습니다.">
                         <Image RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,3,0" Source="/Resources/warning.png" Width="18" Height="18"/>
@@ -58,9 +58,9 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBox Grid.ColumnSpan="2"/>
+                    <TextBox Grid.ColumnSpan="2" Text="{Binding Path=LastLogined, Source={x:Static setting:Settings.Default}}"/>
                     <Button Grid.Row="1" Margin="0,5,0,0" Height="22" Content="시작"/>
-                    <Button Grid.Column="1" Grid.Row="1" Margin="5,5,0,0" Height="22" Content="종료" Click="Exit_Click"/>
+                    <Button Style="{StaticResource RedButton}" Grid.Column="1" Grid.Row="1" Margin="5,5,0,0" Height="22" Content="종료" Click="Exit_Click"/>
                     <CheckBox x:Name="chbUpdate" Grid.Row="2" Margin="0,5,0,0" VerticalAlignment="Center" IsEnabled="False" Content="업데이트">
                         <CheckBox.Style>
                             <Style TargetType="CheckBox">
@@ -100,14 +100,14 @@
                 </StackPanel>
             </Border>
             <DockPanel x:Name="pnlSetting" Background="White" Visibility="Collapsed">
-                <Grid DockPanel.Dock="Bottom" Height="28">
+                <Grid DockPanel.Dock="Bottom" Height="32">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Button Margin="2" Width="80" Content="콘솔 켜기" Click="OpenConsole_Click"/>
-                    <Button Grid.Column="1" Margin="2" Width="80" Content="설정 리셋" Click="SettingClear_Click"/>
+                    <Button Style="{StaticResource RedButton}" Grid.Column="1" Margin="2" Width="80" Content="설정 리셋" Click="SettingClear_Click"/>
                     <Button Grid.Column="2" Margin="2" HorizontalAlignment="Right" Width="80" Content="저장" Click="SettingSave_Click"/>
                 </Grid>
                 <Grid Margin="8" DataContext="{x:Static setting:Settings.Default}">
@@ -136,7 +136,7 @@
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                         </Style>
                         <Style TargetType="CheckBox">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                         </Style>
                         <Style TargetType="Button">

@@ -12,7 +12,7 @@
         <Style TargetType="Button" />
     </Window.Resources>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+        <StackPanel DockPanel.Dock="Bottom" Height="35" HorizontalAlignment="Right" Orientation="Horizontal">
             <CheckBox x:Name="chbAutoScroll" Content="콘솔 자동 스크롤" VerticalAlignment="Center" IsChecked="True" Click="CheckBox_Click"/>
             <Button Width="80" Content="내용 저장" Margin="5,5,5,5" Click="SaveConsole_Click"/>
             <Button Width="80" Content="콘솔 비우기" Margin="0,5,5,5" Click="ClearConsole_Click"/>

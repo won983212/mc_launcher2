@@ -6,7 +6,7 @@
     <Application.Resources>
         <SolidColorBrush x:Key="BlackBrush" Color="#FF1E1E20" />
         <SolidColorBrush x:Key="BlueBrush" Color="#FF334D99" />
-        <SolidColorBrush x:Key="DarkBlueBrush" Color="#FF1F2E70" />
+        <SolidColorBrush x:Key="RedBrush" Color="#FF991E00"/>
         <SolidColorBrush x:Key="WhiteBrush" Color="#FFECECEC" />
         <SolidColorBrush x:Key="GrayBrush" Color="#FF707070" />
         <SolidColorBrush x:Key="WarningYellow" Color="#FFAA5D00"/>
@@ -73,7 +73,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style TargetType="Button">
             <Setter Property="Background" Value="{StaticResource BlueBrush}" />
             <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
@@ -92,7 +92,33 @@
                     <Setter Property="Background" Value="#FF4667C7" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="true">
-                    <Setter Property="Background" Value="{StaticResource DarkBlueBrush}"/>
+                    <Setter Property="Background" Value="#FF1F2E70"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Background" Value="#FFC3C3C3" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="RedButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource RedBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource WhiteBrush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="#FFB96060" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Background" Value="#FF781700" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="false">
                     <Setter Property="Background" Value="#FFC3C3C3" />

@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -22,26 +23,35 @@ namespace Minecraft_Launcher_2
 	{
 		private Properties.Settings settings = Properties.Settings.Default;
 		private WarningManager warnings;
-		private volatile int connectionState = -1; // 0: 연결중, 1: 연결성공, 2: 연결실패
+		private volatile bool connecting = false;
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			warnings = new WarningManager(this);
 
+			CheckMinecraftFolder();
 			LoadInfoFromServer();
 		}
 
 		public static ConsoleIO Monitor { get; private set; } = new ConsoleWindow();
 
+		private void CheckMinecraftFolder()
+		{
+			if(!Directory.Exists(settings.Minecraft_Dir))
+			{
+				warnings.ShowWarning(WarningManager.NeedInstall);
+			}
+		}
+
 		private void LoadInfoFromServer()
 		{
-			if (connectionState == 0)
+			if (connecting)
 				return;
 
 			pnlConnectionState.Visibility = Visibility.Visible;
 			warnings.HideWarning(WarningManager.ConnectionError);
-			connectionState = 0;
+			connecting = true;
 
 			using (TimeoutWebClient client = new TimeoutWebClient())
 			{
@@ -53,7 +63,7 @@ namespace Minecraft_Launcher_2
 
 		private void OnLoadInfoCompleted(object sender, DownloadStringCompletedEventArgs e)
 		{
-			if(e.Error == null)
+			if (e.Error == null)
 			{
 				string[] parsed = e.Result.Split('\n');
 				string latest = parsed[0].Trim() + "#" + parsed[1].Trim();
@@ -65,15 +75,13 @@ namespace Minecraft_Launcher_2
 					warnings.ShowWarning(WarningManager.Outdated);
 					chbUpdate.IsChecked = true;
 				}
-
-				connectionState = 1;
 			}
 			else
 			{
 				pnlConnectionState.Visibility = Visibility.Collapsed;
 				warnings.ShowWarning(WarningManager.ConnectionError);
-				connectionState = 2;
 			}
+			connecting = false;
 		}
 
 		private void Window_MouseDown(object sender, MouseButtonEventArgs e)
