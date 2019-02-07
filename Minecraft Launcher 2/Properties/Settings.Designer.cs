@@ -114,5 +114,17 @@ namespace Minecraft_Launcher_2.Properties {
                 return ((string)(this["AssetsURL"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsFirstRun {
+            get {
+                return ((bool)(this["IsFirstRun"]));
+            }
+            set {
+                this["IsFirstRun"] = value;
+            }
+        }
     }
 }

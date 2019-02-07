@@ -48,6 +48,19 @@ namespace Minecraft_Launcher_2
 
 			lblInstalledVersion.Content = LauncherProfile.ClientProfile.ClientVersion;
 			LoadInfoFromServer();
+
+			if (settings.IsFirstRun)
+			{
+				settings.IsFirstRun = false;
+
+				FirstMessage fWnd = new FirstMessage();
+				fWnd.ShowDialog();
+
+				string ip = fWnd.tbxIPAddress.Text;
+				if(IPAddress.TryParse(ip, out IPAddress addr))
+					settings.UpdateHost = "http://" + ip + "/dataserver";
+				settings.Save();
+			}
 		}
 
 		public static ConsoleIO Monitor { get; private set; } = new ConsoleWindow();
@@ -174,8 +187,9 @@ namespace Minecraft_Launcher_2
 
 		private void SettingClear_Click(object sender, RoutedEventArgs e)
 		{
-			Properties.Settings.Default.Reset();
-			Properties.Settings.Default.Save();
+			settings.Reset();
+			settings.IsFirstRun = false;
+			settings.Save();
 			MessageBox.Show("리셋되었습니다.", "안내", MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 
@@ -217,6 +231,7 @@ namespace Minecraft_Launcher_2
 
 		private void Start_Click(object sender, RoutedEventArgs e)
 		{
+			settings.Save();
 			if (launcher.IsRunning())
 				MessageBox.Show("이미 게임이 실행중입니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
 			else
