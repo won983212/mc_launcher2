@@ -20,13 +20,13 @@ namespace Minecraft_Launcher_2.Updater
 			latestPatch = latestPatchVersion ?? throw new InvalidDataException("서버와 연결하지 않고 업데이트를 시도하였습니다.");
 		}
 
-		public void UpdateAsync()
+		public async void UpdateAsync()
 		{
 			try
 			{
 				FireCurrentProgress(0, "");
 				FireTotalProgress(0, "업데이트 정보 받아오는 중..");
-				LoadServerLaunchSettings();
+				await Task.Run(() => LoadServerLaunchSettings());
 
 				FireTotalProgress(10, "Assets 다운로드 하는 중..");
 				TryDownloadAssets();
