@@ -202,39 +202,36 @@ namespace Minecraft_Launcher_2.Updater
 			using (TimeoutWebClient client = new TimeoutWebClient())
 			{
 				client.Timeout = 10000;
-				using (Stream stream = client.OpenRead(settingPath))
+				using (StreamReader reader = new StreamReader(client.OpenRead(settingPath)))
 				{
-					using (StreamReader reader = new StreamReader(stream))
+					serverProfile.PatchVersion = latestPatch;
+					serverProfile.MinecraftVersion = reader.ReadLine();
+					serverProfile.LaunchArguments = reader.ReadLine();
+					serverProfile.MainClass = reader.ReadLine();
+					serverProfile.AssetsVersion = reader.ReadLine();
+					serverProfile.AssetsJsonUrl = reader.ReadLine();
+
+					string buffer = null;
+					string[] unzipExcludes = null;
+					List<Library> libs = new List<Library>();
+					while ((buffer = reader.ReadLine()) != null)
 					{
-						serverProfile.PatchVersion = latestPatch;
-						serverProfile.MinecraftVersion = reader.ReadLine();
-						serverProfile.LaunchArguments = reader.ReadLine();
-						serverProfile.MainClass = reader.ReadLine();
-						serverProfile.AssetsVersion = reader.ReadLine();
-						serverProfile.AssetsJsonUrl = reader.ReadLine();
-
-						string buffer = null;
-						string[] unzipExcludes = null;
-						List<Library> libs = new List<Library>();
-						while ((buffer = reader.ReadLine()) != null)
+						if (buffer.StartsWith(","))
 						{
-							if (buffer.StartsWith(","))
-							{
-								unzipExcludes = buffer.Substring(1).Split(',');
-							}
-							else
-							{
-								string[] pathSplit = buffer.Split(' ');
-								string path = Path.Combine(settings.Minecraft_Dir, "libraries", pathSplit[1].Replace('/', '\\'));
-
-								Library lib = new Library(pathSplit[0] + pathSplit[1], path, unzipExcludes);
-								libs.Add(lib);
-
-								unzipExcludes = null;
-							}
+							unzipExcludes = buffer.Substring(1).Split(',');
 						}
-						serverProfile.Libraries = libs;
+						else
+						{
+							string[] pathSplit = buffer.Split(' ');
+							string path = Path.Combine(settings.Minecraft_Dir, "libraries", pathSplit[1].Replace('/', '\\'));
+
+							Library lib = new Library(pathSplit[0] + pathSplit[1], path, unzipExcludes);
+							libs.Add(lib);
+
+							unzipExcludes = null;
+						}
 					}
+					serverProfile.Libraries = libs;
 				}
 			}
 		}
