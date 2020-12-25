@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="Minecraft_Launcher_2.Controls.ControlPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Minecraft_Launcher_2.Controls"
+             xmlns:properties="clr-namespace:Minecraft_Launcher_2.Properties"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="860">
+    <Grid x:Name="rectBg" Background="#66000000" TextElement.FontSize="14">
+        <Border Width="600" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                Background="White" CornerRadius="2" RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <ScaleTransform x:Name="scalePanel" />
+            </Border.RenderTransform>
+            <Grid Margin="24,12">
+                <StackPanel>
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <Grid Margin="18,8" Height="50">
+                        <TextBlock>마인크래프트 폴더 위치</TextBlock>
+                        <TextBox VerticalAlignment="Center" Width="300" HorizontalAlignment="Right" Text="{Binding MinecraftDir, Source={x:Static properties:Settings.Default}}"/>
+                    </Grid>
+
+                    <Grid Margin="18,8" Height="50">
+                        <TextBlock>콘솔 사용</TextBlock>
+                        <CheckBox VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}"/>
+                    </Grid>
+
+                    <Grid Margin="18,8" Height="50">
+                        <TextBlock>추가 매개변수</TextBlock>
+                        <TextBox VerticalAlignment="Center" Width="300" HorizontalAlignment="Right" Text="{Binding Arguments, Source={x:Static properties:Settings.Default}}"/>
+                    </Grid>
+
+                    <Grid Margin="18,8" Height="50">
+                        <TextBlock>메모리 할당량</TextBlock>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <TextBox materialDesign:TextFieldAssist.SuffixText=" GB" 
+                         HorizontalContentAlignment="Right" Width="100" Text="{Binding MemorySize, Source={x:Static properties:Settings.Default}}"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,16">
+                    <Button Margin="16,0" Width="100" Height="40" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Click="Reset_Click">초기화</Button>
+                    <Button Width="100" Height="40" Click="Save_Click">확인</Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

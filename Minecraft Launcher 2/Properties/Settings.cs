@@ -12,22 +12,46 @@ namespace Minecraft_Launcher_2.Properties
 		public Settings()
 		{
 			SettingsLoaded += Settings_SettingsLoaded;
+			SettingsSaving += Settings_SettingsSaving;
+		}
+
+		private void Settings_SettingsSaving(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			DetectWrong();
 		}
 
 		private void Settings_SettingsLoaded(object sender, System.Configuration.SettingsLoadedEventArgs e)
 		{
-			Uri result;
-			if (!Uri.TryCreate(Default.UpdateHost, UriKind.Absolute, out result) || (result.Scheme != Uri.UriSchemeHttp && result.Scheme != Uri.UriSchemeHttps))
-			{
-				Default.UpdateHost = "http://localhost/dataserver";
+			if (DetectWrong())
 				Default.Save();
+		}
+
+		private bool DetectWrong()
+		{
+			bool modified = false;
+
+			Uri result;
+			if (!Uri.TryCreate(Default.APIServerLocation, UriKind.Absolute, out result) || (result.Scheme != Uri.UriSchemeHttp && result.Scheme != Uri.UriSchemeHttps))
+			{
+				Default.APIServerLocation = "http://localhost";
+				modified = true;
 			}
 
-			if (!Directory.Exists(Default.Minecraft_Dir))
+			if (!Directory.Exists(Default.MinecraftDir))
 			{
-				Default.Minecraft_Dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "minecraft_data");
-				Default.Save();
+				string folderName = "minecraft_" + Default.ServerName.ToLower();
+				Default.MinecraftDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), folderName);
+				modified = true;
 			}
+
+			string mcdir = Default.MinecraftDir;
+			if (mcdir.EndsWith("/") || mcdir.EndsWith("\\"))
+			{
+				Default.MinecraftDir = mcdir.Substring(0, mcdir.Length - 1);
+				modified = true;
+			}
+
+			return modified;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Minecraft_Launcher_2.Updater;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,20 +12,57 @@ using System.Windows;
 
 namespace Minecraft_Launcher_2
 {
-	class Launcher
+	class LaunchSetting
+	{
+		public string PlayerName { get; private set; }
+		public string MainClass { get; private set; }
+		public string MinecraftArguments { get; private set; }
+		public string AssetsVersion { get; private set; }
+		public string MinecraftVersion { get; private set; }
+		public List<string> Libraries { get; private set; } = new List<string>();
+
+		public void Load(string settingFile)
+		{
+			string data = File.ReadAllText(settingFile);
+			JObject json = JObject.Parse(data);
+
+			LauncherContext ctx = App.MainContext;
+			ctx.UpdatePatchVersion();
+
+			MainClass = (string)json["mainClass"];
+			MinecraftArguments = (string)json["minecraftArguments"];
+			AssetsVersion = (string)json["assets"];
+			MinecraftVersion = ctx.PatchVersion.Split('@')[0];
+
+			JArray libs = json["libraries"] as JArray;
+			foreach (JObject obj in libs)
+			{
+				string name = (string)obj["name"];
+				string[] names = name.Split(':');
+				string jarfile = names[0].Replace('.', '\\') + '\\' + names[1] + '\\' + names[2] + '\\' + names[1] + "-" + names[2] + ".jar";
+				Libraries.Add(Path.Combine(Properties.Settings.Default.MinecraftDir, "libraries", jarfile));
+			}
+		}
+	}
+
+	public class Launcher
 	{
 		private static readonly Properties.Settings settings = Properties.Settings.Default;
-		private static readonly LauncherProfile launchSettings = LauncherProfile.ClientProfile;
-		private volatile bool isRunning = false;
-		public event EventHandler Exit;
+		private volatile bool _isRunning = false;
 
-		private string GetLaunchAdditionalArguments()
+		public event EventHandler<string> OnLog;
+		public event EventHandler<string> OnError;
+		public event EventHandler<int> OnExited;
+
+		public bool IsRunning { get => _isRunning; }
+
+		private string GetLaunchAdditionalArguments(LaunchSetting launchSettings)
 		{
-			string arg = launchSettings.LaunchArguments;
-			arg = arg.Replace("${auth_player_name}", settings.LastLogined);
+			string arg = launchSettings.MinecraftArguments;
+			arg = arg.Replace("${auth_player_name}", launchSettings.PlayerName);
 			arg = arg.Replace("${version_name}", launchSettings.MinecraftVersion);
-			arg = arg.Replace("${game_directory}", settings.Minecraft_Dir);
-			arg = arg.Replace("${assets_root}", Path.Combine(settings.Minecraft_Dir, "assets"));
+			arg = arg.Replace("${game_directory}", settings.MinecraftDir);
+			arg = arg.Replace("${assets_root}", Path.Combine(settings.MinecraftDir, "assets"));
 			arg = arg.Replace("${assets_index_name}", launchSettings.AssetsVersion);
 			arg = arg.Replace("${auth_uuid}", "sessionid");
 			arg = arg.Replace("${auth_access_token}", "-");
@@ -34,7 +72,11 @@ namespace Minecraft_Launcher_2
 
 		private string GetArguments()
 		{
-			string libdir = Path.Combine(settings.Minecraft_Dir, "libraries");
+			Log("Extracting launcher info....");
+			LaunchSetting launchSettings = new LaunchSetting();
+			launchSettings.Load(Path.Combine(settings.MinecraftDir, "launch-config.json"));
+
+			Log("Building arguments....");
 
 			StringBuilder sb = new StringBuilder();
 			sb.Append(settings.Arguments);
@@ -43,31 +85,34 @@ namespace Minecraft_Launcher_2
 			sb.Append(settings.MemorySize);
 			sb.Append("G ");
 			sb.Append("-Djava.library.path=");
-			sb.Append(Path.Combine(libdir, "natives"));
+			sb.Append(Path.Combine(settings.MinecraftDir, "natives"));
 			sb.Append(" -cp ");
 
-			foreach (string lib in Library.DeserializeString(launchSettings.LibraryData))
+			foreach (string lib in launchSettings.Libraries)
 			{
-				sb.Append(Path.Combine(libdir, lib));
+				sb.Append(Path.Combine(settings.MinecraftDir, "libraries", lib));
 				sb.Append(';');
 			}
 
-			sb.Append(Path.Combine(settings.Minecraft_Dir, "minecraft.jar"));
+			sb.Append(Path.Combine(settings.MinecraftDir, "minecraft.jar"));
 			sb.Append(' ');
 			sb.Append(launchSettings.MainClass);
 			sb.Append(' ');
-			sb.Append(GetLaunchAdditionalArguments());
+			sb.Append(GetLaunchAdditionalArguments(launchSettings));
+			sb.Append(" --server ");
+			sb.Append(settings.MinecraftServerIP);
 
 			return sb.ToString();
 		}
 
-		public bool IsRunning()
+		public Task Start()
 		{
-			return isRunning;
+			return Task.Factory.StartNew(StartSync);
 		}
 
-		public void Start()
+		private void StartSync()
 		{
+			_isRunning = true;
 			try
 			{
 				Process p = new Process();
@@ -75,37 +120,32 @@ namespace Minecraft_Launcher_2
 
 				info.FileName = "java";
 				info.Arguments = GetArguments();
-				info.WorkingDirectory = settings.Minecraft_Dir;
+				info.WorkingDirectory = settings.MinecraftDir;
 				info.CreateNoWindow = true;
 				info.UseShellExecute = false;
 
-				if (settings.UseDebug)
+				if (settings.UseLogging)
 				{
-					MainWindow.Monitor.ShowWindow();
-					MainWindow.Monitor.Info("Command: " + info.Arguments);
-
 					info.RedirectStandardOutput = true;
 					info.RedirectStandardError = true;
 
-					p.OutputDataReceived += (sender, ar) => OnOutput(ar.Data);
-					p.ErrorDataReceived += (sender, ar) => OnError(ar.Data);
+					p.OutputDataReceived += (sender, ar) => Log(ar.Data);
+					p.ErrorDataReceived += (sender, ar) => Error(ar.Data);
 				}
 
-				isRunning = true;
+				Log("Starting process...");
+
 				p.StartInfo = info;
 				p.Start();
 
-				if (settings.UseDebug)
+				if (settings.UseLogging)
 				{
 					p.BeginOutputReadLine();
 					p.BeginErrorReadLine();
 
-					ThreadPool.QueueUserWorkItem(delegate
-					{
-						p.WaitForExit();
-						OnExit(p.ExitCode);
-						isRunning = false;
-					});
+					p.WaitForExit();
+					OnExited?.Invoke(this, p.ExitCode);
+					_isRunning = false;
 				}
 				else
 				{
@@ -114,25 +154,18 @@ namespace Minecraft_Launcher_2
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show("패치도중 오류가 발생하였습니다. 자세한 내용은 콘솔에 표시됩니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
-				MainWindow.Monitor.Error(e.ToString());
+				Error(e.ToString());
 			}
 		}
 
-		private static void OnError(string str)
+		private void Log(string str)
 		{
-			MainWindow.Monitor.Error(str);
+			OnLog?.Invoke(this, str);
 		}
 
-		private static void OnOutput(string str)
+		private void Error(string str)
 		{
-			MainWindow.Monitor.Info(str);
-		}
-
-		private void OnExit(int exitcode)
-		{
-			MainWindow.Monitor.Error("# 마인크래프트가 종료되었습니다. (" + exitcode + ")");
-			Exit?.Invoke(this, null);
+			OnError?.Invoke(this, str);
 		}
 	}
 }

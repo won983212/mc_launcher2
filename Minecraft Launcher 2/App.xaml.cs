@@ -1,4 +1,5 @@
 ﻿using Minecraft_Launcher_2.Updater;
+using Minecraft_Launcher_2.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,5 +15,13 @@ namespace Minecraft_Launcher_2
 	/// </summary>
 	public partial class App : Application
 	{
+		public static LauncherContext MainContext { get; private set; } = new LauncherContext();
+
+		private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+		{
+			MainViewModel vmodel = Current.MainWindow.DataContext as MainViewModel;
+			vmodel.ShowErrorMessage(e.Exception, () => { });
+			e.Handled = true;
+		}
 	}
 }

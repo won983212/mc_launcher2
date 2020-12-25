@@ -12,7 +12,7 @@ namespace Minecraft_Launcher_2.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,19 +25,19 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/dataserver")]
-        public string UpdateHost {
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost")]
+        public string APIServerLocation {
             get {
-                return ((string)(this["UpdateHost"]));
+                return ((string)(this["APIServerLocation"]));
             }
             set {
-                this["UpdateHost"] = value;
+                this["APIServerLocation"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public float MemorySize {
             get {
                 return ((float)(this["MemorySize"]));
@@ -49,9 +49,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.h" +
-            "eapdump -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -Xmn256M -XX:-UseAdaptiv" +
-            "eSizePolicy")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string Arguments {
             get {
                 return ((string)(this["Arguments"]));
@@ -64,66 +62,54 @@ namespace Minecraft_Launcher_2.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Minecraft_Dir {
+        public string MinecraftDir {
             get {
-                return ((string)(this["Minecraft_Dir"]));
+                return ((string)(this["MinecraftDir"]));
             }
             set {
-                this["Minecraft_Dir"] = value;
+                this["MinecraftDir"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseDebug {
+        public bool UseLogging {
             get {
-                return ((bool)(this["UseDebug"]));
+                return ((bool)(this["UseLogging"]));
             }
             set {
-                this["UseDebug"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Unnamed")]
-        public string LastLogined {
-            get {
-                return ((string)(this["LastLogined"]));
-            }
-            set {
-                this["LastLogined"] = value;
+                this["UseLogging"] = value;
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://libraries.minecraft.net/")]
-        public string LibraryURL {
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
+        public string ClientVersion {
             get {
-                return ((string)(this["LibraryURL"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://resources.download.minecraft.net/")]
-        public string AssetsURL {
-            get {
-                return ((string)(this["AssetsURL"]));
+                return ((string)(this["ClientVersion"]));
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsFirstRun {
+        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
+        public string MinecraftServerIP {
             get {
-                return ((bool)(this["IsFirstRun"]));
+                return ((string)(this["MinecraftServerIP"]));
             }
             set {
-                this["IsFirstRun"] = value;
+                this["MinecraftServerIP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("lootsrv")]
+        public string ServerName {
+            get {
+                return ((string)(this["ServerName"]));
             }
         }
     }

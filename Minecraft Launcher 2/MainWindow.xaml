@@ -4,198 +4,99 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minecraft_Launcher_2"
-        xmlns:control="clr-namespace:Minecraft_Launcher_2.Controls"
-        xmlns:launcher="clr-namespace:Minecraft_Launcher_2.Updater"
-        xmlns:setting="clr-namespace:Minecraft_Launcher_2.Properties"
+        xmlns:properties="clr-namespace:Minecraft_Launcher_2.Properties"
+        xmlns:controls="clr-namespace:Minecraft_Launcher_2.Controls"
+        xmlns:viewmodel="clr-namespace:Minecraft_Launcher_2.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         WindowStyle="None"
         ResizeMode="NoResize"
-        MouseDown="Window_MouseDown"
-        UseLayoutRounding="True"
-        Width="400" Height="250"
-        Title="MainWindow">
-    <Border BorderBrush="Black" BorderThickness="1">
-        <Grid>
-            <Image Source="Resources/bg0.png" Stretch="Fill"/>
-            <Label x:Name="lblInstalledVersion" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="3" 
-                   Foreground="Gray" Effect="{StaticResource DefaultDropShadow}" Content="1.12.2#190101"/>
-            <Border x:Name="pnlWarnings" Visibility="Collapsed" Style="{StaticResource BlackCardBorder}" Margin="5" Padding="4" VerticalAlignment="Top" HorizontalAlignment="Left">
-                <StackPanel>
-                    <StackPanel x:Name="wrnConnectionError" Visibility="Collapsed" Orientation="Horizontal" Margin="1" MouseDown="ConnectionErrorWarning_MouseDown">
-                        <StackPanel.ToolTip>
-                            <TextBlock Margin="0">
-                                <Bold>클릭하면 서버와 재접속을 시도합니다.</Bold><LineBreak />
-                                데이터 서버와 연결할 수 없습니다. 서버가 닫혀있거나 잘못된 IP를 입력하지는 않았는지 확인하십시오.
-                            </TextBlock>
-                        </StackPanel.ToolTip>
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,3,0" Source="/Resources/warning.png" Width="18" Height="18"/>
-                        <TextBlock Foreground="{StaticResource WarningYellow}" VerticalAlignment="Center">서버와 연결할 수 없습니다.</TextBlock>
-                    </StackPanel>
-                    <StackPanel x:Name="wrnOutdated" Visibility="Collapsed" Orientation="Horizontal" Margin="1" ToolTip="서버에 접속하기 위해서는 최신 버전으로 업데이트 해야합니다. 시작시 자동으로 업데이트가 진행됩니다.">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,3,0" Source="/Resources/warning.png" Width="18" Height="18"/>
-                        <TextBlock Foreground="{StaticResource WarningYellow}" VerticalAlignment="Center">새로운 업데이트가 있습니다.</TextBlock>
-                    </StackPanel>
-                    <StackPanel x:Name="wrnNeedInstall" Visibility="Collapsed" Orientation="Horizontal" Margin="1" ToolTip="컴퓨터에 마인크래프트가 설치되어있지 않습니다. 업데이트를 하지 않으면 시작할 수 없습니다.">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,3,0" Source="/Resources/warning.png" Width="18" Height="18"/>
-                        <TextBlock Foreground="{StaticResource WarningYellow}" VerticalAlignment="Center">게임 최초 설치가 필요합니다.</TextBlock>
-                    </StackPanel>
+        MouseDown="Window_MouseDown" Width="854" Height="480">
+    <Window.DataContext>
+        <viewmodel:MainViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <controls:BackgroundImage />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel.Effect>
+                <DropShadowEffect Color="#FF636363" BlurRadius="15" ShadowDepth="0" RenderingBias="Quality" Opacity="0.5"/>
+            </StackPanel.Effect>
+            <Border TextElement.Foreground="White" Width="250" Height="300">
+                <Border.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#aa3a90ff" Offset="0"/>
+                        <GradientStop Color="#aa2387db" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock FontSize="28" HorizontalAlignment="Center" Margin="8">Welcome!</TextBlock>
+                    <TextBlock FontSize="12" HorizontalAlignment="Center" LineHeight="20" TextAlignment="Center" FontFamily="/Minecraft Launcher 2;component/Fonts/#NanumGothic">DecoCraft 추가 <LineBreak></LineBreak> 1.16.4로 업데이트</TextBlock>
                 </StackPanel>
             </Border>
-            <Border x:Name="pnlConnectionState" Style="{StaticResource BlackCardBorder}" Margin="5" Padding="5" VerticalAlignment="Top" HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal">
-                    <control:Spinner Width="22" Height="22"/>
-                    <Label Foreground="{StaticResource GrayBrush}">데이터 서버와 연결 중..</Label>
-                </StackPanel>
-            </Border>
-            <Border Style="{StaticResource BlackCardBorder}" Width="170" Margin="10" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <StackPanel>
-                    <Grid x:Name="pnlLogin">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*"/>
-                            <ColumnDefinition Width="3*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBox Grid.ColumnSpan="2" Text="{Binding Path=LastLogined, Source={x:Static setting:Settings.Default}}"/>
-                        <Button x:Name="btnStart" Grid.Row="1" Margin="0,5,0,0" Height="22" Content="시작" Click="Start_Click"/>
-                        <Button Style="{StaticResource RedButton}" Grid.Column="1" Grid.Row="1" Margin="5,5,0,0" Height="22" Content="종료" Click="Exit_Click"/>
-                    </Grid>
-                    <Button Style="{StaticResource ImageButton}" Grid.Row="2" Grid.Column="1" Margin="0,5,0,0" HorizontalAlignment="Right" Click="SettingOpen_Click">
-                        <Grid>
-                            <Image RenderOptions.BitmapScalingMode="HighQuality" Source="/Resources/setting.png" Width="18" Height="18"/>
-                            <Rectangle>
-                                <Rectangle.Fill>
-                                    <SolidColorBrush Color="#FF575757"/>
-                                </Rectangle.Fill>
-                                <Rectangle.OpacityMask>
-                                    <ImageBrush ImageSource="/Resources/setting.png"/>
-                                </Rectangle.OpacityMask>
-                            </Rectangle>
-                        </Grid>
-                    </Button>
-                </StackPanel>
-            </Border>
-            <Border x:Name="pnlUpdateState" BorderBrush="Black" BorderThickness="1" Style="{StaticResource BlackCardBorder}" Padding="8" VerticalAlignment="Bottom" Visibility="Collapsed">
-                <StackPanel>
-                    <ProgressBar x:Name="prgCurrent" Height="15" Value="30"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="tblCurrentProgress" Foreground="{StaticResource WhiteBrush}" Margin="0,5,5,8">현재: 0%</TextBlock>
-                        <TextBlock x:Name="tblCurrentState" Foreground="{StaticResource GrayBrush}" Margin="5">Assets 폴더 삭제 중..</TextBlock>
+            <Border Background="white" Width="400" Height="300">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" TextElement.Foreground="{StaticResource PrimaryHueDarkBrush}" Margin="0,0,0,30">
+                        <materialDesign:PackIcon Kind="Account" Width="32" Height="32"></materialDesign:PackIcon>
+                        <TextBlock FontSize="20" VerticalAlignment="Center" Margin="8,0">로그인</TextBlock>
                     </StackPanel>
-                    <ProgressBar x:Name="prgTotal" Height="15" Value="30"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="tblTotalProgress" Foreground="{StaticResource WhiteBrush}" Margin="0,5,5,0">전체: 0%</TextBlock>
-                        <TextBlock x:Name="tblTotalState" Foreground="{StaticResource GrayBrush}" Margin="5,5,5,0">Assets 다운로드 중..</TextBlock>
-                    </StackPanel>
+                    <TextBox materialDesign:HintAssist.Hint="마인크래프트 닉네임" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             Width="300" Margin="0,20"/>
+                    <Button materialDesign:ButtonAssist.CornerRadius="0" Width="100" FontSize="12" HorizontalAlignment="Right">시작</Button>
                 </StackPanel>
             </Border>
-            <DockPanel x:Name="pnlSetting" Background="White" Visibility="Collapsed">
-                <Grid DockPanel.Dock="Bottom" Height="32">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Margin="2" Width="80" Content="콘솔 켜기" Click="OpenConsole_Click"/>
-                    <Button x:Name="btnSettingReset" Style="{StaticResource RedButton}" Grid.Column="1" Margin="2" Width="80" Content="설정 리셋" Click="SettingClear_Click"/>
-                    <Button x:Name="btnGameClear" Style="{StaticResource RedButton}" Grid.Column="2" Margin="2" Width="80" Content="게임 제거" Click="ClearAll_Click"/>
-                    <Button Grid.Column="3" Margin="2" HorizontalAlignment="Right" Width="80" Content="저장" Click="SettingSave_Click"/>
-                </Grid>
-                <Grid x:Name="pnlSettingInner" Margin="8" DataContext="{x:Static setting:Settings.Default}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="200"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.Resources>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="Margin" Value="0,6,0,6"/>
-                        </Style>
-                        <Style TargetType="ComboBox">
-                            <Setter Property="Height" Value="25"/>
-                        </Style>
-                        <Style TargetType="TextBox">
-                            <Setter Property="Height" Value="25"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        </Style>
-                        <Style TargetType="CheckBox">
-                            <Setter Property="HorizontalAlignment" Value="Left"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                        </Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Height" Value="25"/>
-                        </Style>
-                    </Grid.Resources>
-                    <TextBlock ToolTip="데이터가 포함된 서버의 주소를 의미합니다.">데이터 서버 주소</TextBlock>
-                    <TextBox Grid.Column="1" Text="{Binding UpdateHost}"/>
-                    <TextBlock Grid.Row="1">
-                        <TextBlock.ToolTip>
-                            <TextBlock Margin="0">
-                                마인크래프트에서 사용할 수 있는 <Bold>최대 메모리 용량</Bold>입니다. <LineBreak />
-                                많이 할당할 수록 더 쾌적하게 게임을 플레이할 수 있지만 컴퓨터의 최대 메모리보다 크게 할당할 수는 없습니다.
-                            </TextBlock>
-                        </TextBlock.ToolTip>
-                        램 할당량(GB)
-                    </TextBlock>
-                    <ComboBox Grid.Row="1" Grid.Column="1" IsEditable="True" Text="{Binding MemorySize}">
-                        <ComboBoxItem>0.5</ComboBoxItem>
-                        <ComboBoxItem>1</ComboBoxItem>
-                        <ComboBoxItem>1.5</ComboBoxItem>
-                        <ComboBoxItem>2</ComboBoxItem>
-                        <ComboBoxItem>3</ComboBoxItem>
-                        <ComboBoxItem>4</ComboBoxItem>
-                        <ComboBoxItem>6</ComboBoxItem>
-                        <ComboBoxItem>8</ComboBoxItem>
-                    </ComboBox>
-                    <TextBlock Grid.Row="2">
-                        <TextBlock.ToolTip>
-                            <TextBlock Margin="0">
-                                마인크래프트를 실행할 때 VM에 전달할 <Bold>매개변수</Bold>입니다. <LineBreak />
-                                매개변수는 프로그램이 아닌 자바 VM 매개변수를 의미합니다.
-                            </TextBlock>
-                        </TextBlock.ToolTip>
-                        추가 매개변수
-                    </TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Arguments}"/>
-                    <TextBlock Grid.Row="3">
-                        <TextBlock.ToolTip>
-                            <TextBlock Margin="0">
-                                마인크래프트 <Bold>실행 파일들이 저장될 폴더 위치</Bold>입니다. <LineBreak />
-                                기본 위치는 %appdata%\minecraft_data입니다. 변경시 쓰기 권한이 있는 폴더로 설정하거나 관리자 권한으로 실행하세요.
-                            </TextBlock>
-                        </TextBlock.ToolTip>
-                        마인크래프트 폴더 경로
-                    </TextBlock>
-                    <Grid Grid.Row="3" Grid.Column="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding Minecraft_Dir}" />
-                        <Button Grid.Column="1" Margin="3,0,0,0" Content="찾아보기.." Click="FindFolder_Click"/>
-                    </Grid>
-                    <TextBlock Grid.Row="4">
-                        <TextBlock.ToolTip>
-                            <TextBlock Margin="0">
-                                게임 실행시 <Bold>콘솔을 이용할 수 있게 하는 기능</Bold>입니다. <LineBreak />
-                                사용시 런처는 종료되지 않으며, 자동으로 콘솔이 켜집니다. 아울러 게임에서 출력하는 모든 텍스트를 콘솔에 표시합니다. 게임에 오류가 발생할 때 이용하세요.
-                            </TextBlock>
-                        </TextBlock.ToolTip>
-                        테스트 모드 사용
-                    </TextBlock>
-                    <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding UseDebug}"/>
-                </Grid>
-            </DockPanel>
-        </Grid>
-    </Border>
+        </StackPanel>
+
+        <!-- version text -->
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="LightGray" Margin="10">
+            <Run>v</Run>
+            <Run Text="{Binding ClientVersion, Mode=OneWay, Source={x:Static properties:Settings.Default}}"/>
+        </TextBlock>
+
+        <!-- Control Panel -->
+        <controls:ControlPanel IsShow="{Binding ShowControlPanel, Mode=TwoWay}"/>
+
+        <!-- ErrorDialog -->
+        <controls:ErrorDialog x:Name="dialogError" ErrorObject="{Binding ErrorInfo}" IsShow="{Binding ShowErrorDialog, Mode=TwoWay}"/>
+
+        <!-- Top Snackbar -->
+        <materialDesign:Snackbar x:Name="ErrorSnackbar" VerticalAlignment="Top" Background="{StaticResource SecondaryHueMidBrush}" 
+                                 Foreground="White" MessageQueue="{Binding SnackMessages}">
+            <materialDesign:Snackbar.Resources>
+                <Style BasedOn="{StaticResource {x:Type materialDesign:SnackbarMessage}}" TargetType="{x:Type materialDesign:SnackbarMessage}">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+            </materialDesign:Snackbar.Resources>
+        </materialDesign:Snackbar>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <!-- Signal button -->
+            <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" Visibility="{Binding SignalIconVisibility}" Command="{Binding ReconnectCommand}">
+                <Button.ToolTip>
+                    <StackPanel>
+                        <TextBlock Text="{Binding ServerInfo.Motd}" FontSize="12pt"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                            <materialDesign:PackIcon Kind="AccountGroup" Margin="0,0,5,0" Width="18" Height="18" />
+                            <TextBlock Text="{Binding ServerInfo.PlayerCount}" Margin="0,0,8,0"/>
+                            <materialDesign:PackIcon Kind="Signal" Margin="0,0,5,0" Width="18" Height="18" />
+                            <TextBlock Text="{Binding ServerInfo.Ping}"/>
+                        </StackPanel>
+                        <Separator Margin="0,5"/>
+                        <TextBlock Text="클릭시 새로고침합니다." HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button.ToolTip>
+                <materialDesign:PackIcon Kind="{Binding SignalIcon}" Foreground="White" Width="18" Height="18"/>
+            </Button>
+
+            <!-- Config button -->
+            <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="설정" Command="{Binding ShowSettingCommand}">
+                <materialDesign:PackIcon Kind="Settings" Foreground="White" Width="18" Height="18" />
+            </Button>
+
+            <!-- Exit button -->
+            <Button Style="{StaticResource MaterialDesignIconButton}" Click="Exit_Click" Width="30" Height="30" ToolTip="종료">
+                <materialDesign:PackIcon Kind="Close" Foreground="White" Width="18" Height="18" />
+            </Button>
+        </StackPanel>
+    </Grid>
 </Window>
