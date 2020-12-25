@@ -42,6 +42,14 @@ namespace Minecraft_Launcher_2
             }
         }
 
+        public static string Notice
+        {
+            get
+            {
+                return settings.APIServerLocation + "/notice";
+            }
+        }
+
         public static string APIUserInfo(string uuid)
         {
             return settings.APIServerLocation + "/api/user/" + uuid;

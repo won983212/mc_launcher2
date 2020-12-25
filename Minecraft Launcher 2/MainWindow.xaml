@@ -6,15 +6,19 @@
         xmlns:local="clr-namespace:Minecraft_Launcher_2"
         xmlns:properties="clr-namespace:Minecraft_Launcher_2.Properties"
         xmlns:controls="clr-namespace:Minecraft_Launcher_2.Controls"
+        xmlns:converters="clr-namespace:Minecraft_Launcher_2.Converters"
         xmlns:viewmodel="clr-namespace:Minecraft_Launcher_2.ViewModels"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         WindowStyle="None"
-        ResizeMode="NoResize"
+        ResizeMode="NoResize" Title="Minecraft Launcher"
         MouseDown="Window_MouseDown" Width="854" Height="480">
     <Window.DataContext>
         <viewmodel:MainViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <converters:EnumToIntConverter x:Key="EnumToIntConverter" />
+    </Window.Resources>
     <Grid>
         <controls:BackgroundImage />
 
@@ -22,18 +26,30 @@
             <StackPanel.Effect>
                 <DropShadowEffect Color="#FF636363" BlurRadius="15" ShadowDepth="0" RenderingBias="Quality" Opacity="0.5"/>
             </StackPanel.Effect>
-            <Border TextElement.Foreground="White" Width="250" Height="300">
-                <Border.Background>
+            <controls:MultiplexerPanel TextElement.Foreground="White" Width="250" Height="300"
+                                        ActiveChildIndex="{Binding ConnectionState, Converter={StaticResource EnumToIntConverter}}">
+                <controls:MultiplexerPanel.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#aa3a90ff" Offset="0"/>
                         <GradientStop Color="#aa2387db" Offset="1"/>
                     </LinearGradientBrush>
-                </Border.Background>
+                </controls:MultiplexerPanel.Background>
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="0" IsIndeterminate="True" Width="40" Height="40"/>
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock FontSize="28" HorizontalAlignment="Center" Margin="8">Welcome!</TextBlock>
-                    <TextBlock FontSize="12" HorizontalAlignment="Center" LineHeight="20" TextAlignment="Center" FontFamily="/Minecraft Launcher 2;component/Fonts/#NanumGothic">DecoCraft 추가 <LineBreak></LineBreak> 1.16.4로 업데이트</TextBlock>
+                    <TextBlock FontSize="12" HorizontalAlignment="Center" LineHeight="20" TextAlignment="Center" Text="{Binding Motd}"/>
                 </StackPanel>
-            </Border>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="{Binding ConnectionErrorMessage}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Warning" Width="20" Height="20" Margin="10" VerticalAlignment="Center" />
+                        <TextBlock FontSize="12" VerticalAlignment="Center">서버와 연결할 수 없습니다.</TextBlock>
+                    </StackPanel>
+                    <Button Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="White" Width="100" Foreground="White"
+                            HorizontalAlignment="Left" FontSize="8pt" Margin="50,10" Command="{Binding ReconnectCommand}">
+                        재접속 시도
+                    </Button>
+                </StackPanel>
+            </controls:MultiplexerPanel>
             <Border Background="white" Width="400" Height="300">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" TextElement.Foreground="{StaticResource PrimaryHueDarkBrush}" Margin="0,0,0,30">

@@ -23,6 +23,7 @@ namespace Minecraft_Launcher_2.Updater
         public int Ping { get; private set; }
 
         // api server status
+        public string Notice { get; private set; }
         public string PatchVersion { get; private set; }
         public string ClientVersion { get; private set; }
 
@@ -101,6 +102,8 @@ namespace Minecraft_Launcher_2.Updater
                 JObject obj = JObject.Parse(data);
                 PatchVersion = (string)obj["patchVersion"];
                 ClientVersion = (string)obj["clientVersion"];
+
+                Notice = await client.DownloadStringTaskAsync(URLs.Notice);
             }
         }
 

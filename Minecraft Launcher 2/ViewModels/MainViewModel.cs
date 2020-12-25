@@ -17,6 +17,7 @@ namespace Minecraft_Launcher_2.ViewModels
         private Visibility _signalIconVisibility = Visibility.Collapsed;
         private bool _showErrorDialog = false;
         private bool _showControlPanel = false;
+        private string _motd = "Loading...";
 
         private ICommand _reconnectCommand;
         private ICommand _showSettingCommand;
@@ -29,6 +30,16 @@ namespace Minecraft_Launcher_2.ViewModels
             set
             {
                 _errorInfo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Motd
+        {
+            get => _motd;
+            set
+            {
+                _motd = value;
                 OnPropertyChanged();
             }
         }
@@ -73,6 +84,27 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
+        public RetrieveState ConnectionState
+        {
+            get => App.MainContext.ServerStatus.ConnectionState.State;
+        }
+
+        public string ConnectionErrorMessage
+        {
+            get
+            {
+                string message = App.MainContext.ServerStatus.ConnectionState.ErrorMessage;
+                if (string.IsNullOrEmpty(message))
+                {
+                    return "연결 성공";
+                }
+                else
+                {
+                    return message;
+                }
+            }
+        }
+
         public ICommand ReconnectCommand
         {
             get => _reconnectCommand = _reconnectCommand ?? new RelayCommand((a) => App.MainContext.ServerStatus.RetrieveAll());
@@ -109,11 +141,16 @@ namespace Minecraft_Launcher_2.ViewModels
                 {
                     SignalIcon = "SignalCellular1";
                 }
+
+                Motd = status.Notice;
             }
             else
             {
                 SignalIconVisibility = Visibility.Collapsed;
             }
+
+            OnPropertyChanged("ConnectionErrorMessage");
+            OnPropertyChanged("ConnectionState");
         }
 
         public void ShowErrorMessage(Exception e, Action callback)
