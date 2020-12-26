@@ -141,9 +141,10 @@ namespace Minecraft_Launcher_2.Updater
         private Tuple<string, int> RetrieveServerStatusSync()
         {
             string serverIP = Properties.Settings.Default.MinecraftServerIP;
+            int serverPort = Properties.Settings.Default.MinecraftServerPort;
 
             TcpClient client = new TcpClient();
-            client.Connect(serverIP, 25565);
+            client.Connect(serverIP, serverPort);
 
             Logger.Debug("[ServerStatus] Connected to " + serverIP);
             BufferedStream stream = new BufferedStream(client.GetStream());
@@ -152,7 +153,7 @@ namespace Minecraft_Launcher_2.Updater
             BinaryWriter bw = new BinaryWriter(stream);
             WriteVarInt(ms, -1);
             WriteString(ms, serverIP);
-            WriteUnsignedShort(ms, 25565);
+            WriteUnsignedShort(ms, serverPort);
             WriteVarInt(ms, 1);
             Flush(bw, 0);
             Flush(bw, 0);

@@ -14,7 +14,6 @@ namespace Minecraft_Launcher_2
 {
 	class LaunchSetting
 	{
-		public string PlayerName { get; private set; }
 		public string MainClass { get; private set; }
 		public string MinecraftArguments { get; private set; }
 		public string AssetsVersion { get; private set; }
@@ -54,12 +53,13 @@ namespace Minecraft_Launcher_2
 		public event EventHandler<string> OnError;
 		public event EventHandler<int> OnExited;
 
+		public string PlayerName { get; set; } = "Unnamed";
 		public bool IsRunning { get => _isRunning; }
 
 		private string GetLaunchAdditionalArguments(LaunchSetting launchSettings)
 		{
 			string arg = launchSettings.MinecraftArguments;
-			arg = arg.Replace("${auth_player_name}", launchSettings.PlayerName);
+			arg = arg.Replace("${auth_player_name}", PlayerName);
 			arg = arg.Replace("${version_name}", launchSettings.MinecraftVersion);
 			arg = arg.Replace("${game_directory}", settings.MinecraftDir);
 			arg = arg.Replace("${assets_root}", Path.Combine(settings.MinecraftDir, "assets"));
@@ -80,7 +80,7 @@ namespace Minecraft_Launcher_2
 
 			StringBuilder sb = new StringBuilder();
 			sb.Append(settings.Arguments);
-			sb.Append(' ');
+			sb.Append(" -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump ");
 			sb.Append("-Xmx");
 			sb.Append(settings.MemorySize);
 			sb.Append("G ");
@@ -101,6 +101,8 @@ namespace Minecraft_Launcher_2
 			sb.Append(GetLaunchAdditionalArguments(launchSettings));
 			sb.Append(" --server ");
 			sb.Append(settings.MinecraftServerIP);
+			sb.Append(" --port ");
+			sb.Append(settings.MinecraftServerPort);
 
 			return sb.ToString();
 		}

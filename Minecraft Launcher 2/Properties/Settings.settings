@@ -26,5 +26,11 @@
     <Setting Name="ServerName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">lootsrv</Value>
     </Setting>
+    <Setting Name="MinecraftServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">8124</Value>
+    </Setting>
+    <Setting Name="PlayerName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

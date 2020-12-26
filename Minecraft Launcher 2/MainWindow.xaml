@@ -20,13 +20,15 @@
         <converters:EnumToIntConverter x:Key="EnumToIntConverter" />
     </Window.Resources>
     <Grid>
+        <!-- background -->
         <controls:BackgroundImage />
 
+        <!-- login panel -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel.Effect>
                 <DropShadowEffect Color="#FF636363" BlurRadius="15" ShadowDepth="0" RenderingBias="Quality" Opacity="0.5"/>
             </StackPanel.Effect>
-            <controls:MultiplexerPanel TextElement.Foreground="White" Width="250" Height="300"
+            <controls:MultiplexerPanel TextElement.Foreground="White" Width="250" Height="350"
                                         ActiveChildIndex="{Binding ConnectionState, Converter={StaticResource EnumToIntConverter}}">
                 <controls:MultiplexerPanel.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -50,18 +52,23 @@
                     </Button>
                 </StackPanel>
             </controls:MultiplexerPanel>
-            <Border Background="white" Width="400" Height="300">
+            <Border Background="white" Width="400" Height="350">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" TextElement.Foreground="{StaticResource PrimaryHueDarkBrush}" Margin="0,0,0,30">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" TextElement.Foreground="{StaticResource PrimaryHueDarkBrush}" Margin="0,0,0,10">
                         <materialDesign:PackIcon Kind="Account" Width="32" Height="32"></materialDesign:PackIcon>
                         <TextBlock FontSize="20" VerticalAlignment="Center" Margin="8,0">로그인</TextBlock>
                     </StackPanel>
                     <TextBox materialDesign:HintAssist.Hint="마인크래프트 닉네임" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             Width="300" Margin="0,20"/>
-                    <Button materialDesign:ButtonAssist.CornerRadius="0" Width="100" FontSize="12" HorizontalAlignment="Right">시작</Button>
+                             Width="300" Margin="0,60" Height="45" IsEnabled="{Binding IsFormEnabled}" 
+                             Text="{Binding PlayerName, Source={x:Static properties:Settings.Default}}"/>
+                    <Button materialDesign:ButtonAssist.CornerRadius="0" Width="100" FontSize="12" HorizontalAlignment="Right" Content="{Binding StartText}"
+                            Command="{Binding StartCommand}"/>
                 </StackPanel>
             </Border>
         </StackPanel>
+
+        <controls:DownloadStatusBar HorizontalAlignment="Center" VerticalAlignment="Bottom" ProgressValue="{Binding DownloadProgress}"
+                                     IsActive="{Binding IsShowDownloadStatus}" StatusText="{Binding DownloadStatus}" Margin="0,0,0,5" />
 
         <!-- version text -->
         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="LightGray" Margin="10">

@@ -112,5 +112,29 @@ namespace Minecraft_Launcher_2.Properties {
                 return ((string)(this["ServerName"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8124")]
+        public int MinecraftServerPort {
+            get {
+                return ((int)(this["MinecraftServerPort"]));
+            }
+            set {
+                this["MinecraftServerPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PlayerName {
+            get {
+                return ((string)(this["PlayerName"]));
+            }
+            set {
+                this["PlayerName"] = value;
+            }
+        }
     }
 }

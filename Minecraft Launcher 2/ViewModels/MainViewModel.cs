@@ -10,6 +10,20 @@ using System.Windows.Input;
 
 namespace Minecraft_Launcher_2.ViewModels
 {
+    class ServerInfo
+    {
+        public string Motd { get; set; }
+        public string PlayerCount { get; set; }
+        public string Ping { get; private set; }
+
+        public ServerInfo(ServerStatus status)
+        {
+            Motd = status.Motd;
+            PlayerCount = status.PlayersOnline + "/" + status.PlayersMax;
+            Ping = status.Ping + "ms";
+        }
+    }
+
     class MainViewModel : ObservableObject
     {
         private ErrorMessageObject _errorInfo;
@@ -18,9 +32,20 @@ namespace Minecraft_Launcher_2.ViewModels
         private bool _showErrorDialog = false;
         private bool _showControlPanel = false;
         private string _motd = "Loading...";
+        private ServerInfo _serverInfo;
+
+        private Launcher _launcher = new Launcher();
+        private string _startText = "연결 중..";
+        private LauncherState _launchState;
+        private bool _canStart = false;
+
+        private bool _isShowDownloadStatus = false;
+        private double _downloadProgress = 0;
+        private string _downloadStatus = "";
 
         private ICommand _reconnectCommand;
         private ICommand _showSettingCommand;
+        private ICommand _startCommand;
 
         public SnackbarMessageQueue SnackMessages { get; private set; }
 
@@ -84,6 +109,51 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
+        public ServerInfo ServerInfo
+        {
+            get => _serverInfo;
+            set
+            {
+                _serverInfo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsShowDownloadStatus
+        {
+            get => _isShowDownloadStatus;
+            private set
+            {
+                _isShowDownloadStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsFormEnabled
+        {
+            get => !IsShowDownloadStatus;
+        }
+
+        public double DownloadProgress
+        {
+            get => _downloadProgress;
+            private set
+            {
+                _downloadProgress = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string DownloadStatus
+        {
+            get => _downloadStatus;
+            private set
+            {
+                _downloadStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
         public RetrieveState ConnectionState
         {
             get => App.MainContext.ServerStatus.ConnectionState.State;
@@ -105,6 +175,16 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
+        public string StartText
+        {
+            get => _startText;
+            set
+            {
+                _startText = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand ReconnectCommand
         {
             get => _reconnectCommand = _reconnectCommand ?? new RelayCommand((a) => App.MainContext.ServerStatus.RetrieveAll());
@@ -115,11 +195,117 @@ namespace Minecraft_Launcher_2.ViewModels
             get => _showSettingCommand = _showSettingCommand ?? new RelayCommand((a) => ShowControlPanel = true);
         }
 
+        public ICommand StartCommand
+        {
+            get
+            {
+                if (_startCommand == null)
+                    _startCommand = new RelayCommand(OnStartClick, CanStart);
+                return _startCommand;
+            }
+        }
+
         public MainViewModel()
         {
             SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
             ErrorInfo = new ErrorMessageObject();
             App.MainContext.ServerStatus.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
+
+            _launcher.OnLog += (s, t) => Logger.Log(t);
+            _launcher.OnError += (s, t) => Logger.Error(t);
+            _launcher.OnExited += (s, t) => Logger.Log(" Exited (code: " + t + ")");
+        }
+
+        public void StartDownload()
+        {
+            IsShowDownloadStatus = true;
+            _canStart = false;
+            DownloadStatus = "다운로드 중..";
+            DownloadProgress = 0;
+
+            ContentUpdater updater = new ContentUpdater();
+            updater.OnProgress += Updater_OnProgress;
+            updater.BeginDownload();
+        }
+
+        public async Task StartMinecraft()
+        {
+            _launcher.PlayerName = Properties.Settings.Default.PlayerName;
+            Properties.Settings.Default.Save();
+
+            await _launcher.Start();
+            _canStart = true;
+
+            if (!Properties.Settings.Default.UseLogging)
+                App.Current.Shutdown(0);
+        }
+
+        private void Updater_OnProgress(object sender, ProgressArgs e)
+        {
+            DownloadStatus = e.Status;
+            DownloadProgress = e.Progress;
+
+            if (IsShowDownloadStatus && e.Progress >= 100)
+            {
+                IsShowDownloadStatus = false;
+                App.MainContext.UpdatePatchVersion();
+                UpdateStartButton();
+                StartMinecraft();
+            }
+        }
+
+        private void UpdateStartButton()
+        {
+            _launchState = App.MainContext.GetLauncherState();
+            switch (_launchState)
+            {
+                case LauncherState.CanStart:
+                    StartText = "시작";
+                    break;
+                case LauncherState.NeedInstall:
+                    StartText = "설치";
+                    break;
+                case LauncherState.NeedUpdate:
+                    StartText = "업데이트";
+                    break;
+            }
+        }
+
+        private bool IsLegalUsername(string name)
+        {
+            foreach (char c in name)
+                if ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".IndexOf(c) == -1)
+                    return false;
+            return true;
+        }
+
+        private void OnStartClick(object arg)
+        {
+            string playerName = Properties.Settings.Default.PlayerName;
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                AddErrorSnackbar("닉네임을 입력해주세요.");
+                return;
+            }
+            else if (!IsLegalUsername(playerName))
+            {
+                AddErrorSnackbar("닉네임은 영문, 숫자, 언더바(_)로만 구성해야합니다.");
+                return;
+            }
+
+            if (_launchState != LauncherState.CanStart)
+            {
+                StartDownload();
+            }
+            else
+            {
+                StartMinecraft();
+            }
+        }
+
+        private bool CanStart(object arg)
+        {
+            return _canStart && !_launcher.IsRunning;
         }
 
         private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
@@ -142,6 +328,7 @@ namespace Minecraft_Launcher_2.ViewModels
                     SignalIcon = "SignalCellular1";
                 }
 
+                ServerInfo = new ServerInfo(status);
                 Motd = status.Notice;
             }
             else
@@ -151,6 +338,8 @@ namespace Minecraft_Launcher_2.ViewModels
 
             OnPropertyChanged("ConnectionErrorMessage");
             OnPropertyChanged("ConnectionState");
+            UpdateStartButton();
+            _canStart = true;
         }
 
         public void ShowErrorMessage(Exception e, Action callback)
