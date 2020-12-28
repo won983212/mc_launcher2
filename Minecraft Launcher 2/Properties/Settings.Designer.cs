@@ -25,7 +25,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://won983212.iptime.org")]
         public string APIServerLocation {
             get {
                 return ((string)(this["APIServerLocation"]));
@@ -94,7 +94,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
+        [global::System.Configuration.DefaultSettingValueAttribute("won983212.iptime.org")]
         public string MinecraftServerIP {
             get {
                 return ((string)(this["MinecraftServerIP"]));
@@ -134,6 +134,18 @@ namespace Minecraft_Launcher_2.Properties {
             }
             set {
                 this["PlayerName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoJoinServer {
+            get {
+                return ((bool)(this["AutoJoinServer"]));
+            }
+            set {
+                this["AutoJoinServer"] = value;
             }
         }
     }

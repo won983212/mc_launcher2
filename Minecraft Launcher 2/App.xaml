@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:Minecraft_Launcher_2"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              DispatcherUnhandledException="Application_DispatcherUnhandledException"
+             Startup="Application_Startup"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

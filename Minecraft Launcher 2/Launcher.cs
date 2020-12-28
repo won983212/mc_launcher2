@@ -55,6 +55,7 @@ namespace Minecraft_Launcher_2
 
 		public string PlayerName { get; set; } = "Unnamed";
 		public bool IsRunning { get => _isRunning; }
+		public bool IsAutoJoin { get; set; } = true;
 
 		private string GetLaunchAdditionalArguments(LaunchSetting launchSettings)
 		{
@@ -99,10 +100,14 @@ namespace Minecraft_Launcher_2
 			sb.Append(launchSettings.MainClass);
 			sb.Append(' ');
 			sb.Append(GetLaunchAdditionalArguments(launchSettings));
-			sb.Append(" --server ");
-			sb.Append(settings.MinecraftServerIP);
-			sb.Append(" --port ");
-			sb.Append(settings.MinecraftServerPort);
+
+			if (IsAutoJoin)
+			{
+				sb.Append(" --server ");
+				sb.Append(settings.MinecraftServerIP);
+				sb.Append(" --port ");
+				sb.Append(settings.MinecraftServerPort);
+			}
 
 			return sb.ToString();
 		}

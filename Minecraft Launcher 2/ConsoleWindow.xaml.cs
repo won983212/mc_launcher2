@@ -13,20 +13,28 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Minecraft_Launcher_2
 {
     /// <summary>
     /// ConsoleWindow.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ConsoleWindow : Window, ConsoleIO
+    public partial class ConsoleWindow : Window
     {
+		private StreamWriter logWriter;
+
         public ConsoleWindow()
         {
             InitializeComponent();
 			txtConsole.Document = new FlowDocument();
-        }
+
+			string mcdir = Path.Combine(Properties.Settings.Default.MinecraftDir, "log", "client");
+			if (!Directory.Exists(mcdir))
+				Directory.CreateDirectory(mcdir);
+
+			string logfile = Path.Combine(mcdir, "client-log-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".txt");
+			logWriter = File.AppendText(logfile);
+		}
 
 		public void Info(string text)
 		{
@@ -50,6 +58,9 @@ namespace Minecraft_Launcher_2
 		{
 			if (text == null)
 				return;
+
+			logWriter.WriteLine(text);
+			logWriter.Flush();
 
 			Dispatcher.Invoke(() =>
 			{

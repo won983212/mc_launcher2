@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="APIServerLocation" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://localhost</Value>
+      <Value Profile="(Default)">http://won983212.iptime.org</Value>
     </Setting>
     <Setting Name="MemorySize" Type="System.Single" Scope="User">
       <Value Profile="(Default)">3</Value>
@@ -21,7 +21,7 @@
       <Value Profile="(Default)">0.1</Value>
     </Setting>
     <Setting Name="MinecraftServerIP" Type="System.String" Scope="User">
-      <Value Profile="(Default)">localhost</Value>
+      <Value Profile="(Default)">won983212.iptime.org</Value>
     </Setting>
     <Setting Name="ServerName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">lootsrv</Value>
@@ -31,6 +31,9 @@
     </Setting>
     <Setting Name="PlayerName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AutoJoinServer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

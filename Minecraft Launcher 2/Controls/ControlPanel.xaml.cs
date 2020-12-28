@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -89,6 +90,13 @@ namespace Minecraft_Launcher_2.Controls
                 dialog.ShowMessage();
             else
                 dialog.CloseMessage();
+        }
+
+        private void ForceUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModel viewmodel = DataContext as MainViewModel;
+            viewmodel.SetForceUpdate();
+            MessageBox.Show("강제 업데이트 모드가 설정되었습니다. 설정창에서 나가서 업데이트를 누르면 업데이트가 진행됩니다.", "강제 업데이트 설정됨.");
         }
     }
 }

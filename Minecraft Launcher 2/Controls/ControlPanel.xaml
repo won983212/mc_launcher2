@@ -22,22 +22,27 @@
                         </Style>
                     </StackPanel.Resources>
 
-                    <Grid Margin="18,8" Height="50">
+                    <Grid Margin="18,8" Height="45">
                         <TextBlock>마인크래프트 폴더 위치</TextBlock>
                         <TextBox VerticalAlignment="Center" Width="300" HorizontalAlignment="Right" Text="{Binding MinecraftDir, Source={x:Static properties:Settings.Default}}"/>
                     </Grid>
 
-                    <Grid Margin="18,8" Height="50">
+                    <Grid Margin="18,8" Height="45">
                         <TextBlock>콘솔 사용</TextBlock>
                         <CheckBox VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}"/>
                     </Grid>
 
-                    <Grid Margin="18,8" Height="50">
+                    <Grid Margin="18,8" Height="45">
+                        <TextBlock>실행시 서버 자동 접속</TextBlock>
+                        <CheckBox VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding AutoJoinServer, Source={x:Static properties:Settings.Default}}"/>
+                    </Grid>
+
+                    <Grid Margin="18,8" Height="45">
                         <TextBlock>추가 매개변수</TextBlock>
                         <TextBox VerticalAlignment="Center" Width="300" HorizontalAlignment="Right" Text="{Binding Arguments, Source={x:Static properties:Settings.Default}}"/>
                     </Grid>
 
-                    <Grid Margin="18,8" Height="50">
+                    <Grid Margin="18,8" Height="45">
                         <TextBlock>메모리 할당량</TextBlock>
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
                             <TextBox materialDesign:TextFieldAssist.SuffixText=" GB" 
@@ -46,7 +51,8 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,16">
-                    <Button Margin="16,0" Width="100" Height="40" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Click="Reset_Click">초기화</Button>
+                    <Button Margin="16,0" Width="130" Height="40" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Click="ForceUpdate_Click">강제 업데이트</Button>
+                    <Button Margin="0,0,16,0" Width="100" Height="40" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Click="Reset_Click">초기화</Button>
                     <Button Width="100" Height="40" Click="Save_Click">확인</Button>
                 </StackPanel>
             </Grid>

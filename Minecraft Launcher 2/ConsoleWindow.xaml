@@ -4,20 +4,26 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minecraft_Launcher_2"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Closing="Window_Closing"
         Title="Console" Height="500" Width="750">
     <Window.Resources>
-        <Style TargetType="CheckBox" />
-        <Style TargetType="Button" />
+        <Style TargetType="RichTextBox" />
     </Window.Resources>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Bottom" Height="35" HorizontalAlignment="Right" Orientation="Horizontal">
-            <CheckBox x:Name="chbAutoScroll" Content="콘솔 자동 스크롤" VerticalAlignment="Center" IsChecked="True" Click="CheckBox_Click"/>
-            <Button Width="80" Content="내용 저장" Margin="5,5,5,5" Click="SaveConsole_Click"/>
-            <Button Width="80" Content="콘솔 비우기" Margin="0,5,5,5" Click="ClearConsole_Click"/>
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
+            <CheckBox x:Name="chbAutoScroll" Content="콘솔 자동 스크롤" VerticalAlignment="Center" Margin="5" IsChecked="True" 
+                      Click="CheckBox_Click" FontFamily="맑은 고딕"/>
+            <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="내용 저장" Click="SaveConsole_Click">
+                <materialDesign:PackIcon Kind="ContentSave" Width="25" Height="25" />
+            </Button>
+            <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="비우기" Click="ClearConsole_Click">
+                <materialDesign:PackIcon Kind="TrashCan" Width="25" Height="25" />
+            </Button>
         </StackPanel>
-        <RichTextBox x:Name="txtConsole" IsReadOnly="True" Margin="5,5,5,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="White" Foreground="Black">
+        <RichTextBox x:Name="txtConsole" IsReadOnly="True" Margin="5,5,5,0" VerticalScrollBarVisibility="Auto" 
+                     HorizontalScrollBarVisibility="Auto" Background="White" Foreground="Black">
             <RichTextBox.Resources>
                 <Style TargetType="{x:Type Paragraph}">
                     <Setter Property="Margin" Value="0" />

@@ -77,7 +77,7 @@
         </TextBlock>
 
         <!-- Control Panel -->
-        <controls:ControlPanel IsShow="{Binding ShowControlPanel, Mode=TwoWay}"/>
+        <controls:ControlPanel IsShow="{Binding ShowControlPanel, Mode=TwoWay}" DataContext="{Binding Mode=OneWay}"/>
 
         <!-- ErrorDialog -->
         <controls:ErrorDialog x:Name="dialogError" ErrorObject="{Binding ErrorInfo}" IsShow="{Binding ShowErrorDialog, Mode=TwoWay}"/>
@@ -111,6 +111,11 @@
                 <materialDesign:PackIcon Kind="{Binding SignalIcon}" Foreground="White" Width="18" Height="18"/>
             </Button>
 
+            <!-- Console button -->
+            <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="콘솔 열기" Command="{Binding ShowConsoleCommand}">
+                <materialDesign:PackIcon Kind="Console" Foreground="White" Width="18" Height="18" />
+            </Button>
+            
             <!-- Config button -->
             <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="설정" Command="{Binding ShowSettingCommand}">
                 <materialDesign:PackIcon Kind="Settings" Foreground="White" Width="18" Height="18" />

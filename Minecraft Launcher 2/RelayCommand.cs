@@ -21,8 +21,14 @@ namespace Minecraft_Launcher_2
             if (execute == null)
                 throw new ArgumentNullException("execute");
 
+            CommandManager.RequerySuggested += CommandManager_RequerySuggested;
             _execute = execute;
             _canExecute = canExecute;
+        }
+
+        private void CommandManager_RequerySuggested(object sender, EventArgs e)
+        {
+            RaiseCanExecuteChanged();
         }
 
         public bool CanExecute(object parameter)
@@ -35,10 +41,11 @@ namespace Minecraft_Launcher_2
             _execute(parameter);
         }
 
-        public event EventHandler CanExecuteChanged
+        public event EventHandler CanExecuteChanged;
+
+        public void RaiseCanExecuteChanged()
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            CanExecuteChanged?.Invoke(this, new EventArgs());
         }
     }
 }

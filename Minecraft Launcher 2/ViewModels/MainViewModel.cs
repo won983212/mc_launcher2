@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.Updater;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Minecraft_Launcher_2.ViewModels
 {
@@ -26,6 +28,8 @@ namespace Minecraft_Launcher_2.ViewModels
 
     class MainViewModel : ObservableObject
     {
+        #region Fields
+
         private ErrorMessageObject _errorInfo;
         private string _signalIcon = "SignalCellular1";
         private Visibility _signalIconVisibility = Visibility.Collapsed;
@@ -46,6 +50,11 @@ namespace Minecraft_Launcher_2.ViewModels
         private ICommand _reconnectCommand;
         private ICommand _showSettingCommand;
         private ICommand _startCommand;
+        private ICommand _showConsoleCommand;
+
+        #endregion
+
+        #region Properties
 
         public SnackbarMessageQueue SnackMessages { get; private set; }
 
@@ -197,26 +206,37 @@ namespace Minecraft_Launcher_2.ViewModels
 
         public ICommand StartCommand
         {
-            get
-            {
-                if (_startCommand == null)
-                    _startCommand = new RelayCommand(OnStartClick, CanStart);
-                return _startCommand;
-            }
+            get => _startCommand = _startCommand ?? new RelayCommand(OnStartClick, CanStart);
         }
+
+        public ICommand ShowConsoleCommand
+        {
+            get => _showConsoleCommand = _showConsoleCommand ?? new RelayCommand((a) => {
+                if(App.Console != null)
+                    App.Console.Show();
+            });
+        }
+
+        #endregion
 
         public MainViewModel()
         {
             SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
             ErrorInfo = new ErrorMessageObject();
+
+            ServerStatus status = App.MainContext.ServerStatus;
             App.MainContext.ServerStatus.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
+            if(status.ConnectionState.State != RetrieveState.Processing)
+                ServerStatus_OnConnectionStateChanged(null, status.ConnectionState);
 
             _launcher.OnLog += (s, t) => Logger.Log(t);
             _launcher.OnError += (s, t) => Logger.Error(t);
             _launcher.OnExited += (s, t) => Logger.Log(" Exited (code: " + t + ")");
         }
 
-        public void StartDownload()
+        #region Methods
+
+        public async void StartDownload()
         {
             IsShowDownloadStatus = true;
             _canStart = false;
@@ -225,14 +245,38 @@ namespace Minecraft_Launcher_2.ViewModels
 
             ContentUpdater updater = new ContentUpdater();
             updater.OnProgress += Updater_OnProgress;
-            updater.BeginDownload();
+            int failed = await updater.BeginDownload();
+
+            IsShowDownloadStatus = false;
+            App.MainContext.UpdatePatchVersion();
+            UpdateStartButton();
+
+            if (failed > 0)
+            {
+                MessageBoxResult res = MessageBox.Show("파일 " + failed + "개를 받지 못했습니다. 그래도 실행합니까?", "주의", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (res == MessageBoxResult.Yes)
+                {
+                    StartMinecraft();
+                } 
+                else
+                {
+                    _canStart = true;
+                }
+            }
+            else
+            {
+                StartMinecraft();
+            }
         }
 
         public async Task StartMinecraft()
         {
-            _launcher.PlayerName = Properties.Settings.Default.PlayerName;
-            Properties.Settings.Default.Save();
+            Settings settings = Properties.Settings.Default;
+            _launcher.PlayerName = settings.PlayerName;
+            settings.Save();
 
+            _launcher.IsAutoJoin = ConnectionState == RetrieveState.Loaded && settings.AutoJoinServer;
+            // TODO 임시로 실행되는거 막음
             await _launcher.Start();
             _canStart = true;
 
@@ -240,18 +284,21 @@ namespace Minecraft_Launcher_2.ViewModels
                 App.Current.Shutdown(0);
         }
 
+        public bool SetForceUpdate()
+        {
+            if (ConnectionState == RetrieveState.Loaded)
+            {
+                StartText = "업데이트";
+                _launchState = LauncherState.NeedUpdate;
+                return true;
+            }
+            return false;
+        }
+
         private void Updater_OnProgress(object sender, ProgressArgs e)
         {
             DownloadStatus = e.Status;
             DownloadProgress = e.Progress;
-
-            if (IsShowDownloadStatus && e.Progress >= 100)
-            {
-                IsShowDownloadStatus = false;
-                App.MainContext.UpdatePatchVersion();
-                UpdateStartButton();
-                StartMinecraft();
-            }
         }
 
         private void UpdateStartButton()
@@ -267,6 +314,9 @@ namespace Minecraft_Launcher_2.ViewModels
                     break;
                 case LauncherState.NeedUpdate:
                     StartText = "업데이트";
+                    break;
+                case LauncherState.Offline:
+                    StartText = "오프라인 시작";
                     break;
             }
         }
@@ -293,13 +343,13 @@ namespace Minecraft_Launcher_2.ViewModels
                 return;
             }
 
-            if (_launchState != LauncherState.CanStart)
+            if(_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
             {
-                StartDownload();
+                StartMinecraft();
             }
             else
             {
-                StartMinecraft();
+                StartDownload();
             }
         }
 
@@ -339,7 +389,8 @@ namespace Minecraft_Launcher_2.ViewModels
             OnPropertyChanged("ConnectionErrorMessage");
             OnPropertyChanged("ConnectionState");
             UpdateStartButton();
-            _canStart = true;
+            _canStart = e.State != RetrieveState.Processing;
+            Application.Current.Dispatcher.Invoke(() => ((RelayCommand)StartCommand).RaiseCanExecuteChanged());
         }
 
         public void ShowErrorMessage(Exception e, Action callback)
@@ -370,5 +421,7 @@ namespace Minecraft_Launcher_2.ViewModels
         {
             SnackMessages.Enqueue(message);
         }
+
+        #endregion
     }
 }

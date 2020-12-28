@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2
 {
-    // TODO 향후 log / debug를 따로 콘솔창 만들어서 사용
     public static class Logger
     {
         public static void Log(object data)
         {
-            Console.WriteLine("[Log] " + data);
+            if(App.Console != null)
+                App.Console.Info("[Info] " + data);
+            Console.WriteLine("[Info] " + data);
         }
 
         public static void Debug(object data)
@@ -20,13 +21,17 @@ namespace Minecraft_Launcher_2
             if (data == null)
                 Console.WriteLine();
             else
-                Console.WriteLine("[DEBUG] " + data);
+                Console.WriteLine("[Debug] " + data);
+            if (App.Console != null)
+                App.Console.Info("[Debug] " + data);
 #endif
         }
 
         public static void Error(object data)
         {
             Console.WriteLine("[Error] " + data);
+            if (App.Console != null)
+                App.Console.Error("[Error] " + data);
         }
     }
 }

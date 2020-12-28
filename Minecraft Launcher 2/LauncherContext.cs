@@ -10,7 +10,7 @@ namespace Minecraft_Launcher_2
 {
     public enum LauncherState
     {
-        NeedInstall, NeedUpdate, CanStart
+        NeedInstall, NeedUpdate, CanStart, Offline
     }
 
     public class LauncherContext
@@ -39,7 +39,11 @@ namespace Minecraft_Launcher_2
 
         public LauncherState GetLauncherState()
         {
-            if (PatchVersion == "Unknown")
+            if(ServerStatus.ConnectionState.State == RetrieveState.Error)
+            {
+                return LauncherState.Offline;
+            } 
+            else if (PatchVersion == "Unknown")
             {
                 return LauncherState.NeedInstall;
             }

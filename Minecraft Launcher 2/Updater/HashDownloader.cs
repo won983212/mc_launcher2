@@ -33,6 +33,10 @@ namespace Minecraft_Launcher_2.Updater
 
     public class HashDownloader
     {
+        private const int Timeout = 3000;
+
+        private const int RetryCount = 3;
+
         // 저장 경로를 Hash 형태로 저장할 건지?
         public bool UseHashPath { get; set; } = false;
 
@@ -51,6 +55,7 @@ namespace Minecraft_Launcher_2.Updater
         private string _indexesURL;
         private string _resourceUrl;
         private int _count = 0;
+        private int _failed = 0;
         private int _total = 0;
         private volatile bool _isRunning = false;
         private volatile bool _isCanceling = false;
@@ -72,11 +77,13 @@ namespace Minecraft_Launcher_2.Updater
             }
         }
 
-        public Task DownloadTask()
+        public Task<int> DownloadTask()
         {
             if (!_isRunning)
             {
                 _isRunning = true;
+                _count = 0;
+                _failed = 0;
                 return Task.Factory.StartNew(Download);
             }
             return null;
@@ -128,7 +135,7 @@ namespace Minecraft_Launcher_2.Updater
             }
         }
 
-        private void Download()
+        private int Download()
         {
             UpdateStatus(0, "Index파일 다운로드 중..");
             string indexData = new WebClient().DownloadString(_indexesURL);
@@ -153,76 +160,110 @@ namespace Minecraft_Launcher_2.Updater
             List<FileObj> files = new List<FileObj>();
 
             UpdateStatus(0, "다운로드해야 할 파일 검색 중..");
-            foreach (var token in indexDataJson["objects"])
+            JToken objects = indexDataJson["objects"];
+            double lastProgress = 0;
+
+            Interlocked.Exchange(ref _total, objects.Count());
+            foreach (var token in objects)
             {
                 JProperty p = token as JProperty;
                 if (p != null)
                 {
                     FileObj file = new FileObj(p);
                     if (DownloadOnlyNecessary && CheckHash(sha1, parentFolder, file))
-                        Logger.Debug("Ignore " + file.FilePath);
+                    {
+                        Interlocked.Increment(ref _count);
+                        lastProgress = _count * 100.0 / _total;
+                        UpdateStatus(lastProgress, "다운로드해야 할 파일 검색 중..");
+                    }
                     else
+                    {
+                        Logger.Debug("Add Download list: " + file.FilePath);
                         files.Add(file);
+                    }
                 }
             }
 
-            // TODO 말단 폴더만 삭제되는데 해결좀
-            UpdateStatus(0, "삭제해야 할 파일 검색 중..");
+            UpdateStatus(lastProgress, "삭제해야 할 파일 검색 중..");
             if(DetectDeletionFolder != null && DetectDeletionFolder.Length > 0)
             {
-                JObject objects = (JObject) indexDataJson["objects"];
                 foreach (string folder in DetectDeletionFolder)
                 {
                     string path = Path.Combine(parentFolder, folder);
                     if (!Directory.Exists(path))
                         continue;
-                    ProcessFileSyncDelete(objects, parentFolder, path);
+                    ProcessFileSyncDelete((JObject)objects, parentFolder, path);
                 }
             }
 
             sha1.Dispose();
-            Interlocked.Exchange(ref _total, files.Count);
-            UpdateStatus(0, "다운로드 중..");
+            UpdateStatus(lastProgress, "다운로드 중..");
 
             try
             {
                 Parallel.ForEach(files,
                     new ParallelOptions { MaxDegreeOfParallelism = 10, CancellationToken = _tknSrc.Token },
-                    (file) => DownloadFile(parentFolder, file));
+                    (file) => DownloadFile(parentFolder, file, 0));
             } 
             catch (OperationCanceledException)
             {
                 _isRunning = false;
                 _isCanceling = false;
             }
+
+            return _failed;
         }
 
-        private void DownloadFile(string path, FileObj file)
+        private void DownloadFile(string path, FileObj file, int retry)
         {
-            path = file.GetActualPath(path, UseHashPath);
-
-            DirectoryInfo parent = Directory.GetParent(path);
-            if (!parent.Exists)
-                Directory.CreateDirectory(parent.FullName);
-
-            string downloadUrl = Path.Combine(_resourceUrl, file.Hash.Substring(0, 2) + "/" + file.Hash);
-            var sr = new BinaryReader(WebRequest.Create(downloadUrl).GetResponse().GetResponseStream());
-            var sw = new BinaryWriter(new FileStream(path, FileMode.Create));
-            Logger.Debug("Download " + path);
-
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = sr.Read(buf, 0, buf.Length)) > 0)
-                sw.Write(buf, 0, len);
-
-            sr.Close();
-            sw.Close();
-            Interlocked.Increment(ref _count);
-
-            UpdateStatus((_count * 100.0 / _total), _isCanceling ? "취소하고 있습니다.." : "다운로드 중..");
-            if(_count == _total)
+            BinaryReader reader = null;
+            BinaryWriter writer = null;
+            try
             {
-                _isRunning = false;
+                string _path = file.GetActualPath(path, UseHashPath);
+
+                DirectoryInfo parent = Directory.GetParent(_path);
+                if (!parent.Exists)
+                    Directory.CreateDirectory(parent.FullName);
+
+                string downloadUrl = Path.Combine(_resourceUrl, file.Hash.Substring(0, 2) + "/" + file.Hash);
+                Stream s = WebRequest.Create(downloadUrl).GetResponse().GetResponseStream();
+                reader = new BinaryReader(s);
+                writer = new BinaryWriter(new FileStream(_path, FileMode.Create));
+                Logger.Debug("Download: " + _path);
+
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = reader.Read(buf, 0, buf.Length)) > 0)
+                    writer.Write(buf, 0, len);
+
+                reader.Close();
+                writer.Close();
+                Interlocked.Increment(ref _count);
+                Logger.Debug("Finish: " + _path);
+
+                UpdateStatus((_count * 100.0 / _total), _isCanceling ? "취소하고 있습니다.." : "다운로드 중..");
+                if (_count == _total)
+                {
+                    _isRunning = false;
+                }
+            } 
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                if (++retry < RetryCount)
+                {
+                    if (reader != null)
+                        reader.Close();
+                    if (writer != null)
+                        writer.Close();
+                    Logger.Log("Retry download(" + retry + "): " + path);
+                    DownloadFile(path, file, retry);
+                } 
+                else
+                {
+                    Interlocked.Increment(ref _failed);
+                }
             }
         }
     }

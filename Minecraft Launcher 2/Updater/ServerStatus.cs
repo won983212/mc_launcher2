@@ -12,6 +12,7 @@ namespace Minecraft_Launcher_2.Updater
 {
     public class ServerStatus
     {
+        private const int Timeout = 3000;
         private MemoryStream ms = new MemoryStream();
         private ConnectionState _conState = new ConnectionState { State = RetrieveState.Processing };
 
@@ -63,7 +64,7 @@ namespace Minecraft_Launcher_2.Updater
             try
             {
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(URLs.InfoFile);
-                req.Timeout = 3000;
+                req.Timeout = Timeout;
                 req.AllowAutoRedirect = false;
                 req.Method = "HEAD";
                 req.GetResponse().Dispose();
@@ -96,7 +97,7 @@ namespace Minecraft_Launcher_2.Updater
             if (!isActive)
                 throw new Exception("API 서버와 연결할 수 없습니다.");
 
-            using (WebClient client = new WebClient())
+            using (TimeoutWebClient client = new TimeoutWebClient(Timeout))
             {
                 string data = await client.DownloadStringTaskAsync(URLs.InfoFile);
                 JObject obj = JObject.Parse(data);
@@ -144,7 +145,7 @@ namespace Minecraft_Launcher_2.Updater
             int serverPort = Properties.Settings.Default.MinecraftServerPort;
 
             TcpClient client = new TcpClient();
-            client.Connect(serverIP, serverPort);
+            TimeoutSocket.Connect(client, serverIP, serverPort, Timeout);
 
             Logger.Debug("[ServerStatus] Connected to " + serverIP);
             BufferedStream stream = new BufferedStream(client.GetStream());
