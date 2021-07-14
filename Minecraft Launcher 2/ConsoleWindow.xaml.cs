@@ -1,153 +1,95 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace Minecraft_Launcher_2
 {
-    /// <summary>
-    /// ConsoleWindow.xaml에 대한 상호 작용 논리
-    /// </summary>
     public partial class ConsoleWindow : Window
     {
-        private StreamWriter logWriter;
-
         public ConsoleWindow()
         {
             InitializeComponent();
-            txtConsole.Document = new FlowDocument();
+            ((INotifyCollectionChanged)listLog.Items).CollectionChanged += ConsoleWindow_CollectionChanged;
+            UpdateFilter("");
 
-            string mcdir = Path.Combine(Properties.Settings.Default.MinecraftDir, "log", "client");
-            if (!Directory.Exists(mcdir))
-                Directory.CreateDirectory(mcdir);
-
-            string logfile = Path.Combine(mcdir, "client-log-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".txt");
-            logWriter = File.AppendText(logfile);
-        }
-
-        public void Info(string text)
-        {
-            Println(text, false);
-        }
-
-        public void Error(string text)
-        {
-            Println(text, true);
-        }
-
-        public void ShowWindow()
-        {
-            Dispatcher.Invoke(() =>
+            var timer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
+            var r = new Random();
+            timer.Tick += (o, e) =>
             {
-                Show();
-            });
+                switch (r.Next(0, 3))
+                {
+                    case 0:
+                        Logger.Log("How are you? " + DateTime.Now);
+                        break;
+                    case 1:
+                        Logger.Debug("Hello, world! " + DateTime.Now);
+                        break;
+                    case 2:
+                        Logger.Error("ERROR DATE " + DateTime.Now);
+                        break;
+                    default:
+                        break;
+                }
+            };
+            timer.Start();
         }
 
-        public void Println(string text, bool isError)
+        private void ConsoleWindow_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (text == null)
-                return;
-
-            logWriter.WriteLine(text);
-            logWriter.Flush();
-
-            Dispatcher.Invoke(() =>
-            {
-                Paragraph p = new Paragraph();
-                string[] info = SeperateInfo(text);
-                SolidColorBrush col;
-
-                if (isError)
-                {
-                    col = new SolidColorBrush(Colors.OrangeRed);
-                }
-                else
-                {
-                    col = new SolidColorBrush(Colors.Black);
-                }
-
-                if (!string.IsNullOrEmpty(info[0]))
-                {
-                    Run r = new Run(info[0]);
-                    r.FontWeight = FontWeights.Bold;
-
-                    p.Inlines.Add(r);
-                }
-
-                if (!string.IsNullOrEmpty(info[1]))
-                {
-                    p.Foreground = col;
-                    p.Inlines.Add(info[1]);
-                }
-
-                txtConsole.Document.Blocks.Add(p);
-                if (chbAutoScroll.IsChecked == true)
-                {
-                    txtConsole.ScrollToEnd();
-                }
-            });
-        }
-
-        private string[] SeperateInfo(string str)
-        {
-            string[] ret = new string[2];
-
-            if (str.StartsWith("[") && str.Contains("]:"))
-            {
-                int index = str.IndexOf("]:") + 2;
-                ret[0] = str.Substring(0, index);
-                ret[1] = str.Substring(index);
-            }
-            else
-            {
-                ret[1] = str;
-            }
-
-            return ret;
+            if (chbAutoScroll.IsChecked == true)
+                ScrollToEnd();
         }
 
         private void ClearConsole_Click(object sender, RoutedEventArgs e)
         {
-            txtConsole.Document.Blocks.Clear();
+            Logger.ClearLogs();
         }
 
         private void SaveConsole_Click(object sender, RoutedEventArgs e)
         {
-            TextRange r = new TextRange(txtConsole.Document.ContentStart, txtConsole.Document.ContentEnd);
+            SaveFileDialog dialog = new SaveFileDialog { FileName = "console_log.txt" };
 
-            if (r.CanSave(System.Windows.DataFormats.Text))
+            if (dialog.ShowDialog() == true)
             {
-                SaveFileDialog dialog = new SaveFileDialog();
-                dialog.FileName = "console_log.txt";
-
-                if (dialog.ShowDialog() == true)
+                using (StreamWriter writer = new StreamWriter(new FileStream(dialog.FileName, FileMode.Create)))
                 {
-                    FileStream file = new FileStream(dialog.FileName, FileMode.Create);
-                    r.Save(file, System.Windows.DataFormats.Text);
-                    MessageBox.Show("저장되었습니다.");
+                    foreach (LogMessage message in Logger.Logs)
+                    {
+                        writer.WriteLine("[" + message.Type.ToString() + "] " + message.Message);
+                    }
                 }
-            }
-            else
-            {
-                MessageBox.Show("Text 포맷으로 저장할 수 없습니다.", "오류.");
+                MessageBox.Show("저장되었습니다.");
             }
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
+        private void ScrollToEnd()
         {
-            e.Cancel = true;
-            Visibility = Visibility.Hidden;
+            if (listLog.Items.Count > 0)
+                listLog.ScrollIntoView(listLog.Items[listLog.Items.Count - 1]);
+        }
+
+        private void UpdateFilter(string filter)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(Logger.Logs);
+            view.Filter = (o) => string.IsNullOrEmpty(filter) || ((LogMessage)o).Message.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) != -1;
+            listLog.ItemsSource = view;
         }
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             if (chbAutoScroll.IsChecked == true)
-            {
-                txtConsole.ScrollToEnd();
-            }
+                ScrollToEnd();
+        }
+
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateFilter(((TextBox)sender).Text);
         }
     }
 }

@@ -6,29 +6,109 @@
         xmlns:local="clr-namespace:Minecraft_Launcher_2"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Closing="Window_Closing"
+        FontFamily="{StaticResource PrimaryFont}"
         Title="Console" Height="500" Width="750">
-    <Window.Resources>
-        <Style TargetType="RichTextBox" />
-    </Window.Resources>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
-            <CheckBox x:Name="chbAutoScroll" Content="콘솔 자동 스크롤" VerticalAlignment="Center" Margin="5" IsChecked="True" 
-                      Click="CheckBox_Click" FontFamily="맑은 고딕"/>
-            <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="내용 저장" Click="SaveConsole_Click">
-                <materialDesign:PackIcon Kind="ContentSave" Width="25" Height="25" />
-            </Button>
-            <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="비우기" Click="ClearConsole_Click">
-                <materialDesign:PackIcon Kind="TrashCan" Width="25" Height="25" />
-            </Button>
-        </StackPanel>
-        <RichTextBox x:Name="txtConsole" IsReadOnly="True" Margin="5,5,5,0" VerticalScrollBarVisibility="Auto" 
-                     HorizontalScrollBarVisibility="Auto" Background="White" Foreground="Black">
-            <RichTextBox.Resources>
-                <Style TargetType="{x:Type Paragraph}">
-                    <Setter Property="Margin" Value="0" />
-                </Style>
-            </RichTextBox.Resources>
-        </RichTextBox>
+        <Border DockPanel.Dock="Top" Background="{StaticResource BackgroundColor}">
+            <Grid Margin="8,12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock FontWeight="Bold"
+                           FontSize="8pt"
+                           Text="로그 필터링" />
+                <TextBox Grid.Row="1"
+                         MinWidth="300"
+                         Height="30"
+                         VerticalContentAlignment="Center"
+                         materialDesign:HintAssist.Hint="필터링 키워드 입력..."
+                         VerticalAlignment="Top"
+                         TextChanged="TextBox_TextChanged"/>
+
+                <TextBlock Grid.Column="1"
+                           FontSize="8pt"
+                           FontWeight="Bold"
+                           Margin="16,0"
+                           Text="설정"/>
+                <CheckBox x:Name="chbAutoScroll" 
+                          Grid.Column="1"
+                          Grid.Row="1"
+                          Margin="16,0"
+                          VerticalAlignment="Center"
+                          Content="자동 스크롤"
+                          IsChecked="True" 
+                          Click="CheckBox_Click" />
+
+                <TextBlock Grid.Column="2" 
+                           FontSize="8pt"
+                           FontWeight="Bold"
+                           Text="콘솔 조작" />
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
+                    <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                            Click="SaveConsole_Click"
+                            Margin="0,0,8,0"
+                            FontSize="9pt"
+                            Content="저장" />
+                    <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                            Click="ClearConsole_Click"
+                            FontSize="9pt"
+                            Content="콘솔 비우기" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ListBox x:Name="listLog" 
+                 ItemsSource="{x:Static local:Logger.Logs}" 
+                 ItemContainerStyle="{StaticResource NoFocusHighlight}"
+                 materialDesign:RippleAssist.IsDisabled="True"
+                 VirtualizingStackPanel.VirtualizationMode="Recycling">
+            <ListBox.Resources>
+                <Style TargetType="ListBoxItem" />
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.Resources>
+                            <Style x:Key="errorColoredStyle" TargetType="FrameworkElement">
+                                <Setter Property="TextElement.Foreground" Value="Black" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Type}" Value="Error">
+                                        <Setter Property="TextElement.Foreground" Value="{StaticResource ErrorColor}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold"
+                                   Margin="0,0,16,0"
+                                   Text="{Binding Time, StringFormat=HH:mm:ss.fff}"/>
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource errorColoredStyle}"
+                                   Margin="0,0,8,0"
+                                   FontWeight="Bold"
+                                   Text="{Binding Type}"/>
+                        <TextBox Grid.Column="2"
+                                 Style="{StaticResource errorColoredStyle}"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 IsReadOnly="True"
+                                 TextWrapping="Wrap"
+                                 Text="{Binding Message, Mode=OneWay}">
+                        </TextBox>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </DockPanel>
 </Window>

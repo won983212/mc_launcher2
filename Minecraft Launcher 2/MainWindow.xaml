@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:properties="clr-namespace:Minecraft_Launcher_2.Properties"
         xmlns:controls="clr-namespace:Minecraft_Launcher_2.Controls"
-        xmlns:converters="clr-namespace:Minecraft_Launcher_2.Converters"
         xmlns:viewmodel="clr-namespace:Minecraft_Launcher_2.ViewModels"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
@@ -16,9 +15,6 @@
     <Window.DataContext>
         <viewmodel:MainViewModel/>
     </Window.DataContext>
-    <Window.Resources>
-        <converters:EnumToIntConverter x:Key="EnumToIntConverter" />
-    </Window.Resources>
     <md:DialogHost Style="{StaticResource MaterialDesignEmbeddedDialogHost}"
                    Identifier="RootDialogHost"
                    DialogTheme="Inherit">
@@ -81,12 +77,6 @@
 
             <controls:DownloadStatusBar HorizontalAlignment="Center" VerticalAlignment="Bottom" ProgressValue="{Binding DownloadProgress}"
                                          IsActive="{Binding IsShowDownloadStatus}" StatusText="{Binding DownloadStatus}" Margin="0,0,0,5" />
-
-            <!-- version text -->
-            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="LightGray" Margin="10">
-                <Run>v</Run>
-                <Run Text="{Binding ClientVersion, Mode=OneWay, Source={x:Static properties:Settings.Default}}"/>
-            </TextBlock>
 
             <!-- Top Snackbar -->
             <md:Snackbar x:Name="ErrorSnackbar" VerticalAlignment="Top" Background="{StaticResource SecondaryHueMidBrush}" 

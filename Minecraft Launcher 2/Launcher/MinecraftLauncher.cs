@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Minecraft_Launcher_2.Updater;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,24 +12,28 @@ namespace Minecraft_Launcher_2.Launcher
 {
     internal class LaunchSetting
     {
+        private LauncherContext _context;
         public string MainClass { get; private set; }
         public string MinecraftArguments { get; private set; }
         public string AssetsVersion { get; private set; }
         public string MinecraftVersion { get; private set; }
         public List<string> Libraries { get; private set; } = new List<string>();
 
+        internal LaunchSetting(LauncherContext context)
+        {
+            _context = context;
+        }
+
         public void Load(string settingFile)
         {
             string data = File.ReadAllText(settingFile);
             JObject json = JObject.Parse(data);
 
-            LauncherContext ctx = App.MainContext;
-            ctx.UpdatePatchVersion();
-
-            MainClass = (string)json["mainClass"];
-            MinecraftArguments = (string)json["minecraftArguments"];
-            AssetsVersion = (string)json["assets"];
-            MinecraftVersion = ctx.PatchVersion.Split('@')[0];
+            _context.GetInstalledPatchVersion();
+            MainClass = json.Value<string>("mainClass");
+            MinecraftArguments = json.Value<string>("arguments");
+            AssetsVersion = json.Value<string>("assets");
+            MinecraftVersion = _context.PatchVersion.Split('@')[0];
 
             JArray libs = json["libraries"] as JArray;
             foreach (JObject obj in libs)
@@ -50,9 +55,13 @@ namespace Minecraft_Launcher_2.Launcher
         public event EventHandler<string> OnError;
         public event EventHandler<int> OnExited;
 
-        public string PlayerName { get; set; } = "Unnamed";
-        public bool IsRunning { get => _isRunning; }
-        public bool IsAutoJoin { get; set; } = true;
+        private LauncherContext _context;
+
+        public MinecraftLauncher(LauncherContext context)
+        {
+            _context = context;
+        }
+
 
         private string GetLaunchAdditionalArguments(LaunchSetting launchSettings)
         {
@@ -71,7 +80,7 @@ namespace Minecraft_Launcher_2.Launcher
         private string GetArguments()
         {
             Log("Extracting launcher info....");
-            LaunchSetting launchSettings = new LaunchSetting();
+            LaunchSetting launchSettings = new LaunchSetting(_context);
             launchSettings.Load(Path.Combine(settings.MinecraftDir, "launch-config.json"));
 
             Log("Building arguments....");
@@ -98,7 +107,7 @@ namespace Minecraft_Launcher_2.Launcher
             sb.Append(' ');
             sb.Append(GetLaunchAdditionalArguments(launchSettings));
 
-            if (IsAutoJoin)
+            if (_context.ServerStatus.ConnectionState.State == RetrieveState.Loaded && settings.AutoJoinServer)
             {
                 sb.Append(" --server ");
                 sb.Append(settings.MinecraftServerIP);
@@ -169,5 +178,10 @@ namespace Minecraft_Launcher_2.Launcher
         {
             OnError?.Invoke(this, str);
         }
+
+
+        public string PlayerName { get; set; } = "Unnamed";
+
+        public bool IsRunning => _isRunning;
     }
 }

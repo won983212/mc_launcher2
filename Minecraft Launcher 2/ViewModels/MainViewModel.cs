@@ -32,7 +32,8 @@ namespace Minecraft_Launcher_2.ViewModels
         private string _welcomeMessage = "Loading...";
         private ServerInfo _serverInfo;
 
-        private readonly MinecraftLauncher _launcher = new MinecraftLauncher();
+        private readonly LauncherContext _context;
+        private readonly MinecraftLauncher _launcher;
         private string _startText = "연결 중..";
         private LauncherState _launchState;
         private bool _canStart = false;
@@ -45,16 +46,21 @@ namespace Minecraft_Launcher_2.ViewModels
 
         public MainViewModel()
         {
+            _context = new LauncherContext();
+            _launcher = new MinecraftLauncher(_context);
             SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
 
-            ServerStatus status = App.MainContext.ServerStatus;
-            App.MainContext.ServerStatus.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
+            ServerStatus status = _context.ServerStatus;
+            status.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
             if (status.ConnectionState.State != RetrieveState.Processing)
                 ServerStatus_OnConnectionStateChanged(null, status.ConnectionState);
 
             _launcher.OnLog += (s, t) => Logger.Log(t);
             _launcher.OnError += (s, t) => Logger.Error(t);
             _launcher.OnExited += (s, t) => Logger.Log(" Exited (code: " + t + ")");
+
+            _context.GetInstalledPatchVersion();
+            status.RetrieveAll();
         }
 
 
@@ -70,7 +76,7 @@ namespace Minecraft_Launcher_2.ViewModels
             int failed = await updater.BeginDownload();
 
             IsShowDownloadStatus = false;
-            App.MainContext.UpdatePatchVersion();
+            _context.GetInstalledPatchVersion();
             UpdateStartButton();
 
             if (failed > 0)
@@ -97,7 +103,6 @@ namespace Minecraft_Launcher_2.ViewModels
             _launcher.PlayerName = settings.PlayerName;
             settings.Save();
 
-            _launcher.IsAutoJoin = ConnectionState == RetrieveState.Loaded && settings.AutoJoinServer;
             await _launcher.Start();
             _canStart = true;
 
@@ -122,7 +127,7 @@ namespace Minecraft_Launcher_2.ViewModels
 
         private void UpdateStartButton()
         {
-            _launchState = App.MainContext.GetLauncherState();
+            _launchState = _context.GetLauncherState();
             switch (_launchState)
             {
                 case LauncherState.CanStart:
@@ -176,7 +181,7 @@ namespace Minecraft_Launcher_2.ViewModels
             if (e.State == RetrieveState.Loaded)
             {
                 SignalIconVisibility = Visibility.Visible;
-                ServerStatus status = App.MainContext.ServerStatus;
+                ServerStatus status = _context.ServerStatus;
 
                 SignalIcon = "SignalCellular1";
                 if (status.Ping < 150)
@@ -298,14 +303,14 @@ namespace Minecraft_Launcher_2.ViewModels
 
         public RetrieveState ConnectionState
         {
-            get => App.MainContext.ServerStatus.ConnectionState.State;
+            get => _context.ServerStatus.ConnectionState.State;
         }
 
         public string ConnectionErrorMessage
         {
             get
             {
-                string message = App.MainContext.ServerStatus.ConnectionState.ErrorMessage;
+                string message = _context.ServerStatus.ConnectionState.ErrorMessage;
                 if (string.IsNullOrEmpty(message))
                 {
                     return "연결 성공";
@@ -327,7 +332,8 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
-        public ICommand ReconnectCommand => new RelayCommand(() => App.MainContext.ServerStatus.RetrieveAll());
+
+        public ICommand ReconnectCommand => new RelayCommand(() => _context.ServerStatus.RetrieveAll());
 
         public ICommand ShowSettingCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(this)));
 

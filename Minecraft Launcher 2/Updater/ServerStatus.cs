@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2.Updater
 {
+    // TODO API, MC 2개로 분리
     public class ServerStatus
     {
         private const int Timeout = 3000;

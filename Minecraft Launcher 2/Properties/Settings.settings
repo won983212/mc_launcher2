@@ -17,9 +17,6 @@
     <Setting Name="UseLogging" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ClientVersion" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">0.9</Value>
-    </Setting>
     <Setting Name="MinecraftServerIP" Type="System.String" Scope="User">
       <Value Profile="(Default)">won983212.iptime.org</Value>
     </Setting>

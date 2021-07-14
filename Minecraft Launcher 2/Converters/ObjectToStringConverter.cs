@@ -4,12 +4,12 @@ using System.Windows.Data;
 
 namespace Minecraft_Launcher_2.Converters
 {
-    [ValueConversion(typeof(Enum), typeof(int))]
-    public class EnumToIntConverter : IValueConverter
+    [ValueConversion(typeof(object), typeof(string))]
+    public class ObjectToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (int)value;
+            return value.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
