@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.Updater;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -6,32 +7,15 @@ using System.Windows.Media.Animation;
 
 namespace Minecraft_Launcher_2.Controls
 {
-    /// <summary>
-    /// DownloadStatusBar.xaml에 대한 상호 작용 논리
-    /// </summary>
     public partial class DownloadStatusBar : UserControl
     {
-        public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive",
-            typeof(bool), typeof(DownloadStatusBar), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnIsActiveChanged)));
-        public static readonly DependencyProperty ProgressValueProperty = DependencyProperty.Register("ProgressValue", typeof(double), typeof(DownloadStatusBar));
-        public static readonly DependencyProperty StatusTextProperty = DependencyProperty.Register("StatusText", typeof(string), typeof(DownloadStatusBar));
+        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register("ViewModel",
+            typeof(UpdaterViewModel), typeof(DownloadStatusBar));
 
-        public bool IsActive
+        public UpdaterViewModel ViewModel
         {
-            get => (bool)GetValue(IsActiveProperty);
-            set { SetValue(IsActiveProperty, value); }
-        }
-
-        public double ProgressValue
-        {
-            get => (double)GetValue(ProgressValueProperty);
-            set { SetValue(ProgressValueProperty, value); }
-        }
-
-        public string StatusText
-        {
-            get => (string)GetValue(StatusTextProperty);
-            set { SetValue(StatusTextProperty, value); }
+            get => (UpdaterViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
         }
 
         private static readonly TimeSpan AnimationTimeSpan = TimeSpan.FromSeconds(0.5);
@@ -64,13 +48,27 @@ namespace Minecraft_Launcher_2.Controls
             Visibility = Visibility.Collapsed;
         }
 
-        public static void OnIsActiveChanged(DependencyObject obj, DependencyPropertyChangedEventArgs arg)
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            DownloadStatusBar bar = obj as DownloadStatusBar;
-            if ((bool)arg.NewValue)
-                bar.ShowMessage();
-            else
-                bar.CloseMessage();
+            if(ViewModel != null)
+                ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel != null)
+                ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        }
+
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(UpdaterViewModel.IsShowDownloadStatus))
+            {
+                if (ViewModel.IsShowDownloadStatus)
+                    ShowMessage();
+                else
+                    CloseMessage();
+            }
         }
     }
 }

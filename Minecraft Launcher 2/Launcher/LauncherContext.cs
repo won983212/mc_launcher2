@@ -11,8 +11,8 @@ namespace Minecraft_Launcher_2.Launcher
 
     public class LauncherContext
     {
-        public ServerInfoRetriever ServerStatus { get; private set; } = new ServerInfoRetriever();
-        public string PatchVersion { get; private set; }
+        public ServerInfoRetriever Retriever { get; private set; } = new ServerInfoRetriever();
+        public string InstalledVersion { get; private set; }
 
         public LauncherContext()
         { }
@@ -20,17 +20,17 @@ namespace Minecraft_Launcher_2.Launcher
         public void GetInstalledPatchVersion()
         {
             string filePath = Path.Combine(Properties.Settings.Default.MinecraftDir, "version");
-            PatchVersion = File.Exists(filePath) ? File.ReadAllText(filePath) : "Unknown";
+            InstalledVersion = File.Exists(filePath) ? File.ReadAllText(filePath) : "Unknown";
         }
 
         public LauncherState GetLauncherState()
         {
             GetInstalledPatchVersion();
-            if (ServerStatus.ConnectionState.State == RetrieveState.Error)
+            if (Retriever.ConnectionState.State == RetrieveState.Error)
                 return LauncherState.Offline;
-            else if (PatchVersion == "Unknown")
+            else if (InstalledVersion == "Unknown")
                 return LauncherState.NeedInstall;
-            else if (PatchVersion != ServerStatus.ResourceServerData.PatchVersion)
+            else if (InstalledVersion != Retriever.ResourceServerData.PatchVersion)
                 return LauncherState.NeedUpdate;
 
             return LauncherState.CanStart;

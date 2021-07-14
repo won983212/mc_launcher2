@@ -48,7 +48,7 @@
                         FontWeight="Normal" Width="120" 
                         Command="{Binding ShowDetailCommand}"
                         materialDesign:ButtonAssist.CornerRadius="0">
-                자세한 정보
+                모든내용 복사
             </Button>
             <Button Style="{StaticResource MaterialDesignRaisedAccentButton}" 
                         FontWeight="Normal" Width="100" 

@@ -29,23 +29,26 @@ namespace Minecraft_Launcher_2
 
         public static void Log(object data)
         {
-            Console.WriteLine("[Info] " + data);
-            _logs.Add(new LogMessage(LogType.Info, data.ToString()));
+            AppendLog(LogType.Info, data);
         }
 
         public static void Debug(object data)
         {
-            if (data == null)
-                Console.WriteLine();
-            else
-                Console.WriteLine("[Debug] " + data);
-            _logs.Add(new LogMessage(LogType.Debug, data.ToString()));
+            AppendLog(LogType.Debug, data);
         }
 
         public static void Error(object data)
         {
-            Console.WriteLine("[Error] " + data);
-            _logs.Add(new LogMessage(LogType.Error, data.ToString()));
+            AppendLog(LogType.Error, data);
+        }
+
+        private static void AppendLog(LogType type, object data)
+        {
+            Console.WriteLine("[" + type.ToString() + "] " + (data ?? "null"));
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                _logs.Add(new LogMessage(type, (data ?? "null").ToString()));
+            });
         }
 
         public static void ClearLogs()

@@ -56,9 +56,10 @@ namespace Minecraft_Launcher_2.ServerConnections
 
         public TimeoutWebClient()
         {
+            Encoding = System.Text.Encoding.UTF8;
         }
 
-        public TimeoutWebClient(int timeout)
+        public TimeoutWebClient(int timeout) : this()
         {
             Timeout = timeout;
         }

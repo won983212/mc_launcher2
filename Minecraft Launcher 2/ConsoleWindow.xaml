@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Minecraft_Launcher_2"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         FontFamily="{StaticResource PrimaryFont}"
         Title="Console" Height="500" Width="750">
     <DockPanel>

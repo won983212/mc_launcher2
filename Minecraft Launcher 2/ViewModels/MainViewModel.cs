@@ -27,90 +27,29 @@ namespace Minecraft_Launcher_2.ViewModels
 
     internal class MainViewModel : ObservableObject, IForceUpdateContoller
     {
-        private string _signalIcon = "SignalCellular1";
-        private Visibility _signalIconVisibility = Visibility.Collapsed;
+        private readonly LauncherContext _context;
 
+        private string _signalIcon = "";
         private string _welcomeMessage = "Loading...";
         private ServerInfo _serverInfo;
-
-        private readonly LauncherContext _context;
-        private readonly MinecraftLauncher _launcher;
         private string _startText = "연결 중..";
         private LauncherState _launchState;
         private bool _canStart = false;
-
-        // TODO Download 부분은 나눠서 만들기
-        private bool _isShowDownloadStatus = false;
-        private double _downloadProgress = 0;
-        private string _downloadStatus = "";
 
 
         public MainViewModel()
         {
             _context = new LauncherContext();
-            _launcher = new MinecraftLauncher(_context);
+            Updater = new UpdaterViewModel(_context);
             SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
 
-            ServerInfoRetriever status = _context.ServerStatus;
+            ServerInfoRetriever status = _context.Retriever;
             status.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
             if (status.ConnectionState.State != RetrieveState.Processing)
                 ServerStatus_OnConnectionStateChanged(null, status.ConnectionState);
 
-            _launcher.OnLog += (s, t) => Logger.Log(t);
-            _launcher.OnError += (s, t) => Logger.Error(t);
-            _launcher.OnExited += (s, t) => Logger.Log(" Exited (code: " + t + ")");
-
             _context.GetInstalledPatchVersion();
             status.RetrieveAll();
-        }
-
-
-        public async void StartDownload()
-        {
-            IsShowDownloadStatus = true;
-            _canStart = false;
-            DownloadStatus = "다운로드 중..";
-            DownloadProgress = 0;
-
-            ContentUpdater updater = new ContentUpdater();
-            updater.OnProgress += Updater_OnProgress;
-            int failed = await updater.BeginDownload();
-
-            IsShowDownloadStatus = false;
-            _context.GetInstalledPatchVersion();
-            UpdateStartButton();
-
-            if (failed > 0)
-            {
-                MessageBoxResult res = MessageBox.Show("파일 " + failed + "개를 받지 못했습니다. 그래도 실행합니까?", "주의", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (res == MessageBoxResult.Yes)
-                {
-                    StartMinecraft();
-                }
-                else
-                {
-                    _canStart = true;
-                }
-            }
-            else
-            {
-                StartMinecraft();
-            }
-        }
-
-        public async Task StartMinecraft()
-        {
-            Settings settings = Settings.Default;
-            _launcher.PlayerName = settings.PlayerName;
-            settings.Save();
-
-            await _launcher.Start();
-            _canStart = true;
-
-            if (Settings.Default.UseLogging)
-                return;
-
-            App.Current.Shutdown(0);
         }
 
         public void SetForceUpdate()
@@ -120,12 +59,6 @@ namespace Minecraft_Launcher_2.ViewModels
                 StartText = "업데이트";
                 _launchState = LauncherState.NeedUpdate;
             }
-        }
-
-        private void Updater_OnProgress(object sender, ProgressArgs e)
-        {
-            DownloadStatus = e.Status;
-            DownloadProgress = e.Progress;
         }
 
         private void UpdateStartButton()
@@ -165,26 +98,21 @@ namespace Minecraft_Launcher_2.ViewModels
             }
 
             if (_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
-            {
-                StartMinecraft();
-            }
+                Updater.StartMinecraft();
             else
-            {
-                StartDownload();
-            }
+                Updater.StartDownload().ContinueWith((t) => UpdateStartButton());
         }
 
         private bool CanStart(object parameter)
         {
-            return _canStart && !_launcher.IsRunning;
+            return _canStart && !Updater.IsRunning;
         }
 
         private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
         {
             if (e.State == RetrieveState.Loaded)
             {
-                SignalIconVisibility = Visibility.Visible;
-                ServerInfoRetriever status = _context.ServerStatus;
+                ServerInfoRetriever status = _context.Retriever;
 
                 SignalIcon = "SignalCellular1";
                 if (status.MinecraftServerData.Ping < 150)
@@ -201,7 +129,7 @@ namespace Minecraft_Launcher_2.ViewModels
             }
             else
             {
-                SignalIconVisibility = Visibility.Collapsed;
+                SignalIcon = "";
             }
 
             OnPropertyChanged("ConnectionErrorMessage");
@@ -233,88 +161,33 @@ namespace Minecraft_Launcher_2.ViewModels
         public string WelcomeMessage
         {
             get => _welcomeMessage;
-            set
-            {
-                _welcomeMessage = value;
-                OnPropertyChanged();
-            }
+            set => SetProperty(ref _welcomeMessage, value);
         }
 
         public string SignalIcon
         {
             get => _signalIcon;
-            set
-            {
-                _signalIcon = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility SignalIconVisibility
-        {
-            get => _signalIconVisibility;
-            set
-            {
-                _signalIconVisibility = value;
-                OnPropertyChanged();
-            }
+            set => SetProperty(ref _signalIcon, value);
         }
 
         public ServerInfo ServerInfo
         {
             get => _serverInfo;
-            set
-            {
-                _serverInfo = value;
-                OnPropertyChanged();
-            }
+            set => SetProperty(ref _serverInfo, value);
         }
 
-        public bool IsShowDownloadStatus
-        {
-            get => _isShowDownloadStatus;
-            private set
-            {
-                _isShowDownloadStatus = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsFormEnabled
-        {
-            get => !IsShowDownloadStatus;
-        }
-
-        public double DownloadProgress
-        {
-            get => _downloadProgress;
-            private set
-            {
-                _downloadProgress = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string DownloadStatus
-        {
-            get => _downloadStatus;
-            private set
-            {
-                _downloadStatus = value;
-                OnPropertyChanged();
-            }
-        }
+        public UpdaterViewModel Updater { get; }
 
         public RetrieveState ConnectionState
         {
-            get => _context.ServerStatus.ConnectionState.State;
+            get => _context.Retriever.ConnectionState.State;
         }
 
         public string ConnectionErrorMessage
         {
             get
             {
-                string message = _context.ServerStatus.ConnectionState.ErrorMessage;
+                string message = _context.Retriever.ConnectionState.ErrorMessage;
                 if (string.IsNullOrEmpty(message))
                 {
                     return "연결 성공";
@@ -329,15 +202,11 @@ namespace Minecraft_Launcher_2.ViewModels
         public string StartText
         {
             get => _startText;
-            set
-            {
-                _startText = value;
-                OnPropertyChanged();
-            }
+            set => SetProperty(ref _startText, value);
         }
 
 
-        public ICommand ReconnectCommand => new RelayCommand(() => _context.ServerStatus.RetrieveAll());
+        public ICommand ReconnectCommand => new RelayCommand(() => _context.Retriever.RetrieveAll());
 
         public ICommand ShowSettingCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(this)));
 
@@ -345,7 +214,7 @@ namespace Minecraft_Launcher_2.ViewModels
 
         public ICommand ShowConsoleCommand => new RelayCommand(() =>
         {
-            if (App.Console != null)
+            if(App.Console != null)
                 App.Console.Show();
         });
     }

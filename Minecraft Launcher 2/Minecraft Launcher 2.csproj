@@ -123,6 +123,7 @@
     <Compile Include="Updater\ContentUpdater.cs" />
     <Compile Include="Updater\HashDownloader.cs" />
     <Compile Include="Updater\IForceUpdateContoller.cs" />
+    <Compile Include="ViewModels\UpdaterViewModel.cs" />
     <Compile Include="Updater\ServerConnections\ResourceServerConnection.cs" />
     <Compile Include="Updater\ServerConnections\MinecraftServerConnection.cs" />
     <Compile Include="Updater\ProgressArgs.cs" />

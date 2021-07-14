@@ -65,8 +65,18 @@
                         </StackPanel>
                         <TextBox md:HintAssist.Hint="Name" 
                                  Width="300" FontSize="10pt" Margin="0,60" 
-                                 IsEnabled="{Binding IsFormEnabled}" 
-                                 Text="{Binding PlayerName, Source={x:Static properties:Settings.Default}}"/>
+                                 Text="{Binding PlayerName, Source={x:Static properties:Settings.Default}}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+                                    <Setter Property="IsEnabled" Value="True"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Updater.IsRunning}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
                         <Button md:ButtonAssist.CornerRadius="0" 
                                 Width="120" FontSize="12" 
                                 HorizontalAlignment="Right" 
@@ -76,12 +86,16 @@
                 </Border>
             </StackPanel>
 
-            <controls:DownloadStatusBar HorizontalAlignment="Center" VerticalAlignment="Bottom" ProgressValue="{Binding DownloadProgress}"
-                                         IsActive="{Binding IsShowDownloadStatus}" StatusText="{Binding DownloadStatus}" Margin="0,0,0,5" />
+            <controls:DownloadStatusBar HorizontalAlignment="Center" VerticalAlignment="Bottom" ViewModel="{Binding Updater}" Margin="0,0,0,5" />
 
             <!-- Top Snackbar -->
-            <md:Snackbar x:Name="ErrorSnackbar" VerticalAlignment="Top" Background="{StaticResource SecondaryHueMidBrush}" 
-                                     Foreground="White" MessageQueue="{Binding SnackMessages}">
+            <md:Snackbar x:Name="ErrorSnackbar" 
+                         VerticalAlignment="Bottom"
+                         HorizontalAlignment="Right"
+                         Margin="16"
+                         Background="{StaticResource ErrorColor}" 
+                         Foreground="White" 
+                         MessageQueue="{Binding SnackMessages}">
                 <md:Snackbar.Resources>
                     <Style BasedOn="{StaticResource {x:Type md:SnackbarMessage}}" TargetType="{x:Type md:SnackbarMessage}">
                         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -91,20 +105,28 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                 <!-- Signal button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}" 
-                        Width="30" Height="30"
-                        Visibility="{Binding SignalIconVisibility}"
+                <Button Width="30" Height="30"
                         Command="{Binding ReconnectCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SignalIcon}" Value="">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <Button.ToolTip>
-                        <StackPanel>
+                        <StackPanel Margin="8,4">
                             <TextBlock Text="{Binding ServerInfo.Motd}" FontSize="12pt"/>
-                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                <md:PackIcon Kind="AccountGroup" Margin="0,0,5,0" Width="18" Height="18" />
-                                <TextBlock Text="{Binding ServerInfo.PlayerCount}" Margin="0,0,8,0"/>
-                                <md:PackIcon Kind="Signal" Margin="0,0,5,0" Width="18" Height="18" />
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                <md:PackIcon Kind="AccountGroup" Margin="0,0,4,0" Width="16" Height="16" />
+                                <TextBlock Text="{Binding ServerInfo.PlayerCount}" Margin="0,0,12,0"/>
+                                <md:PackIcon Kind="SignalCellular3" Margin="0,0,4,0" Width="16" Height="16" />
                                 <TextBlock Text="{Binding ServerInfo.Ping}"/>
                             </StackPanel>
-                            <Separator Margin="0,5"/>
+                            <Separator Margin="0,8"/>
                             <TextBlock Text="클릭시 새로고침합니다." HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Button.ToolTip>

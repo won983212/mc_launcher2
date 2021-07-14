@@ -42,6 +42,12 @@ namespace Minecraft_Launcher_2
             listLog.ItemsSource = view;
         }
 
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Visibility = Visibility.Hidden;
+        }
+
         private void ConsoleWindow_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (chbAutoScroll.IsChecked == true)

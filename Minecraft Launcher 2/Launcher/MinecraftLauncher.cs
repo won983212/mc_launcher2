@@ -33,14 +33,13 @@ namespace Minecraft_Launcher_2.Launcher
             MainClass = json.Value<string>("mainClass");
             MinecraftArguments = json.Value<string>("arguments");
             AssetsVersion = json.Value<string>("assets");
-            MinecraftVersion = _context.PatchVersion.Split('@')[0];
+            MinecraftVersion = _context.InstalledVersion.Split('@')[0];
 
             JArray libs = json["libraries"] as JArray;
             foreach (JObject obj in libs)
             {
-                string name = (string)obj["name"];
-                string[] names = name.Split(':');
-                string jarfile = names[0].Replace('.', '\\') + '\\' + names[1] + '\\' + names[2] + '\\' + names[1] + "-" + names[2] + ".jar";
+                string[] names = obj.Value<string>("name").Split(':');
+                string jarfile = string.Format("{0}\\{1}\\{2}\\{1}-{2}.jar", names[0].Replace('.', '\\'), names[1], names[2]);
                 Libraries.Add(Path.Combine(Properties.Settings.Default.MinecraftDir, "libraries", jarfile));
             }
         }
@@ -55,11 +54,11 @@ namespace Minecraft_Launcher_2.Launcher
         public event EventHandler<string> OnError;
         public event EventHandler<int> OnExited;
 
-        private LauncherContext _context;
+        public LauncherContext Context { get; }
 
         public MinecraftLauncher(LauncherContext context)
         {
-            _context = context;
+            Context = context;
         }
 
 
@@ -80,7 +79,7 @@ namespace Minecraft_Launcher_2.Launcher
         private string GetArguments()
         {
             Log("Extracting launcher info....");
-            LaunchSetting launchSettings = new LaunchSetting(_context);
+            LaunchSetting launchSettings = new LaunchSetting(Context);
             launchSettings.Load(Path.Combine(settings.MinecraftDir, "launch-config.json"));
 
             Log("Building arguments....");
@@ -107,7 +106,7 @@ namespace Minecraft_Launcher_2.Launcher
             sb.Append(' ');
             sb.Append(GetLaunchAdditionalArguments(launchSettings));
 
-            if (_context.ServerStatus.ConnectionState.State == RetrieveState.Loaded && settings.AutoJoinServer)
+            if (Context.Retriever.ConnectionState.State == RetrieveState.Loaded && settings.AutoJoinServer)
             {
                 sb.Append(" --server ");
                 sb.Append(settings.MinecraftServerIP);

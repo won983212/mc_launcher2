@@ -24,7 +24,7 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
         {
             if (FullMessage != null)
             {
-                MessageBoxResult res = MessageBox.Show(FullMessage, "이 내용을 복사하시겠습니까?", MessageBoxButton.YesNo);
+                MessageBoxResult res = MessageBox.Show("발생한 오류의 모든 내용을 복사하시겠습니까?", "복사", MessageBoxButton.YesNo);
                 if (res == MessageBoxResult.Yes)
                     Clipboard.SetText(FullMessage);
             }

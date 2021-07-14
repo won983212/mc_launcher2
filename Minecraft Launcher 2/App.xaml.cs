@@ -10,8 +10,12 @@ namespace Minecraft_Launcher_2
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             MainViewModel vmodel = Current.MainWindow.DataContext as MainViewModel;
-            vmodel.ShowErrorMessage(e.Exception, () => { });
-            e.Handled = true;
+            if (vmodel != null)
+            {
+                vmodel.ShowErrorMessage(e.Exception, () => { });
+                e.Handled = true;
+            } 
+            Logger.Error(e.Exception);
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
