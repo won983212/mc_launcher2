@@ -46,17 +46,17 @@ namespace Minecraft_Launcher_2.Updater
 
         /** 
          * 삭제란? 서버의 파일 리스트와 비교하여 서버에 없는 파일은 삭제하는 것.
-         * 삭제를 지원하는 폴더 리스트 정의. null일 경우 없는 것으로 판단
+         * 이 필드는 삭제를 지원하는 폴더 리스트 정의. null일 경우 없는 것으로 판단
          */
         public string[] DetectDeletionFolder { get; set; } = null;
 
 
         public event EventHandler<ProgressArgs> OnProgress;
 
-        private CancellationTokenSource _tknSrc = new CancellationTokenSource();
-        private string _savePath;
-        private string _indexesURL;
-        private string _resourceUrl;
+        private readonly CancellationTokenSource _tknSrc = new CancellationTokenSource();
+        private readonly string _savePath;
+        private readonly string _indexesURL;
+        private readonly string _resourceUrl;
         private int _count = 0;
         private int _failed = 0;
         private int _total = 0;
@@ -167,10 +167,9 @@ namespace Minecraft_Launcher_2.Updater
             double lastProgress = 0;
 
             Interlocked.Exchange(ref _total, objects.Count());
-            foreach (var token in objects)
+            foreach (JToken token in objects)
             {
-                JProperty p = token as JProperty;
-                if (p != null)
+                if (token is JProperty p)
                 {
                     FileObj file = new FileObj(p);
                     if (DownloadOnlyNecessary && CheckHash(sha1, parentFolder, file))
@@ -231,6 +230,7 @@ namespace Minecraft_Launcher_2.Updater
 
                 string downloadUrl = Path.Combine(_resourceUrl, file.Hash.Substring(0, 2) + "/" + file.Hash);
                 Stream s = WebRequest.Create(downloadUrl).GetResponse().GetResponseStream();
+
                 reader = new BinaryReader(s);
                 writer = new BinaryWriter(new FileStream(_path, FileMode.Create));
                 Logger.Debug("Download: " + _path);

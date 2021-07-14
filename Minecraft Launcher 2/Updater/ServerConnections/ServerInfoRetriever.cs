@@ -6,10 +6,10 @@ namespace Minecraft_Launcher_2.ServerConnections
 {
     public class ServerInfoRetriever
     {
-        public const int Timeout = 3000;
+        public const int Timeout = 2000;
         private ConnectionState _conState = new ConnectionState { State = RetrieveState.Processing };
-        private ResourceServerConnection _resourceServer = new ResourceServerConnection();
-        private MinecraftServerConnection _minecraftServer = new MinecraftServerConnection();
+        private readonly ResourceServerConnection _resourceServer = new ResourceServerConnection();
+        private readonly MinecraftServerConnection _minecraftServer = new MinecraftServerConnection();
 
         public event EventHandler<ConnectionState> OnConnectionStateChanged;
 

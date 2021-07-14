@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace Minecraft_Launcher_2.Controls
 {
-    class MultiplexerPanel : Panel
+    internal class MultiplexerPanel : Panel
     {
         public static readonly DependencyProperty ActiveChildIndexProperty = DependencyProperty.Register("ActiveChildIndex",
             typeof(int), typeof(MultiplexerPanel), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsArrange, OnActiveChildIndexChanged));

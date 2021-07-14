@@ -28,7 +28,6 @@
                 <TextBox x:Name="tbxFilter"
                          Grid.Row="1"
                          MinWidth="300"
-                         Height="30"
                          VerticalContentAlignment="Center"
                          materialDesign:HintAssist.Hint="필터링 키워드 입력..."
                          VerticalAlignment="Top"

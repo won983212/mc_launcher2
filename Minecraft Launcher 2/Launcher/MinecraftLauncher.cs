@@ -12,7 +12,7 @@ namespace Minecraft_Launcher_2.Launcher
 {
     internal class LaunchSetting
     {
-        private ServerDataContext _context;
+        private readonly ServerDataContext _context;
         public string MainClass { get; private set; }
         public string MinecraftArguments { get; private set; }
         public string AssetsVersion { get; private set; }
@@ -29,7 +29,7 @@ namespace Minecraft_Launcher_2.Launcher
             string data = File.ReadAllText(settingFile);
             JObject json = JObject.Parse(data);
 
-            _context.GetInstalledPatchVersion();
+            _context.ReadInstalledPatchVersion();
             MainClass = json.Value<string>("mainClass");
             MinecraftArguments = json.Value<string>("arguments");
             AssetsVersion = json.Value<string>("assets");

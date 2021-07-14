@@ -17,7 +17,7 @@ namespace Minecraft_Launcher_2.Launcher
         public ServerDataContext()
         { }
 
-        public void GetInstalledPatchVersion()
+        public void ReadInstalledPatchVersion()
         {
             string filePath = Path.Combine(Properties.Settings.Default.MinecraftDir, "version");
             InstalledVersion = File.Exists(filePath) ? File.ReadAllText(filePath) : "Unknown";
@@ -25,7 +25,7 @@ namespace Minecraft_Launcher_2.Launcher
 
         public LauncherState GetLauncherState()
         {
-            GetInstalledPatchVersion();
+            ReadInstalledPatchVersion();
             if (Retriever.ConnectionState.State == RetrieveState.Error)
                 return LauncherState.Offline;
             else if (InstalledVersion == "Unknown")

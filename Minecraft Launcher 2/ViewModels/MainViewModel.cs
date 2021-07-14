@@ -30,15 +30,11 @@ namespace Minecraft_Launcher_2.ViewModels
         private readonly ServerDataContext _context;
 
         // TODO SettingPanel 디자인 수정
-        // TODO Updater Refactoring
-        // TODO Download / Update를 시작할 때 꼭 체크해야할까?
         private string _signalIcon = "";
         private ServerInfo _serverInfo;
         private string _welcomeMessage = "Loading...";
         private string _startButtonText = "연결 중..";
-
         private LauncherState _launchState;
-        private bool _canStart = false;
 
 
         public MainViewModel()
@@ -52,7 +48,7 @@ namespace Minecraft_Launcher_2.ViewModels
             if (status.ConnectionState.State != RetrieveState.Processing)
                 ServerStatus_OnConnectionStateChanged(null, status.ConnectionState);
 
-            _context.GetInstalledPatchVersion();
+            _context.ReadInstalledPatchVersion();
             status.RetrieveAll();
         }
 
@@ -100,7 +96,7 @@ namespace Minecraft_Launcher_2.ViewModels
 
         private bool CanStart(object parameter)
         {
-            return _canStart && !Updater.IsRunning;
+            return _context.Retriever.ConnectionState.State != RetrieveState.Processing && !Updater.IsRunning;
         }
 
         private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
@@ -131,7 +127,6 @@ namespace Minecraft_Launcher_2.ViewModels
             OnPropertyChanged(nameof(ConnectionState));
             UpdateStartButton();
 
-            _canStart = e.State != RetrieveState.Processing;
             Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
         }
 

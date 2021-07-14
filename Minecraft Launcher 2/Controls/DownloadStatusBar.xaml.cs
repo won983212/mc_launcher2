@@ -19,15 +19,21 @@ namespace Minecraft_Launcher_2.Controls
         }
 
         private static readonly TimeSpan AnimationTimeSpan = TimeSpan.FromSeconds(0.5);
-        private DoubleAnimation _animation;
-        private DoubleAnimation _animationRev;
+        private readonly DoubleAnimation _animation;
+        private readonly DoubleAnimation _animationRev;
 
         public DownloadStatusBar()
         {
-            _animation = new DoubleAnimation(60, 0, AnimationTimeSpan);
-            _animation.EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut };
-            _animationRev = new DoubleAnimation(0, 60, AnimationTimeSpan);
-            _animationRev.EasingFunction = _animation.EasingFunction;
+            _animation = new DoubleAnimation(60, 0, AnimationTimeSpan)
+            {
+                EasingFunction = new QuadraticEase() { EasingMode = EasingMode.EaseOut }
+            };
+
+            _animationRev = new DoubleAnimation(0, 60, AnimationTimeSpan)
+            {
+                EasingFunction = _animation.EasingFunction
+            };
+
             _animationRev.Completed += _animationRev_Completed;
             InitializeComponent();
         }

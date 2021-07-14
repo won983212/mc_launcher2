@@ -63,8 +63,12 @@
                             <TextBlock FontSize="20pt" VerticalAlignment="Center"
                                        Margin="8,0" FontWeight="Light">Login</TextBlock>
                         </StackPanel>
-                        <TextBox md:HintAssist.Hint="Name" 
-                                 Width="300" FontSize="10pt" Margin="0,60" 
+                        <TextBox md:HintAssist.Hint="닉네임" 
+                                 Width="300" 
+                                 Height="30"
+                                 VerticalContentAlignment="Center"
+                                 FontSize="10pt"
+                                 Margin="0,60" 
                                  Text="{Binding PlayerName, Source={x:Static properties:Settings.Default}}">
                             <TextBox.Style>
                                 <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">

@@ -50,24 +50,18 @@ namespace Minecraft_Launcher_2.Updater
             int failed = await updater.BeginDownload();
 
             IsShowDownloadStatus = false;
-            _launcher.Context.GetInstalledPatchVersion();
+            _launcher.Context.ReadInstalledPatchVersion();
 
             if (failed > 0)
             {
                 MessageBoxResult res = MessageBox.Show("파일 " + failed + "개를 받지 못했습니다. 그래도 실행합니까?", "주의", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (res == MessageBoxResult.Yes)
-                {
                     StartMinecraft();
-                }
                 else
-                {
                     IsRunning = false;
-                }
             }
             else
-            {
                 StartMinecraft();
-            }
         }
 
         private void Updater_OnProgress(object sender, ProgressArgs e)

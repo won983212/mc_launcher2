@@ -8,7 +8,7 @@ namespace Minecraft_Launcher_2.Updater
 {
     public class ContentUpdater
     {
-        private static Properties.Settings settings = Properties.Settings.Default;
+        private static readonly Properties.Settings settings = Properties.Settings.Default;
 
         private volatile HashDownloader _currentDownloader;
         public event EventHandler<ProgressArgs> OnProgress;

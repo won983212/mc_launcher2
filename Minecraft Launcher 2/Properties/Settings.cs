@@ -26,8 +26,7 @@ namespace Minecraft_Launcher_2.Properties
         {
             bool modified = false;
 
-            Uri result;
-            if (!Uri.TryCreate(Default.APIServerLocation, UriKind.Absolute, out result) || (result.Scheme != Uri.UriSchemeHttp && result.Scheme != Uri.UriSchemeHttps))
+            if (!Uri.TryCreate(Default.APIServerLocation, UriKind.Absolute, out Uri result) || (result.Scheme != Uri.UriSchemeHttp && result.Scheme != Uri.UriSchemeHttps))
             {
                 Default.APIServerLocation = "http://localhost";
                 modified = true;

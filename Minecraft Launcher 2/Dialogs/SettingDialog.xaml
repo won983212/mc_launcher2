@@ -12,42 +12,73 @@
         <Border.RenderTransform>
             <ScaleTransform x:Name="scalePanel" />
         </Border.RenderTransform>
-        <Grid Margin="24,12">
-            <StackPanel>
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                    </Style>
-                </StackPanel.Resources>
+        <Grid Margin="32,12">
+            <Grid.Resources>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="FontSize" Value="8pt" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock>마인크래프트 폴더 위치</TextBlock>
+            <TextBox Grid.Column="1"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Right"
+                     Margin="16,0,0,0"
+                     Width="320" 
+                     Text="{Binding MinecraftDir, Source={x:Static properties:Settings.Default}}"/>
 
-                <Grid Margin="18,8" Height="45">
-                    <TextBlock>마인크래프트 폴더 위치</TextBlock>
-                    <TextBox VerticalAlignment="Center" Width="300" HorizontalAlignment="Right" Text="{Binding MinecraftDir, Source={x:Static properties:Settings.Default}}"/>
-                </Grid>
+            <TextBlock Grid.Row="1">콘솔 사용</TextBlock>
+            <CheckBox Grid.Row="1"
+                      Grid.Column="2"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Right"
+                      IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}"/>
 
-                <Grid Margin="18,8" Height="45">
-                    <TextBlock>콘솔 사용</TextBlock>
-                    <CheckBox VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}"/>
-                </Grid>
+            <TextBlock Grid.Row="2">실행시 서버 자동 접속</TextBlock>
+            <CheckBox Grid.Row="2"
+                      Grid.Column="2" 
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Right"
+                      IsChecked="{Binding AutoJoinServer, Source={x:Static properties:Settings.Default}}"/>
 
-                <Grid Margin="18,8" Height="45">
-                    <TextBlock>실행시 서버 자동 접속</TextBlock>
-                    <CheckBox VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding AutoJoinServer, Source={x:Static properties:Settings.Default}}"/>
-                </Grid>
+            <TextBlock Grid.Row="3">메모리 할당량</TextBlock>
+            <TextBox Grid.Row="3" 
+                     Grid.Column="2"
+                     materialDesign:TextFieldAssist.SuffixText=" GB" 
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Right"
+                     HorizontalContentAlignment="Right" 
+                     Margin="16,0,0,0"
+                     Width="100" 
+                     Text="{Binding MemorySize, Source={x:Static properties:Settings.Default}}"/>
 
-                <Grid Margin="18,8" Height="45">
-                    <TextBlock>메모리 할당량</TextBlock>
-                    <TextBox materialDesign:TextFieldAssist.SuffixText=" GB" 
-                                VerticalAlignment="Center" 
-                                HorizontalAlignment="Right"
-                                HorizontalContentAlignment="Right" 
-                                Width="100" 
-                                Text="{Binding MemorySize, Source={x:Static properties:Settings.Default}}"/>
-                </Grid>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,16">
-                <Button Margin="0,0,16,0" Width="100" Height="40" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Command="{Binding ResetCommand}">초기화</Button>
-                <Button Width="100" Height="40" Command="{Binding SaveCommand}">확인</Button>
+            <StackPanel Grid.Row="4" 
+                        Grid.ColumnSpan="2" 
+                        Orientation="Horizontal"
+                        VerticalAlignment="Bottom" 
+                        HorizontalAlignment="Right"
+                        Margin="0,16">
+                <Button Margin="0,0,16,0" 
+                        Width="100" 
+                        Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                        Command="{Binding ResetCommand}">
+                    초기화
+                </Button>
+                <Button Width="100"
+                        Command="{Binding SaveCommand}">
+                    확인
+                </Button>
             </StackPanel>
         </Grid>
     </Border>
