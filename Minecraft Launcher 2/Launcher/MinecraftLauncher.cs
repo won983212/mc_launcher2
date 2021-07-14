@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Minecraft_Launcher_2
+namespace Minecraft_Launcher_2.Launcher
 {
-    class LaunchSetting
+    internal class LaunchSetting
     {
         public string MainClass { get; private set; }
         public string MinecraftArguments { get; private set; }
@@ -41,7 +41,7 @@ namespace Minecraft_Launcher_2
         }
     }
 
-    public class Launcher
+    public class MinecraftLauncher
     {
         private static readonly Properties.Settings settings = Properties.Settings.Default;
         private volatile bool _isRunning = false;
@@ -152,9 +152,7 @@ namespace Minecraft_Launcher_2
                     _isRunning = false;
                 }
                 else
-                {
                     Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown(0));
-                }
             }
             catch (Exception e)
             {

@@ -106,7 +106,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("lootsrv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("loot_server")]
         public string FolderName {
             get {
                 return ((string)(this["FolderName"]));

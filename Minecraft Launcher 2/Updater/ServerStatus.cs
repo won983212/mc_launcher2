@@ -11,7 +11,7 @@ namespace Minecraft_Launcher_2.Updater
     public class ServerStatus
     {
         private const int Timeout = 3000;
-        private MemoryStream ms = new MemoryStream();
+        private readonly MemoryStream ms = new MemoryStream();
         private ConnectionState _conState = new ConnectionState { State = RetrieveState.Processing };
 
         // minecraft server status
@@ -143,7 +143,7 @@ namespace Minecraft_Launcher_2.Updater
             int serverPort = Properties.Settings.Default.MinecraftServerPort;
 
             TcpClient client = new TcpClient();
-            TimeoutSocket.Connect(client, serverIP, serverPort, Timeout);
+            Connect(client, serverIP, serverPort, Timeout);
 
             Logger.Debug("[ServerStatus] Connected to " + serverIP);
             BufferedStream stream = new BufferedStream(client.GetStream());
@@ -198,7 +198,7 @@ namespace Minecraft_Launcher_2.Updater
             var value = 0;
             var size = 0;
             byte b;
-            while ((((b = br.ReadByte()) & 0x80) == 0x80))
+            while (((b = br.ReadByte()) & 0x80) == 0x80)
             {
                 value |= (b & 0x7F) << (size++ * 7);
                 if (size > 5)
@@ -255,6 +255,40 @@ namespace Minecraft_Launcher_2.Updater
         {
             for (int i = 7; i >= 0; i--)
                 stream.WriteByte((byte)((value >> (8 * i)) & 0xff));
+        }
+
+        private static void Connect(TcpClient client, string hostname, int port, int timeout)
+        {
+            IAsyncResult res = client.BeginConnect(hostname, port, null, null);
+            bool success = res.AsyncWaitHandle.WaitOne(timeout, true);
+            if (success)
+                client.EndConnect(res);
+            else
+            {
+                client.Close();
+                throw new SocketException(10060);
+            }
+        }
+    }
+
+    internal class TimeoutWebClient : WebClient
+    {
+        public int Timeout { get; set; } = 10000;
+
+        public TimeoutWebClient()
+        {
+        }
+
+        public TimeoutWebClient(int timeout)
+        {
+            Timeout = timeout;
+        }
+
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            WebRequest req = base.GetWebRequest(address);
+            req.Timeout = Timeout;
+            return req;
         }
     }
 }

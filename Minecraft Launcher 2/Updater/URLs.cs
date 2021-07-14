@@ -1,4 +1,4 @@
-﻿namespace Minecraft_Launcher_2
+﻿namespace Minecraft_Launcher_2.Updater
 {
     public static class URLs
     {

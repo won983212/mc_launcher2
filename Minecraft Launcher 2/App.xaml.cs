@@ -1,4 +1,5 @@
-﻿using Minecraft_Launcher_2.ViewModels;
+﻿using Minecraft_Launcher_2.Launcher;
+using Minecraft_Launcher_2.ViewModels;
 using System.Windows;
 
 namespace Minecraft_Launcher_2

@@ -1,4 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Minecraft_Launcher_2.Dialogs.ViewModels;
+using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.Updater;
 using System;
@@ -22,35 +24,28 @@ namespace Minecraft_Launcher_2.ViewModels
         }
     }
 
-    internal class MainViewModel : ObservableObject
+    internal class MainViewModel : ObservableObject, IForceUpdateContoller
     {
-        #region Fields
-
-        private ErrorMessageObject _errorInfo;
         private string _signalIcon = "SignalCellular1";
         private Visibility _signalIconVisibility = Visibility.Collapsed;
-        private bool _showErrorDialog = false;
-        private bool _showControlPanel = false;
 
-        private string _motd = "Loading...";
+        private string _welcomeMessage = "Loading...";
         private ServerInfo _serverInfo;
 
-        private readonly Launcher _launcher = new Launcher();
+        private readonly MinecraftLauncher _launcher = new MinecraftLauncher();
         private string _startText = "연결 중..";
         private LauncherState _launchState;
         private bool _canStart = false;
 
+        // TODO Download 부분은 나눠서 만들기
         private bool _isShowDownloadStatus = false;
         private double _downloadProgress = 0;
         private string _downloadStatus = "";
-
-        #endregion
 
 
         public MainViewModel()
         {
             SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
-            ErrorInfo = new ErrorMessageObject();
 
             ServerStatus status = App.MainContext.ServerStatus;
             App.MainContext.ServerStatus.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
@@ -62,8 +57,6 @@ namespace Minecraft_Launcher_2.ViewModels
             _launcher.OnExited += (s, t) => Logger.Log(" Exited (code: " + t + ")");
         }
 
-
-        #region Methods
 
         public async void StartDownload()
         {
@@ -112,15 +105,13 @@ namespace Minecraft_Launcher_2.ViewModels
                 App.Current.Shutdown(0);
         }
 
-        public bool SetForceUpdate()
+        public void SetForceUpdate()
         {
             if (ConnectionState == RetrieveState.Loaded)
             {
                 StartText = "업데이트";
                 _launchState = LauncherState.NeedUpdate;
-                return true;
             }
-            return false;
         }
 
         private void Updater_OnProgress(object sender, ProgressArgs e)
@@ -151,18 +142,7 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
-        private bool IsLegalUsername(string name)
-        {
-            foreach (char c in name)
-            {
-                if ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_".IndexOf(c) == -1)
-                    return false;
-            }
-
-            return true;
-        }
-
-        private void OnStartClick(object arg)
+        private void OnStartClick()
         {
             string playerName = Settings.Default.PlayerName;
             if (string.IsNullOrWhiteSpace(playerName))
@@ -170,7 +150,7 @@ namespace Minecraft_Launcher_2.ViewModels
                 AddErrorSnackbar("닉네임을 입력해주세요.");
                 return;
             }
-            else if (!IsLegalUsername(playerName))
+            else if (!CommonUtils.IsLegalUsername(playerName))
             {
                 AddErrorSnackbar("닉네임은 영문, 숫자, 언더바(_)로만 구성해야합니다.");
                 return;
@@ -186,7 +166,7 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
-        private bool CanStart(object arg)
+        private bool CanStart(object parameter)
         {
             return _canStart && !_launcher.IsRunning;
         }
@@ -209,7 +189,7 @@ namespace Minecraft_Launcher_2.ViewModels
                 }
 
                 ServerInfo = new ServerInfo(status);
-                Motd = status.Notice;
+                WelcomeMessage = status.Notice;
             }
             else
             {
@@ -220,31 +200,17 @@ namespace Minecraft_Launcher_2.ViewModels
             OnPropertyChanged("ConnectionState");
             UpdateStartButton();
             _canStart = e.State != RetrieveState.Processing;
-            Application.Current.Dispatcher.Invoke(() => ((RelayCommand)StartCommand).RaiseCanExecuteChanged());
+            Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
         }
 
         public void ShowErrorMessage(Exception e, Action callback)
         {
-            ErrorInfo = new ErrorMessageObject()
-            {
-                Title = "오류 발생",
-                Message = e.Message,
-                FullMessage = e.ToString(),
-                Callback = callback
-            };
-            ShowErrorDialog = true;
+            CommonUtils.ShowDialog(new ErrorDialogVM(e), (vm, args) => callback());
         }
 
         public void ShowErrorMessage(string title, string message, Action callback)
         {
-            ErrorInfo = new ErrorMessageObject()
-            {
-                Title = title,
-                Message = message,
-                FullMessage = null,
-                Callback = callback
-            };
-            ShowErrorDialog = true;
+            CommonUtils.ShowDialog(new ErrorDialogVM(title, message), (vm, args) => callback());
         }
 
         public void AddErrorSnackbar(string message)
@@ -252,49 +218,15 @@ namespace Minecraft_Launcher_2.ViewModels
             SnackMessages.Enqueue(message);
         }
 
-        #endregion
-
-
-        #region Properties
 
         public SnackbarMessageQueue SnackMessages { get; private set; }
 
-        public ErrorMessageObject ErrorInfo
+        public string WelcomeMessage
         {
-            get => _errorInfo;
+            get => _welcomeMessage;
             set
             {
-                _errorInfo = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string Motd
-        {
-            get => _motd;
-            set
-            {
-                _motd = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool ShowErrorDialog
-        {
-            get => _showErrorDialog;
-            set
-            {
-                _showErrorDialog = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool ShowControlPanel
-        {
-            get => _showControlPanel;
-            set
-            {
-                _showControlPanel = value;
+                _welcomeMessage = value;
                 OnPropertyChanged();
             }
         }
@@ -395,18 +327,16 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
-        public ICommand ReconnectCommand => new RelayCommand((a) => App.MainContext.ServerStatus.RetrieveAll());
+        public ICommand ReconnectCommand => new RelayCommand(() => App.MainContext.ServerStatus.RetrieveAll());
 
-        public ICommand ShowSettingCommand => new RelayCommand((a) => ShowControlPanel = true);
+        public ICommand ShowSettingCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(this)));
 
         public ICommand StartCommand => new RelayCommand(OnStartClick, CanStart);
 
-        public ICommand ShowConsoleCommand => new RelayCommand((a) =>
+        public ICommand ShowConsoleCommand => new RelayCommand(() =>
         {
             if (App.Console != null)
                 App.Console.Show();
         });
-
-        #endregion
     }
 }

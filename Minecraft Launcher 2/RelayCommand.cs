@@ -3,45 +3,67 @@ using System.Windows.Input;
 
 namespace Minecraft_Launcher_2
 {
-    class RelayCommand : ICommand
+    public class RelayCommand<T> : ICommand
     {
-        readonly Action<object> _execute;
-        readonly Predicate<object> _canExecute;
+        private readonly Action<T> execute;
+        private readonly Predicate<T> canExecute;
 
-        public RelayCommand(Action<object> execute)
+        public RelayCommand(Action<T> execute)
             : this(execute, null)
         { }
 
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+        public RelayCommand(Action<T> execute, Predicate<T> canExecute)
         {
-            if (execute == null)
-                throw new ArgumentNullException("execute");
-
-            CommandManager.RequerySuggested += CommandManager_RequerySuggested;
-            _execute = execute;
-            _canExecute = canExecute;
+            this.execute = execute ?? throw new ArgumentNullException("execute");
+            this.canExecute = canExecute;
         }
 
-        private void CommandManager_RequerySuggested(object sender, EventArgs e)
+        public event EventHandler CanExecuteChanged
         {
-            RaiseCanExecuteChanged();
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute != null ? _canExecute(parameter) : true;
+            return canExecute == null || parameter == null || canExecute((T)parameter);
         }
 
         public void Execute(object parameter)
         {
-            _execute(parameter);
+            execute((T)parameter);
+        }
+    }
+
+    public class RelayCommand : ICommand
+    {
+        private readonly Action execute;
+        private readonly Predicate<object> canExecute;
+
+        public RelayCommand(Action execute)
+            : this(execute, null)
+        { }
+
+        public RelayCommand(Action execute, Predicate<object> canExecute)
+        {
+            this.execute = execute ?? throw new ArgumentNullException("execute");
+            this.canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged;
-
-        public void RaiseCanExecuteChanged()
+        public event EventHandler CanExecuteChanged
         {
-            CanExecuteChanged?.Invoke(this, new EventArgs());
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return canExecute == null || canExecute(parameter);
+        }
+
+        public void Execute(object parameter)
+        {
+            execute();
         }
     }
 }

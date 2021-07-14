@@ -95,37 +95,36 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ConnectionState.cs" />
+    <Compile Include="CommonUtils.cs" />
+    <Compile Include="Dialogs\ViewModels\ErrorDialogVM.cs" />
+    <Compile Include="Dialogs\ViewModels\SettingDialogVM.cs" />
+    <Compile Include="Updater\ConnectionState.cs" />
     <Compile Include="Controls\BackgroundImage.xaml.cs">
       <DependentUpon>BackgroundImage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ControlPanel.xaml.cs">
-      <DependentUpon>ControlPanel.xaml</DependentUpon>
+    <Compile Include="Dialogs\SettingDialog.xaml.cs">
+      <DependentUpon>SettingDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DownloadStatusBar.xaml.cs">
       <DependentUpon>DownloadStatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ErrorDialog.xaml.cs">
+    <Compile Include="Dialogs\ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MultiplexerPanel.cs" />
     <Compile Include="Controls\NoSizeDecorator.cs" />
     <Compile Include="Converters\EnumToIntConverter.cs" />
-    <Compile Include="ErrorMessageObject.cs" />
-    <Compile Include="Launcher.cs" />
-    <Compile Include="LauncherContext.cs" />
+    <Compile Include="Launcher\MinecraftLauncher.cs" />
+    <Compile Include="Launcher\LauncherContext.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ObservableObject.cs" />
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="TimeoutSocket.cs" />
-    <Compile Include="TimeoutWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Updater\ContentUpdater.cs" />
     <Compile Include="Updater\HashDownloader.cs" />
+    <Compile Include="Updater\IForceUpdateContoller.cs" />
     <Compile Include="Updater\ProgressArgs.cs" />
     <Compile Include="Updater\ServerStatus.cs" />
-    <Compile Include="URLs.cs" />
+    <Compile Include="Updater\URLs.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="ConsoleWindow.xaml">
       <SubType>Designer</SubType>
@@ -135,7 +134,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\ControlPanel.xaml">
+    <Page Include="Dialogs\SettingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -143,7 +142,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\ErrorDialog.xaml">
+    <Page Include="Dialogs\ErrorDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

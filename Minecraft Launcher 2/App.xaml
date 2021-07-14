@@ -2,6 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:dialog="clr-namespace:Minecraft_Launcher_2.Dialogs"
+             xmlns:dialogvm="clr-namespace:Minecraft_Launcher_2.Dialogs.ViewModels"
              DispatcherUnhandledException="Application_DispatcherUnhandledException"
              Startup="Application_Startup"
              StartupUri="MainWindow.xaml">
@@ -14,15 +16,18 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Fonts -->
-            <FontFamily x:Key="PrimaryFont">#Roboto</FontFamily>
+            <!-- <FontFamily x:Key="PrimaryFont">#Roboto</FontFamily> -->
 
             <!-- For release version font -->
-            <!-- <FontFamily x:Key="PrimaryFont">pack://application:,,,/Resources/Fonts/#Roboto</FontFamily> -->
+            <FontFamily x:Key="PrimaryFont">pack://application:,,,/Resources/Fonts/#Roboto</FontFamily>
 
-            <LinearGradientBrush x:Key="BlueGradient" EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#aa303F9F" Offset="0"/>
-                <GradientStop Color="#aa3949AB" Offset="1"/>
-            </LinearGradientBrush>
+            <!-- DataTemplates -->
+            <DataTemplate DataType="{x:Type dialogvm:ErrorDialogVM}">
+                <dialog:ErrorDialog />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type dialogvm:SettingDialogVM}">
+                <dialog:SettingDialog />
+            </DataTemplate>
 
             <!-- Styles -->
             <Style TargetType="{x:Type ToolTip}">

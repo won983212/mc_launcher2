@@ -24,7 +24,7 @@
       <Value Profile="(Default)">won983212.iptime.org</Value>
     </Setting>
     <Setting Name="FolderName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">lootsrv</Value>
+      <Value Profile="(Default)">loot_server</Value>
     </Setting>
     <Setting Name="MinecraftServerPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">25565</Value>
