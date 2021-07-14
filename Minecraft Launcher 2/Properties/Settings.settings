@@ -8,9 +8,6 @@
     <Setting Name="MemorySize" Type="System.Single" Scope="User">
       <Value Profile="(Default)">3</Value>
     </Setting>
-    <Setting Name="Arguments" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="MinecraftDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

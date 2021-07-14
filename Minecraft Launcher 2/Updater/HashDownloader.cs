@@ -76,7 +76,7 @@ namespace Minecraft_Launcher_2.Updater
             {
                 _tknSrc.Cancel();
                 _isCanceling = true;
-                UpdateStatus((_count * 100.0 / _total), "취소하고 있습니다..");
+                UpdateStatus(_count * 100.0 / _total, "취소하고 있습니다..");
             }
         }
 

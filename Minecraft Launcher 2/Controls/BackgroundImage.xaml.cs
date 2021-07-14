@@ -7,13 +7,10 @@ using System.Windows.Threading;
 
 namespace Minecraft_Launcher_2.Controls
 {
-    /// <summary>
-    /// BackgroundImage.xaml에 대한 상호 작용 논리
-    /// </summary>
     public partial class BackgroundImage : UserControl
     {
         public const int CountPhoto = 3;
-        private static int[] _photoOrder = new int[CountPhoto];
+        private static readonly int[] _photoOrder = new int[CountPhoto];
         private static int _photoIdx = 0;
 
         public BackgroundImage()

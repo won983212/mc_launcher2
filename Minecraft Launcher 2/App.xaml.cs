@@ -14,7 +14,7 @@ namespace Minecraft_Launcher_2
             {
                 vmodel.ShowErrorMessage(e.Exception, () => { });
                 e.Handled = true;
-            } 
+            }
             Logger.Error(e.Exception);
         }
 

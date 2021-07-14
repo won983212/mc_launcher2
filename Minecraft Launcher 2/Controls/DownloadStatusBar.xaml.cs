@@ -10,7 +10,7 @@ namespace Minecraft_Launcher_2.Controls
     public partial class DownloadStatusBar : UserControl
     {
         public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register("ViewModel",
-            typeof(UpdaterViewModel), typeof(DownloadStatusBar));
+            typeof(UpdaterViewModel), typeof(DownloadStatusBar), new FrameworkPropertyMetadata(OnViewModelChanged));
 
         public UpdaterViewModel ViewModel
         {
@@ -50,24 +50,29 @@ namespace Minecraft_Launcher_2.Controls
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            if(ViewModel != null)
-                ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
             if (ViewModel != null)
-                ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+                ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(UpdaterViewModel.IsShowDownloadStatus))
+            if (e.PropertyName == nameof(UpdaterViewModel.IsShowDownloadStatus))
             {
                 if (ViewModel.IsShowDownloadStatus)
                     ShowMessage();
                 else
                     CloseMessage();
+            }
+        }
+
+        private static void OnViewModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue != null)
+            {
+                DownloadStatusBar bar = (DownloadStatusBar)d;
+                if (e.OldValue != null)
+                    ((UpdaterViewModel)e.OldValue).PropertyChanged -= bar.ViewModel_PropertyChanged;
+                ((UpdaterViewModel)e.NewValue).PropertyChanged += bar.ViewModel_PropertyChanged;
             }
         }
     }

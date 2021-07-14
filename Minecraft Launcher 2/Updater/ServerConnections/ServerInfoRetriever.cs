@@ -1,4 +1,4 @@
-﻿using Minecraft_Launcher_2.Updater;
+﻿using Minecraft_Launcher_2.Updater.ServerConnections;
 using System;
 using System.Threading.Tasks;
 

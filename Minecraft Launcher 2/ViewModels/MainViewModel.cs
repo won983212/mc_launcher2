@@ -4,8 +4,8 @@ using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater;
+using Minecraft_Launcher_2.Updater.ServerConnections;
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -25,21 +25,25 @@ namespace Minecraft_Launcher_2.ViewModels
         }
     }
 
-    internal class MainViewModel : ObservableObject, IForceUpdateContoller
+    internal class MainViewModel : ObservableObject
     {
-        private readonly LauncherContext _context;
+        private readonly ServerDataContext _context;
 
+        // TODO SettingPanel 디자인 수정
+        // TODO Updater Refactoring
+        // TODO Download / Update를 시작할 때 꼭 체크해야할까?
         private string _signalIcon = "";
-        private string _welcomeMessage = "Loading...";
         private ServerInfo _serverInfo;
-        private string _startText = "연결 중..";
+        private string _welcomeMessage = "Loading...";
+        private string _startButtonText = "연결 중..";
+
         private LauncherState _launchState;
         private bool _canStart = false;
 
 
         public MainViewModel()
         {
-            _context = new LauncherContext();
+            _context = new ServerDataContext();
             Updater = new UpdaterViewModel(_context);
             SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
 
@@ -52,31 +56,22 @@ namespace Minecraft_Launcher_2.ViewModels
             status.RetrieveAll();
         }
 
-        public void SetForceUpdate()
-        {
-            if (ConnectionState == RetrieveState.Loaded)
-            {
-                StartText = "업데이트";
-                _launchState = LauncherState.NeedUpdate;
-            }
-        }
-
         private void UpdateStartButton()
         {
             _launchState = _context.GetLauncherState();
             switch (_launchState)
             {
                 case LauncherState.CanStart:
-                    StartText = "시작";
+                    StartButtonText = "시작";
                     break;
                 case LauncherState.NeedInstall:
-                    StartText = "설치";
+                    StartButtonText = "설치";
                     break;
                 case LauncherState.NeedUpdate:
-                    StartText = "업데이트";
+                    StartButtonText = "업데이트";
                     break;
                 case LauncherState.Offline:
-                    StartText = "오프라인 시작";
+                    StartButtonText = "오프라인 시작";
                     break;
                 default:
                     break;
@@ -132,8 +127,8 @@ namespace Minecraft_Launcher_2.ViewModels
                 SignalIcon = "";
             }
 
-            OnPropertyChanged("ConnectionErrorMessage");
-            OnPropertyChanged("ConnectionState");
+            OnPropertyChanged(nameof(ConnectionErrorMessage));
+            OnPropertyChanged(nameof(ConnectionState));
             UpdateStartButton();
 
             _canStart = e.State != RetrieveState.Processing;
@@ -188,33 +183,26 @@ namespace Minecraft_Launcher_2.ViewModels
             get
             {
                 string message = _context.Retriever.ConnectionState.ErrorMessage;
-                if (string.IsNullOrEmpty(message))
-                {
-                    return "연결 성공";
-                }
-                else
-                {
-                    return message;
-                }
+                return string.IsNullOrEmpty(message) ? "연결 성공" : message;
             }
         }
 
-        public string StartText
+        public string StartButtonText
         {
-            get => _startText;
-            set => SetProperty(ref _startText, value);
+            get => _startButtonText;
+            set => SetProperty(ref _startButtonText, value);
         }
 
 
         public ICommand ReconnectCommand => new RelayCommand(() => _context.Retriever.RetrieveAll());
 
-        public ICommand ShowSettingCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(this)));
+        public ICommand ShowSettingCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM()));
 
         public ICommand StartCommand => new RelayCommand(OnStartClick, CanStart);
 
         public ICommand ShowConsoleCommand => new RelayCommand(() =>
         {
-            if(App.Console != null)
+            if (App.Console != null)
                 App.Console.Show();
         });
     }

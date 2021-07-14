@@ -80,12 +80,13 @@
                         <Button md:ButtonAssist.CornerRadius="0" 
                                 Width="120" FontSize="12" 
                                 HorizontalAlignment="Right" 
-                                Content="{Binding StartText}"
+                                Content="{Binding StartButtonText}"
                                 Command="{Binding StartCommand}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
 
+            <!-- Download status bar -->
             <controls:DownloadStatusBar HorizontalAlignment="Center" VerticalAlignment="Bottom" ViewModel="{Binding Updater}" Margin="0,0,0,5" />
 
             <!-- Top Snackbar -->

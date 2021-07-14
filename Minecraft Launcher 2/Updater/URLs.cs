@@ -2,7 +2,7 @@
 {
     public static class URLs
     {
-        private static Properties.Settings settings = Properties.Settings.Default;
+        private static readonly Properties.Settings settings = Properties.Settings.Default;
 
         public static string InfoFile
         {
@@ -34,11 +34,6 @@
             {
                 return settings.APIServerLocation + "/launch-config.json";
             }
-        }
-
-        public static string APIUserInfo(string uuid)
-        {
-            return settings.APIServerLocation + "/api/user/" + uuid;
         }
 
         public static readonly string AssetsURL = "http://resources.download.minecraft.net/";

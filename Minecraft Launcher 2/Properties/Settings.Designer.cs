@@ -50,18 +50,6 @@ namespace Minecraft_Launcher_2.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Arguments {
-            get {
-                return ((string)(this["Arguments"]));
-            }
-            set {
-                this["Arguments"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string MinecraftDir {
             get {
                 return ((string)(this["MinecraftDir"]));

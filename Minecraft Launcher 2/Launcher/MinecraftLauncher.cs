@@ -1,4 +1,4 @@
-﻿using Minecraft_Launcher_2.Updater;
+﻿using Minecraft_Launcher_2.Updater.ServerConnections;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,14 +12,14 @@ namespace Minecraft_Launcher_2.Launcher
 {
     internal class LaunchSetting
     {
-        private LauncherContext _context;
+        private ServerDataContext _context;
         public string MainClass { get; private set; }
         public string MinecraftArguments { get; private set; }
         public string AssetsVersion { get; private set; }
         public string MinecraftVersion { get; private set; }
         public List<string> Libraries { get; private set; } = new List<string>();
 
-        internal LaunchSetting(LauncherContext context)
+        internal LaunchSetting(ServerDataContext context)
         {
             _context = context;
         }
@@ -54,9 +54,9 @@ namespace Minecraft_Launcher_2.Launcher
         public event EventHandler<string> OnError;
         public event EventHandler<int> OnExited;
 
-        public LauncherContext Context { get; }
+        public ServerDataContext Context { get; }
 
-        public MinecraftLauncher(LauncherContext context)
+        public MinecraftLauncher(ServerDataContext context)
         {
             Context = context;
         }
@@ -85,8 +85,6 @@ namespace Minecraft_Launcher_2.Launcher
             Log("Building arguments....");
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(settings.Arguments);
-            sb.Append(" -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump ");
             sb.Append("-Xmx");
             sb.Append(settings.MemorySize);
             sb.Append("G ");

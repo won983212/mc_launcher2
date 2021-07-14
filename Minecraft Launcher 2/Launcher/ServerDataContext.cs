@@ -1,5 +1,5 @@
 ﻿using Minecraft_Launcher_2.ServerConnections;
-using Minecraft_Launcher_2.Updater;
+using Minecraft_Launcher_2.Updater.ServerConnections;
 using System.IO;
 
 namespace Minecraft_Launcher_2.Launcher
@@ -9,12 +9,12 @@ namespace Minecraft_Launcher_2.Launcher
         NeedInstall, NeedUpdate, CanStart, Offline
     }
 
-    public class LauncherContext
+    public class ServerDataContext
     {
         public ServerInfoRetriever Retriever { get; private set; } = new ServerInfoRetriever();
         public string InstalledVersion { get; private set; }
 
-        public LauncherContext()
+        public ServerDataContext()
         { }
 
         public void GetInstalledPatchVersion()

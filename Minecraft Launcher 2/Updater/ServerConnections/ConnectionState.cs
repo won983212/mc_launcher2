@@ -1,4 +1,4 @@
-﻿namespace Minecraft_Launcher_2.Updater
+﻿namespace Minecraft_Launcher_2.Updater.ServerConnections
 {
     public enum RetrieveState
     {

@@ -1,9 +1,5 @@
 ﻿using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -18,7 +14,7 @@ namespace Minecraft_Launcher_2.Updater
         private string _downloadStatus = "";
         private bool _running = false;
 
-        public UpdaterViewModel(LauncherContext context)
+        public UpdaterViewModel(ServerDataContext context)
         {
             _launcher = new MinecraftLauncher(context);
             _launcher.OnLog += (s, t) => Logger.Log(t);

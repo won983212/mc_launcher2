@@ -36,11 +36,6 @@
                 </Grid>
 
                 <Grid Margin="18,8" Height="45">
-                    <TextBlock>추가 매개변수</TextBlock>
-                    <TextBox VerticalAlignment="Center" Width="300" HorizontalAlignment="Right" Text="{Binding Arguments, Source={x:Static properties:Settings.Default}}"/>
-                </Grid>
-
-                <Grid Margin="18,8" Height="45">
                     <TextBlock>메모리 할당량</TextBlock>
                     <TextBox materialDesign:TextFieldAssist.SuffixText=" GB" 
                                 VerticalAlignment="Center" 
@@ -51,7 +46,6 @@
                 </Grid>
             </StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,16">
-                <Button Margin="16,0" Width="130" Height="40" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Command="{Binding MarkAsForceUpdateCommand}">강제 업데이트</Button>
                 <Button Margin="0,0,16,0" Width="100" Height="40" Style="{StaticResource MaterialDesignFlatAccentBgButton}" Command="{Binding ResetCommand}">초기화</Button>
                 <Button Width="100" Height="40" Command="{Binding SaveCommand}">확인</Button>
             </StackPanel>
