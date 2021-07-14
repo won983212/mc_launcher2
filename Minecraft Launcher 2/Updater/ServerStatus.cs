@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -115,8 +113,8 @@ namespace Minecraft_Launcher_2.Updater
                 ConnectionState = new ConnectionState { State = RetrieveState.Processing };
                 await _RetrieveServerStatus();
                 ConnectionState = new ConnectionState { State = RetrieveState.Loaded };
-            } 
-            catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Logger.Debug(e);
                 ConnectionState = new ConnectionState { State = RetrieveState.Error, ErrorMessage = "Minecraft 서버: " + e.Message };
@@ -173,7 +171,7 @@ namespace Minecraft_Launcher_2.Updater
             id = ReadVarInt(br); // id
             long pong = ReadLong(br);
 
-            Ping = (int) ((DateTime.UtcNow.Ticks - pong) / 10000.0);
+            Ping = (int)((DateTime.UtcNow.Ticks - pong) / 10000.0);
             Logger.Debug("[ServerStatus] Pong! " + Ping);
 
             client.Close();
@@ -222,7 +220,7 @@ namespace Minecraft_Launcher_2.Updater
             for (int i = 0; i < 8; i++)
             {
                 data |= br.ReadByte();
-                if(i != 7) data <<= 8;
+                if (i != 7) data <<= 8;
             }
             return data;
         }
@@ -237,13 +235,13 @@ namespace Minecraft_Launcher_2.Updater
         private int WriteVarInt(Stream stream, int value)
         {
             int size = 1;
-            while((value & -128) != 0)
+            while ((value & -128) != 0)
             {
                 stream.WriteByte((byte)(value & 127 | 128));
                 value = (byte)(((uint)value) >> 7);
                 size++;
             }
-            stream.WriteByte((byte) value);
+            stream.WriteByte((byte)value);
             return size;
         }
 
@@ -255,7 +253,7 @@ namespace Minecraft_Launcher_2.Updater
 
         private void WriteLong(Stream stream, long value)
         {
-            for(int i = 7; i >= 0; i--)
+            for (int i = 7; i >= 0; i--)
                 stream.WriteByte((byte)((value >> (8 * i)) & 0xff));
         }
     }

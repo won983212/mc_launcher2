@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2
 {
@@ -16,7 +11,7 @@ namespace Minecraft_Launcher_2
         [Conditional("DEBUG")]
         private void VerifyPropertyName(string name)
         {
-            if(TypeDescriptor.GetProperties(this)[name] == null)
+            if (TypeDescriptor.GetProperties(this)[name] == null)
             {
                 Debug.Fail("Invaild property name: " + name);
             }

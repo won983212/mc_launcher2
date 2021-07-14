@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,7 +17,7 @@ namespace Minecraft_Launcher_2.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            foreach(UIElement child in InternalChildren)
+            foreach (UIElement child in InternalChildren)
                 child.Measure(availableSize);
             return availableSize;
         }

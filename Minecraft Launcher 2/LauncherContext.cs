@@ -1,10 +1,5 @@
 ﻿using Minecraft_Launcher_2.Updater;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2
 {
@@ -39,10 +34,10 @@ namespace Minecraft_Launcher_2
 
         public LauncherState GetLauncherState()
         {
-            if(ServerStatus.ConnectionState.State == RetrieveState.Error)
+            if (ServerStatus.ConnectionState.State == RetrieveState.Error)
             {
                 return LauncherState.Offline;
-            } 
+            }
             else if (PatchVersion == "Unknown")
             {
                 return LauncherState.NeedInstall;

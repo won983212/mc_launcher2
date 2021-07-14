@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -185,7 +184,7 @@ namespace Minecraft_Launcher_2.Updater
             }
 
             UpdateStatus(lastProgress, "삭제해야 할 파일 검색 중..");
-            if(DetectDeletionFolder != null && DetectDeletionFolder.Length > 0)
+            if (DetectDeletionFolder != null && DetectDeletionFolder.Length > 0)
             {
                 foreach (string folder in DetectDeletionFolder)
                 {
@@ -204,7 +203,7 @@ namespace Minecraft_Launcher_2.Updater
                 Parallel.ForEach(files,
                     new ParallelOptions { MaxDegreeOfParallelism = 10, CancellationToken = _tknSrc.Token },
                     (file) => DownloadFile(parentFolder, file, 0));
-            } 
+            }
             catch (OperationCanceledException)
             {
                 _isRunning = false;
@@ -247,7 +246,7 @@ namespace Minecraft_Launcher_2.Updater
                 {
                     _isRunning = false;
                 }
-            } 
+            }
             catch (Exception e)
             {
                 Logger.Error(e);
@@ -259,7 +258,7 @@ namespace Minecraft_Launcher_2.Updater
                         writer.Close();
                     Logger.Log("Retry download(" + retry + "): " + path);
                     DownloadFile(path, file, retry);
-                } 
+                }
                 else
                 {
                     Interlocked.Increment(ref _failed);

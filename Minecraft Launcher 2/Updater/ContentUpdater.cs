@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2.Updater
@@ -54,13 +51,13 @@ namespace Minecraft_Launcher_2.Updater
 
         private void CheckDownloadTaskCancelled()
         {
-            if(_currentDownloader == null)
+            if (_currentDownloader == null)
                 throw new TaskCanceledException();
         }
 
         public void Cancel()
         {
-            if(_currentDownloader != null)
+            if (_currentDownloader != null)
             {
                 _currentDownloader.Cancel();
                 _currentDownloader = null;
@@ -70,7 +67,7 @@ namespace Minecraft_Launcher_2.Updater
         private void UpdatePatchVersion()
         {
             string patchVersionPath = Path.Combine(settings.MinecraftDir, "version");
-            using(WebClient client = new WebClient())
+            using (WebClient client = new WebClient())
             {
                 string data = client.DownloadString(URLs.InfoFile);
                 JObject json = JObject.Parse(data);

@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Minecraft_Launcher_2"
         xmlns:properties="clr-namespace:Minecraft_Launcher_2.Properties"
         xmlns:controls="clr-namespace:Minecraft_Launcher_2.Controls"
         xmlns:converters="clr-namespace:Minecraft_Launcher_2.Converters"
@@ -11,6 +10,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         WindowStyle="None"
+        FontFamily="{StaticResource PrimaryFont}"
         ResizeMode="NoResize" Title="Minecraft Launcher"
         MouseDown="Window_MouseDown" Width="854" Height="480">
     <Window.DataContext>
@@ -28,15 +28,14 @@
             <StackPanel.Effect>
                 <DropShadowEffect Color="#FF636363" BlurRadius="15" ShadowDepth="0" RenderingBias="Quality" Opacity="0.5"/>
             </StackPanel.Effect>
-            <controls:MultiplexerPanel TextElement.Foreground="White" Width="250" Height="350"
-                                        ActiveChildIndex="{Binding ConnectionState, Converter={StaticResource EnumToIntConverter}}">
-                <controls:MultiplexerPanel.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#aa3a90ff" Offset="0"/>
-                        <GradientStop Color="#aa2387db" Offset="1"/>
-                    </LinearGradientBrush>
-                </controls:MultiplexerPanel.Background>
-                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="0" IsIndeterminate="True" Width="40" Height="40"/>
+            <controls:MultiplexerPanel TextElement.Foreground="{StaticResource PrimaryContent}"
+                                       Width="250" Height="350"
+                                       Background="{StaticResource BlueGradient}"
+                                       ActiveChildIndex="{Binding ConnectionState, Converter={StaticResource EnumToIntConverter}}">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                             Value="0"
+                             IsIndeterminate="True"
+                             Width="40" Height="40"/>
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock FontSize="28" HorizontalAlignment="Center" Margin="8">Welcome!</TextBlock>
                     <TextBlock FontSize="12" HorizontalAlignment="Center" LineHeight="20" TextAlignment="Center" Text="{Binding Motd}"/>
@@ -46,22 +45,32 @@
                         <materialDesign:PackIcon Kind="Warning" Width="20" Height="20" Margin="10" VerticalAlignment="Center" />
                         <TextBlock FontSize="12" VerticalAlignment="Center">서버와 연결할 수 없습니다.</TextBlock>
                     </StackPanel>
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="White" Width="100" Foreground="White"
-                            HorizontalAlignment="Left" FontSize="8pt" Margin="50,10" Command="{Binding ReconnectCommand}">
+                    <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                            BorderBrush="{StaticResource BorderColor}" Width="100" 
+                            Foreground="{StaticResource PrimaryContent}"
+                            HorizontalAlignment="Left" 
+                            FontSize="8pt"
+                            Margin="50,10" 
+                            Command="{Binding ReconnectCommand}">
                         재접속 시도
                     </Button>
                 </StackPanel>
             </controls:MultiplexerPanel>
-            <Border Background="white" Width="400" Height="350">
+            <Border Background="{StaticResource CardColor}" Width="400" Height="350">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" TextElement.Foreground="{StaticResource PrimaryHueDarkBrush}" Margin="0,0,0,10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" TextElement.Foreground="{StaticResource Primary}" Margin="0,0,0,10">
                         <materialDesign:PackIcon Kind="Account" Width="32" Height="32"></materialDesign:PackIcon>
-                        <TextBlock FontSize="20" VerticalAlignment="Center" Margin="8,0">로그인</TextBlock>
+                        <TextBlock FontSize="20pt" VerticalAlignment="Center"
+                                   Margin="8,0" FontWeight="Light">Login</TextBlock>
                     </StackPanel>
-                    <TextBox materialDesign:HintAssist.Hint="마인크래프트 닉네임" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             Width="300" Margin="0,60" Height="45" IsEnabled="{Binding IsFormEnabled}" 
+                    <TextBox materialDesign:HintAssist.Hint="Name" 
+                             Width="300" FontSize="10pt" Margin="0,60" 
+                             IsEnabled="{Binding IsFormEnabled}" 
                              Text="{Binding PlayerName, Source={x:Static properties:Settings.Default}}"/>
-                    <Button materialDesign:ButtonAssist.CornerRadius="0" Width="100" FontSize="12" HorizontalAlignment="Right" Content="{Binding StartText}"
+                    <Button materialDesign:ButtonAssist.CornerRadius="0" 
+                            Width="120" FontSize="12" 
+                            HorizontalAlignment="Right" 
+                            Content="{Binding StartText}"
                             Command="{Binding StartCommand}"/>
                 </StackPanel>
             </Border>

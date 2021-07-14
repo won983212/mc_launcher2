@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Minecraft_Launcher_2.Controls
@@ -25,7 +15,7 @@ namespace Minecraft_Launcher_2.Controls
         public static readonly DependencyProperty ErrorObjectProperty = DependencyProperty.Register("ErrorObject",
             typeof(ErrorMessageObject), typeof(ErrorDialog), new FrameworkPropertyMetadata(new PropertyChangedCallback(OnErrorObjectChanged)));
 
-        public static readonly DependencyProperty IsShowProperty = DependencyProperty.Register("IsShow", 
+        public static readonly DependencyProperty IsShowProperty = DependencyProperty.Register("IsShow",
             typeof(bool), typeof(ErrorDialog), new FrameworkPropertyMetadata(false, new PropertyChangedCallback(OnIsShowChanged)));
 
         public ErrorMessageObject ErrorObject
@@ -114,7 +104,7 @@ namespace Minecraft_Launcher_2.Controls
         private void ShowFullMessage_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult res = MessageBox.Show(ErrorObject.FullMessage, "이 내용을 복사하시겠습니까?", MessageBoxButton.YesNo);
-            if(res == MessageBoxResult.Yes)
+            if (res == MessageBoxResult.Yes)
             {
                 Clipboard.SetText(ErrorObject.FullMessage);
             }
