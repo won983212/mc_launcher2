@@ -25,11 +25,11 @@ namespace Minecraft_Launcher_2.ViewModels
         }
     }
 
+    // TODO 서버 설정 Panel 제작
     internal class MainViewModel : ObservableObject
     {
         private readonly ServerDataContext _context;
 
-        // TODO SettingPanel 디자인 수정
         private string _signalIcon = "";
         private ServerInfo _serverInfo;
         private string _welcomeMessage = "Loading...";

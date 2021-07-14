@@ -7,76 +7,59 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="480" d:DesignWidth="860">
-    <Border Width="600" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center" 
+    <Border Width="500" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center" 
             Background="White" CornerRadius="2" RenderTransformOrigin="0.5,0.5">
         <Border.RenderTransform>
             <ScaleTransform x:Name="scalePanel" />
         </Border.RenderTransform>
         <Grid Margin="32,12">
-            <Grid.Resources>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="FontSize" Value="8pt" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                </Style>
-            </Grid.Resources>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock>마인크래프트 폴더 위치</TextBlock>
-            <TextBox Grid.Column="1"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Right"
-                     Margin="16,0,0,0"
-                     Width="320" 
-                     Text="{Binding MinecraftDir, Source={x:Static properties:Settings.Default}}"/>
+            <StackPanel>
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="8pt" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Margin" Value="0,28,0,4" />
+                    </Style>
+                    <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                        <Setter Property="FontSize" Value="9pt" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Margin" Value="0,28,0,4" />
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Margin="0,16,0,8"
+                           FontSize="14pt"
+                           HorizontalAlignment="Center">환경설정</TextBlock>
+                
+                <TextBlock>마인크래프트 폴더 위치</TextBlock>
+                <TextBox HorizontalAlignment="Stretch"
+                         Text="{Binding MinecraftDir, Source={x:Static properties:Settings.Default}}"/>
 
-            <TextBlock Grid.Row="1">콘솔 사용</TextBlock>
-            <CheckBox Grid.Row="1"
-                      Grid.Column="2"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Right"
-                      IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}"/>
+                <TextBlock>메모리 할당량</TextBlock>
+                <TextBox materialDesign:TextFieldAssist.SuffixText=" GB" 
+                         HorizontalAlignment="Left"
+                         HorizontalContentAlignment="Left"
+                         ToolTip="마인크래프트에 할당할 메모리를 설정합니다. 컴퓨터 실제 메모리에서 1~2GB를 뺸 값을 넘도록 설정하지 마세요.&#x0a;적정값은 3~6GB입니다. 6GB이상 할당해도 성능 향상에 큰 영향을 주지는 않습니다."
+                         Width="100" 
+                         Text="{Binding MemorySize, Source={x:Static properties:Settings.Default}}">
+                </TextBox>
 
-            <TextBlock Grid.Row="2">실행시 서버 자동 접속</TextBlock>
-            <CheckBox Grid.Row="2"
-                      Grid.Column="2" 
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Right"
-                      IsChecked="{Binding AutoJoinServer, Source={x:Static properties:Settings.Default}}"/>
+                <CheckBox IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}">실행시 콘솔에 Game Output 연결</CheckBox>
 
-            <TextBlock Grid.Row="3">메모리 할당량</TextBlock>
-            <TextBox Grid.Row="3" 
-                     Grid.Column="2"
-                     materialDesign:TextFieldAssist.SuffixText=" GB" 
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Right"
-                     HorizontalContentAlignment="Right" 
-                     Margin="16,0,0,0"
-                     Width="100" 
-                     Text="{Binding MemorySize, Source={x:Static properties:Settings.Default}}"/>
+                <CheckBox IsChecked="{Binding AutoJoinServer, Source={x:Static properties:Settings.Default}}">실행시 서버 자동 접속</CheckBox>
+            </StackPanel>
 
-            <StackPanel Grid.Row="4" 
-                        Grid.ColumnSpan="2" 
-                        Orientation="Horizontal"
+            <StackPanel Orientation="Horizontal"
                         VerticalAlignment="Bottom" 
                         HorizontalAlignment="Right"
                         Margin="0,16">
                 <Button Margin="0,0,16,0" 
-                        Width="100" 
-                        Style="{StaticResource MaterialDesignFlatAccentBgButton}"
-                        Command="{Binding ResetCommand}">
+                            Width="100" 
+                            Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                            Command="{Binding ResetCommand}">
                     초기화
                 </Button>
                 <Button Width="100"
-                        Command="{Binding SaveCommand}">
+                            Command="{Binding SaveCommand}">
                     확인
                 </Button>
             </StackPanel>
