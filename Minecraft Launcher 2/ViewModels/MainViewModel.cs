@@ -2,6 +2,7 @@
 using Minecraft_Launcher_2.Dialogs.ViewModels;
 using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
+using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater;
 using System;
 using System.Threading.Tasks;
@@ -16,11 +17,11 @@ namespace Minecraft_Launcher_2.ViewModels
         public string PlayerCount { get; set; }
         public string Ping { get; private set; }
 
-        public ServerInfo(ServerStatus status)
+        public ServerInfo(ServerInfoRetriever status)
         {
-            Motd = status.Motd;
-            PlayerCount = status.PlayersOnline + "/" + status.PlayersMax;
-            Ping = status.Ping + "ms";
+            Motd = status.MinecraftServerData.Motd;
+            PlayerCount = status.MinecraftServerData.PlayersOnline + "/" + status.MinecraftServerData.PlayersMax;
+            Ping = status.MinecraftServerData.Ping + "ms";
         }
     }
 
@@ -50,7 +51,7 @@ namespace Minecraft_Launcher_2.ViewModels
             _launcher = new MinecraftLauncher(_context);
             SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
 
-            ServerStatus status = _context.ServerStatus;
+            ServerInfoRetriever status = _context.ServerStatus;
             status.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
             if (status.ConnectionState.State != RetrieveState.Processing)
                 ServerStatus_OnConnectionStateChanged(null, status.ConnectionState);
@@ -106,8 +107,10 @@ namespace Minecraft_Launcher_2.ViewModels
             await _launcher.Start();
             _canStart = true;
 
-            if (!Settings.Default.UseLogging)
-                App.Current.Shutdown(0);
+            if (Settings.Default.UseLogging)
+                return;
+
+            App.Current.Shutdown(0);
         }
 
         public void SetForceUpdate()
@@ -181,20 +184,20 @@ namespace Minecraft_Launcher_2.ViewModels
             if (e.State == RetrieveState.Loaded)
             {
                 SignalIconVisibility = Visibility.Visible;
-                ServerStatus status = _context.ServerStatus;
+                ServerInfoRetriever status = _context.ServerStatus;
 
                 SignalIcon = "SignalCellular1";
-                if (status.Ping < 150)
+                if (status.MinecraftServerData.Ping < 150)
                 {
                     SignalIcon = "SignalCellular3";
                 }
-                else if (status.Ping < 300)
+                else if (status.MinecraftServerData.Ping < 300)
                 {
                     SignalIcon = "SignalCellular2";
                 }
 
                 ServerInfo = new ServerInfo(status);
-                WelcomeMessage = status.Notice;
+                WelcomeMessage = status.ResourceServerData.Notice;
             }
             else
             {
@@ -204,6 +207,7 @@ namespace Minecraft_Launcher_2.ViewModels
             OnPropertyChanged("ConnectionErrorMessage");
             OnPropertyChanged("ConnectionState");
             UpdateStartButton();
+
             _canStart = e.State != RetrieveState.Processing;
             Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
         }

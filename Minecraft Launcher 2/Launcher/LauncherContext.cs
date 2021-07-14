@@ -1,4 +1,5 @@
-﻿using Minecraft_Launcher_2.Updater;
+﻿using Minecraft_Launcher_2.ServerConnections;
+using Minecraft_Launcher_2.Updater;
 using System.IO;
 
 namespace Minecraft_Launcher_2.Launcher
@@ -10,7 +11,7 @@ namespace Minecraft_Launcher_2.Launcher
 
     public class LauncherContext
     {
-        public ServerStatus ServerStatus { get; private set; } = new ServerStatus();
+        public ServerInfoRetriever ServerStatus { get; private set; } = new ServerInfoRetriever();
         public string PatchVersion { get; private set; }
 
         public LauncherContext()
@@ -29,7 +30,7 @@ namespace Minecraft_Launcher_2.Launcher
                 return LauncherState.Offline;
             else if (PatchVersion == "Unknown")
                 return LauncherState.NeedInstall;
-            else if (PatchVersion != ServerStatus.PatchVersion)
+            else if (PatchVersion != ServerStatus.ResourceServerData.PatchVersion)
                 return LauncherState.NeedUpdate;
 
             return LauncherState.CanStart;

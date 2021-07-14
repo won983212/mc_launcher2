@@ -16,28 +16,30 @@ namespace Minecraft_Launcher_2
         {
             InitializeComponent();
             ((INotifyCollectionChanged)listLog.Items).CollectionChanged += ConsoleWindow_CollectionChanged;
-            UpdateFilter("");
+            UpdateFilter(tbxFilter.Text, chbOnlyDisplayError.IsChecked == true);
+        }
 
-            var timer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
-            var r = new Random();
-            timer.Tick += (o, e) =>
+        private void ScrollToEnd()
+        {
+            if (listLog.Items.Count > 0)
+                listLog.ScrollIntoView(listLog.Items[listLog.Items.Count - 1]);
+        }
+
+        private void UpdateFilter(string filter, bool onlyDisplayError)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(Logger.Logs);
+            view.Filter = (o) =>
             {
-                switch (r.Next(0, 3))
-                {
-                    case 0:
-                        Logger.Log("How are you? " + DateTime.Now);
-                        break;
-                    case 1:
-                        Logger.Debug("Hello, world! " + DateTime.Now);
-                        break;
-                    case 2:
-                        Logger.Error("ERROR DATE " + DateTime.Now);
-                        break;
-                    default:
-                        break;
-                }
+                LogMessage log = (LogMessage)o;
+                if (onlyDisplayError && log.Type != LogType.Error)
+                    return false;
+
+                if (string.IsNullOrEmpty(filter))
+                    return true;
+
+                return log.Message.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) != -1;
             };
-            timer.Start();
+            listLog.ItemsSource = view;
         }
 
         private void ConsoleWindow_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -68,28 +70,20 @@ namespace Minecraft_Launcher_2
             }
         }
 
-        private void ScrollToEnd()
-        {
-            if (listLog.Items.Count > 0)
-                listLog.ScrollIntoView(listLog.Items[listLog.Items.Count - 1]);
-        }
-
-        private void UpdateFilter(string filter)
-        {
-            ICollectionView view = CollectionViewSource.GetDefaultView(Logger.Logs);
-            view.Filter = (o) => string.IsNullOrEmpty(filter) || ((LogMessage)o).Message.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) != -1;
-            listLog.ItemsSource = view;
-        }
-
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        private void Checkbox_AutoScroll_Click(object sender, RoutedEventArgs e)
         {
             if (chbAutoScroll.IsChecked == true)
                 ScrollToEnd();
         }
 
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void Checkbox_OnlyDisplayError_Click(object sender, RoutedEventArgs e)
         {
-            UpdateFilter(((TextBox)sender).Text);
+            UpdateFilter(tbxFilter.Text, chbOnlyDisplayError.IsChecked == true);
+        }
+
+        private void TextBox_FilterBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateFilter(tbxFilter.Text, chbOnlyDisplayError.IsChecked == true);
         }
     }
 }

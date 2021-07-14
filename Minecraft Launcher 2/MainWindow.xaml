@@ -31,7 +31,8 @@
                                            Width="250" Height="350"
                                            Background="{StaticResource BlueGradient}"
                                            ActiveChildIndex="{Binding ConnectionState, Converter={StaticResource EnumToIntConverter}}">
-                    <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" 
+                    <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                 Foreground="White"
                                  Value="0"
                                  IsIndeterminate="True"
                                  Width="40" Height="40"/>
@@ -90,7 +91,10 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                 <!-- Signal button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" Visibility="{Binding SignalIconVisibility}" Command="{Binding ReconnectCommand}">
+                <Button Style="{StaticResource MaterialDesignIconButton}" 
+                        Width="30" Height="30"
+                        Visibility="{Binding SignalIconVisibility}"
+                        Command="{Binding ReconnectCommand}">
                     <Button.ToolTip>
                         <StackPanel>
                             <TextBlock Text="{Binding ServerInfo.Motd}" FontSize="12pt"/>
