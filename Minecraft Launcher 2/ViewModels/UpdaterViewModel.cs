@@ -1,4 +1,5 @@
-﻿using Minecraft_Launcher_2.Launcher;
+﻿using Minecraft_Launcher_2.Controls;
+using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.Updater.ServerConnections;
 using System.Threading.Tasks;
@@ -9,18 +10,14 @@ namespace Minecraft_Launcher_2.Updater
     public class UpdaterViewModel : ObservableObject
     {
         private readonly MinecraftLauncher _launcher;
-
-        private bool _isShowDownloadStatus = false;
-        private double _downloadProgress = 0;
-        private string _downloadStatus = "";
         private bool _running = false;
 
         public UpdaterViewModel(ServerDataContext context)
         {
             _launcher = new MinecraftLauncher(context);
-            _launcher.OnLog += (s, t) => Logger.Log(t);
+            _launcher.OnLog += (s, t) => Logger.Info(t);
             _launcher.OnError += (s, t) => Logger.Error(t);
-            _launcher.OnExited += (s, t) => Logger.Log(" Exited (code: " + t + ")");
+            _launcher.OnExited += (s, t) => Logger.Info(" Exited (code: " + t + ")");
         }
 
         public async Task StartMinecraft()
@@ -43,16 +40,15 @@ namespace Minecraft_Launcher_2.Updater
 
         public async Task StartDownload()
         {
-            IsShowDownloadStatus = true;
             IsRunning = true;
-            DownloadStatus = "다운로드 중..";
-            DownloadProgress = 0;
+            ProgressData.IsShow = true;
+            ProgressData.SetProgress("다운로드 중..", 0);
 
             ContentUpdater updater = new ContentUpdater();
             updater.OnProgress += Updater_OnProgress;
             int failed = await updater.BeginDownload();
 
-            IsShowDownloadStatus = false;
+            ProgressData.IsShow = false;
             _launcher.Context.ReadInstalledPatchVersion();
 
             if (failed > 0)
@@ -69,27 +65,10 @@ namespace Minecraft_Launcher_2.Updater
 
         private void Updater_OnProgress(object sender, ProgressArgs e)
         {
-            DownloadStatus = e.Status;
-            DownloadProgress = e.Progress;
+            ProgressData.SetProgress(e.Status, e.Progress);
         }
 
-        public bool IsShowDownloadStatus
-        {
-            get => _isShowDownloadStatus;
-            private set => SetProperty(ref _isShowDownloadStatus, value);
-        }
-
-        public double DownloadProgress
-        {
-            get => _downloadProgress;
-            private set => SetProperty(ref _downloadProgress, value);
-        }
-
-        public string DownloadStatus
-        {
-            get => _downloadStatus;
-            private set => SetProperty(ref _downloadStatus, value);
-        }
+        public ProgressStatus ProgressData { get; } = new ProgressStatus();
 
         public bool IsRunning
         {

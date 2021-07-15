@@ -258,7 +258,7 @@ namespace Minecraft_Launcher_2.Updater
                 catch (Exception e)
                 {
                     Logger.Error(e);
-                    Logger.Log("Retry download(" + (i + 1) + "): " + file.FilePath);
+                    Logger.Info("Retry download(" + (i + 1) + "): " + file.FilePath);
                 }
                 finally
                 {

@@ -20,13 +20,13 @@ namespace Minecraft_Launcher_2.ServerConnections
             {
                 ConnectionState = new ConnectionState { State = RetrieveState.Processing };
 
-                bool isActive = await CommonUtils.IsActiveHttpServer(URLs.InfoFile);
+                bool isActive = await CommonUtils.IsActiveHttpServer(URLs.InfoFilePath);
                 if (!isActive)
                     throw new Exception("API 서버와 연결할 수 없습니다.");
 
                 using (TimeoutWebClient client = new TimeoutWebClient(Timeout))
                 {
-                    string data = await client.DownloadStringTaskAsync(URLs.InfoFile);
+                    string data = await client.DownloadStringTaskAsync(URLs.InfoFilePath);
                     JObject obj = JObject.Parse(data);
                     PatchVersion = obj.Value<string>("patchVersion");
                     Notice = obj.Value<string>("notice");

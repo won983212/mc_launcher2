@@ -27,7 +27,7 @@ namespace Minecraft_Launcher_2
     {
         private static readonly ObservableCollection<LogMessage> _logs = new ObservableCollection<LogMessage>();
 
-        public static void Log(object data)
+        public static void Info(object data)
         {
             AppendLog(LogType.Info, data);
         }

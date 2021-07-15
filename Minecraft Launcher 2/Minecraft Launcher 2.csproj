@@ -77,6 +77,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -97,7 +98,12 @@
     </ApplicationDefinition>
     <Compile Include="CommonUtils.cs" />
     <Compile Include="Converters\ObjectToStringConverter.cs" />
+    <Compile Include="ServerSettingPanel.xaml.cs">
+      <DependentUpon>ServerSettingPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ViewModels\ErrorDialogVM.cs" />
+    <Compile Include="Validations\VersionValidationRule.cs" />
+    <Compile Include="ViewModels\ServerSettingPanelVM.cs" />
     <Compile Include="Dialogs\ViewModels\SettingDialogVM.cs" />
     <Compile Include="Updater\ServerConnections\ConnectionState.cs" />
     <Compile Include="Controls\BackgroundImage.xaml.cs">
@@ -106,8 +112,8 @@
     <Compile Include="Dialogs\SettingDialog.xaml.cs">
       <DependentUpon>SettingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DownloadStatusBar.xaml.cs">
-      <DependentUpon>DownloadStatusBar.xaml</DependentUpon>
+    <Compile Include="Controls\ProgressStatusBar.xaml.cs">
+      <DependentUpon>ProgressStatusBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>
@@ -136,11 +142,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ServerSettingPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\SettingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\DownloadStatusBar.xaml">
+    <Page Include="Controls\ProgressStatusBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

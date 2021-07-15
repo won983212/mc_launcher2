@@ -44,7 +44,8 @@
                                 Foreground="{StaticResource PrimaryContent}"
                                 FontSize="8pt"
                                 Margin="50,8" 
-                                Command="{Binding ReconnectAPIServerCommand}">
+                                Command="{Binding OpenServerSettingPanelCommand}"
+                                Visibility="{Binding IsManagementButtonActive, Converter={StaticResource BooleanToVisibilityConverter}}">
                             관리
                         </Button>
                     </StackPanel>
@@ -98,7 +99,10 @@
             </StackPanel>
 
             <!-- Download status bar -->
-            <controls:DownloadStatusBar HorizontalAlignment="Center" VerticalAlignment="Bottom" ViewModel="{Binding Updater}" Margin="0,0,0,5" />
+            <controls:ProgressStatusBar HorizontalAlignment="Center" 
+                                        VerticalAlignment="Bottom"
+                                        Progress="{Binding Updater.ProgressData}"
+                                        Margin="0,0,0,5" />
 
             <!-- Top Snackbar -->
             <md:Snackbar x:Name="ErrorSnackbar" 
@@ -177,12 +181,12 @@
                 </Button>
 
                 <!-- Console button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="콘솔 열기" Command="{Binding ShowConsoleCommand}">
+                <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="콘솔 열기" Command="{Binding OpenConsoleCommand}">
                     <md:PackIcon Kind="Console" Foreground="White" Width="18" Height="18" />
                 </Button>
 
                 <!-- Config button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="설정" Command="{Binding ShowSettingCommand}">
+                <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="설정" Command="{Binding OpenSettingDialogCommand}">
                     <md:PackIcon Kind="Settings" Foreground="White" Width="18" Height="18" />
                 </Button>
 
@@ -191,6 +195,8 @@
                     <md:PackIcon Kind="Close" Foreground="White" Width="18" Height="18" />
                 </Button>
             </StackPanel>
+
+            <local:ServerSettingPanel xmlns:local="clr-namespace:Minecraft_Launcher_2" DataContext="{Binding ServerSettingPanelViewModel}" />
         </Grid>
     </md:DialogHost>
 </Window>

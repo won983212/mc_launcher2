@@ -1,4 +1,5 @@
-﻿using Minecraft_Launcher_2.ViewModels;
+﻿using Minecraft_Launcher_2.Dialogs.ViewModels;
+using Minecraft_Launcher_2.ViewModels;
 using System.Windows;
 
 namespace Minecraft_Launcher_2
@@ -12,7 +13,7 @@ namespace Minecraft_Launcher_2
             MainViewModel vmodel = Current.MainWindow.DataContext as MainViewModel;
             if (vmodel != null)
             {
-                vmodel.ShowErrorMessage(e.Exception, () => { });
+                CommonUtils.ShowDialog(new ErrorDialogVM(e.Exception));
                 e.Handled = true;
             }
             Logger.Error(e.Exception);

@@ -27,7 +27,7 @@ namespace Minecraft_Launcher_2.Updater
                 failed += await _currentDownloader.DownloadTask();
                 CheckDownloadTaskCancelled();
 
-                _currentDownloader = new HashDownloader(settings.MinecraftDir, URLs.IndexFile, URLs.PatchFolder);
+                _currentDownloader = new HashDownloader(settings.MinecraftDir, URLs.IndexFilePath, URLs.PatchFolderPath);
                 _currentDownloader.DetectDeletionFolder = new string[] { "mods", "libraries", "natives", "scripts" };
                 _currentDownloader.OnProgress += (s, a) => { UpdateProgress(a.Progress * 0.39 + 60, "패치파일: " + a.Status); };
                 failed += await _currentDownloader.DownloadTask();
@@ -69,7 +69,7 @@ namespace Minecraft_Launcher_2.Updater
             string patchVersionPath = Path.Combine(settings.MinecraftDir, "version");
             using (WebClient client = new WebClient())
             {
-                string data = client.DownloadString(URLs.InfoFile);
+                string data = client.DownloadString(URLs.InfoFilePath);
                 JObject json = JObject.Parse(data);
                 File.WriteAllText(patchVersionPath, (string)json["patchVersion"]);
             }
@@ -83,12 +83,12 @@ namespace Minecraft_Launcher_2.Updater
                 UpdateProgress(0.1 * e.ProgressPercentage, "Launch Config 가져오는중");
             };
 
-            string cfg = await client.DownloadStringTaskAsync(URLs.LauncherConfig);
+            string cfg = await client.DownloadStringTaskAsync(URLs.LauncherConfigPath);
             client.Dispose();
 
             // save launcher-config file
             Directory.CreateDirectory(settings.MinecraftDir);
-            File.WriteAllText(Path.Combine(settings.MinecraftDir, Path.GetFileName(URLs.LauncherConfig)), cfg);
+            File.WriteAllText(Path.Combine(settings.MinecraftDir, Path.GetFileName(URLs.LauncherConfigPath)), cfg);
 
             JObject cfgJson = JObject.Parse(cfg);
             return (string)cfgJson["assetIndex"]["url"];

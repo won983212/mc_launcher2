@@ -127,5 +127,29 @@ namespace Minecraft_Launcher_2.Properties {
                 this["AutoJoinServer"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseAutoRefreshVersion {
+            get {
+                return ((bool)(this["UseAutoRefreshVersion"]));
+            }
+            set {
+                this["UseAutoRefreshVersion"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string APIServerDirectory {
+            get {
+                return ((string)(this["APIServerDirectory"]));
+            }
+            set {
+                this["APIServerDirectory"] = value;
+            }
+        }
     }
 }

@@ -28,6 +28,7 @@ namespace Minecraft_Launcher_2.ViewModels
     internal class MainViewModel : ObservableObject
     {
         private readonly ServerDataContext _context;
+        private bool _isManagementButtonActive = false;
 
         private string _signalIcon = "SignalOff";
         private ServerInfo _serverInfo;
@@ -48,9 +49,50 @@ namespace Minecraft_Launcher_2.ViewModels
             if (status.ConnectionState.State != RetrieveState.Processing)
                 ServerStatus_OnConnectionStateChanged(null, status.ConnectionState);
 
+            ServerSettingPanelViewModel = new ServerSettingPanelVM();
+            ServerSettingPanelViewModel.PanelClosed += (s, e) => status.RetrieveFromAPIServer();
+
             _context.ReadInstalledPatchVersion();
             status.RetrieveFromAPIServer();
             RetrieveMinecraftServerStatus();
+        }
+
+
+        private void OnStartClick()
+        {
+            string playerName = Settings.Default.PlayerName;
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                AddErrorSnackbar("닉네임을 입력해주세요.");
+                return;
+            }
+            else if (!CommonUtils.IsLegalUsername(playerName))
+            {
+                AddErrorSnackbar("닉네임은 영문, 숫자, 언더바(_)로만 구성해야합니다.");
+                return;
+            }
+
+            if (_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
+                Updater.StartMinecraft();
+            else
+                Updater.StartDownload().ContinueWith((t) => UpdateStartButton(false));
+        }
+
+        private bool CanStart(object parameter)
+        {
+            return _context.Retriever.ConnectionState.State != RetrieveState.Processing && !Updater.IsRunning;
+        }
+
+        private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
+        {
+            if (e.State == RetrieveState.Loaded)
+                WelcomeMessage = _context.Retriever.Notice;
+
+            OnPropertyChanged(nameof(ConnectionErrorMessage));
+            OnPropertyChanged(nameof(ConnectionState));
+            UpdateStartButton(false);
+            Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
+            CommonUtils.IsActiveHttpServer(URLs.LocalInfoFile).ContinueWith((t) => IsManagementButtonActive = t.Result);
         }
 
         private void UpdateStartButton(bool useForceUpdate)
@@ -76,31 +118,6 @@ namespace Minecraft_Launcher_2.ViewModels
                 default:
                     break;
             }
-        }
-
-        private void OnStartClick()
-        {
-            string playerName = Settings.Default.PlayerName;
-            if (string.IsNullOrWhiteSpace(playerName))
-            {
-                AddErrorSnackbar("닉네임을 입력해주세요.");
-                return;
-            }
-            else if (!CommonUtils.IsLegalUsername(playerName))
-            {
-                AddErrorSnackbar("닉네임은 영문, 숫자, 언더바(_)로만 구성해야합니다.");
-                return;
-            }
-
-            if (_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
-                Updater.StartMinecraft();
-            else
-                Updater.StartDownload().ContinueWith((t) => UpdateStartButton(false));
-        }
-
-        private bool CanStart(object parameter)
-        {
-            return _context.Retriever.ConnectionState.State != RetrieveState.Processing && !Updater.IsRunning;
         }
 
         private async void RetrieveMinecraftServerStatus()
@@ -131,27 +148,6 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
-        private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
-        {
-            if (e.State == RetrieveState.Loaded)
-                WelcomeMessage = _context.Retriever.Notice;
-
-            OnPropertyChanged(nameof(ConnectionErrorMessage));
-            OnPropertyChanged(nameof(ConnectionState));
-            UpdateStartButton(false);
-            Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
-        }
-
-        public void ShowErrorMessage(Exception e, Action callback)
-        {
-            CommonUtils.ShowDialog(new ErrorDialogVM(e), (vm, args) => callback());
-        }
-
-        public void ShowErrorMessage(string title, string message, Action callback)
-        {
-            CommonUtils.ShowDialog(new ErrorDialogVM(title, message), (vm, args) => callback());
-        }
-
         public void AddErrorSnackbar(string message)
         {
             SnackMessages.Enqueue(message);
@@ -180,6 +176,8 @@ namespace Minecraft_Launcher_2.ViewModels
 
         public UpdaterViewModel Updater { get; }
 
+        public ServerSettingPanelVM ServerSettingPanelViewModel { get; }
+
         public RetrieveState ConnectionState
         {
             get => _context.Retriever.ConnectionState.State;
@@ -200,16 +198,24 @@ namespace Minecraft_Launcher_2.ViewModels
             set => SetProperty(ref _startButtonText, value);
         }
 
+        public bool IsManagementButtonActive
+        {
+            get => _isManagementButtonActive;
+            set => SetProperty(ref _isManagementButtonActive, value);
+        }
+
 
         public ICommand ReconnectAPIServerCommand => new RelayCommand(() => _context.Retriever.RetrieveFromAPIServer());
 
         public ICommand ReconnectMinecraftServerCommand => new RelayCommand(RetrieveMinecraftServerStatus);
 
-        public ICommand ShowSettingCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(), (vm, a) => UpdateStartButton(vm.UseForceUpdate)));
-
         public ICommand StartCommand => new RelayCommand(OnStartClick, CanStart);
 
-        public ICommand ShowConsoleCommand => new RelayCommand(() =>
+        public ICommand OpenSettingDialogCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(), (vm, a) => UpdateStartButton(vm.UseForceUpdate)));
+
+        public ICommand OpenServerSettingPanelCommand => new RelayCommand(ServerSettingPanelViewModel.Open);
+
+        public ICommand OpenConsoleCommand => new RelayCommand(() =>
         {
             if (App.Console != null)
                 App.Console.Show();

@@ -4,38 +4,17 @@
     {
         private static readonly Properties.Settings settings = Properties.Settings.Default;
 
-        public static string InfoFile
-        {
-            get
-            {
-                return settings.APIServerLocation + "/info.json";
-            }
-        }
+        public static readonly string InfoFilename = "info.json";
+        public static readonly string IndexFilename = "indexes.json";
+        public static readonly string ResourceFolderName = "resources";
+        public static readonly string LauncherConfigFilename = "launch-config.json";
 
-        public static string IndexFile
-        {
-            get
-            {
-                return settings.APIServerLocation + "/indexes.json";
-            }
-        }
+        public static string InfoFilePath => settings.APIServerLocation + "/" + InfoFilename;
+        public static string IndexFilePath => settings.APIServerLocation + "/" + IndexFilename;
+        public static string PatchFolderPath => settings.APIServerLocation + "/" + ResourceFolderName;
+        public static string LauncherConfigPath => settings.APIServerLocation + "/" + LauncherConfigFilename;
 
-        public static string PatchFolder
-        {
-            get
-            {
-                return settings.APIServerLocation + "/resources";
-            }
-        }
-
-        public static string LauncherConfig
-        {
-            get
-            {
-                return settings.APIServerLocation + "/launch-config.json";
-            }
-        }
-
+        public static readonly string LocalInfoFile = "http://127.0.0.1/" + InfoFilename;
         public static readonly string AssetsURL = "http://resources.download.minecraft.net/";
     }
 }
