@@ -123,10 +123,9 @@
     <Compile Include="Updater\ContentUpdater.cs" />
     <Compile Include="Updater\HashDownloader.cs" />
     <Compile Include="ViewModels\UpdaterViewModel.cs" />
-    <Compile Include="Updater\ServerConnections\ResourceServerConnection.cs" />
     <Compile Include="Updater\ServerConnections\MinecraftServerConnection.cs" />
     <Compile Include="Updater\ProgressArgs.cs" />
-    <Compile Include="Updater\ServerConnections\ServerInfoRetriever.cs" />
+    <Compile Include="Updater\ServerConnections\APIServerInfoRetriever.cs" />
     <Compile Include="Updater\URLs.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="ConsoleWindow.xaml">

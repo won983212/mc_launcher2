@@ -39,6 +39,14 @@
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock FontSize="28" HorizontalAlignment="Center" Margin="8">Welcome!</TextBlock>
                         <TextBlock FontSize="12" HorizontalAlignment="Center" LineHeight="20" TextAlignment="Center" Text="{Binding WelcomeMessage}"/>
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                BorderBrush="{StaticResource BorderColor}" Width="100" 
+                                Foreground="{StaticResource PrimaryContent}"
+                                FontSize="8pt"
+                                Margin="50,8" 
+                                Command="{Binding ReconnectAPIServerCommand}">
+                            관리
+                        </Button>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="{Binding ConnectionErrorMessage}">
                         <StackPanel Orientation="Horizontal">
@@ -48,10 +56,9 @@
                         <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
                                 BorderBrush="{StaticResource BorderColor}" Width="100" 
                                 Foreground="{StaticResource PrimaryContent}"
-                                HorizontalAlignment="Left" 
                                 FontSize="8pt"
                                 Margin="50,10" 
-                                Command="{Binding ReconnectCommand}">
+                                Command="{Binding ReconnectAPIServerCommand}">
                             재접속 시도
                         </Button>
                     </StackPanel>
@@ -111,31 +118,62 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                 <!-- Signal button -->
                 <Button Width="30" Height="30"
-                        Command="{Binding ReconnectCommand}">
+                        Command="{Binding ReconnectMinecraftServerCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
-                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <StackPanel Margin="8,4">
+                                        <TextBlock Text="{Binding ServerInfo.Motd}" FontSize="12pt"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                            <md:PackIcon Kind="AccountGroup" Margin="0,0,4,0" Width="16" Height="16" />
+                                            <TextBlock Text="{Binding ServerInfo.PlayerCount}" Margin="0,0,12,0"/>
+                                            <md:PackIcon Kind="SignalCellular3" Margin="0,0,4,0" Width="16" Height="16" />
+                                            <TextBlock Text="{Binding ServerInfo.Ping}"/>
+                                        </StackPanel>
+                                        <Separator Margin="0,8"/>
+                                        <TextBlock Text="클릭시 새로고침합니다." HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Setter.Value>
+                            </Setter>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding SignalIcon}" Value="">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                <DataTrigger Binding="{Binding SignalIcon}" Value="SignalOff">
+                                    <Setter Property="ToolTip" Value="마인크래프트 서버가 닫혀있습니다. &#x0a;다시 연결시도를 하려면 클릭하세요." />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SignalIcon}" Value="Loading">
+                                    <Setter Property="ToolTip" Value="마인크래프트 서버와 연결을 시도중입니다..." />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Button.ToolTip>
-                        <StackPanel Margin="8,4">
-                            <TextBlock Text="{Binding ServerInfo.Motd}" FontSize="12pt"/>
-                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                <md:PackIcon Kind="AccountGroup" Margin="0,0,4,0" Width="16" Height="16" />
-                                <TextBlock Text="{Binding ServerInfo.PlayerCount}" Margin="0,0,12,0"/>
-                                <md:PackIcon Kind="SignalCellular3" Margin="0,0,4,0" Width="16" Height="16" />
-                                <TextBlock Text="{Binding ServerInfo.Ping}"/>
-                            </StackPanel>
-                            <Separator Margin="0,8"/>
-                            <TextBlock Text="클릭시 새로고침합니다." HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Button.ToolTip>
-                    <md:PackIcon Kind="{Binding SignalIcon}" Foreground="White" Width="18" Height="18"/>
+                    <Grid>
+                        <md:PackIcon Kind="{Binding SignalIcon}" Foreground="White" Width="18" Height="18">
+                            <md:PackIcon.Style>
+                                <Style TargetType="md:PackIcon">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SignalIcon}" Value="Loading">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </md:PackIcon.Style>
+                        </md:PackIcon>
+                        <ProgressBar Foreground="White"
+                                     IsIndeterminate="True"
+                                     Width="18" Height="18">
+                            <ProgressBar.Style>
+                                <Style TargetType="ProgressBar" BasedOn="{StaticResource MaterialDesignCircularProgressBar}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SignalIcon}" Value="Loading">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ProgressBar.Style>
+                        </ProgressBar>
+                    </Grid>
                 </Button>
 
                 <!-- Console button -->

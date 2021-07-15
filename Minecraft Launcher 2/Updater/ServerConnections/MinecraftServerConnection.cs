@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2.ServerConnections
 {
-    internal class MinecraftServerConnection
+    public class MinecraftServerConnection
     {
         private readonly MemoryStream ms = new MemoryStream();
 
@@ -20,6 +20,9 @@ namespace Minecraft_Launcher_2.ServerConnections
                 throw new InvalidDataException(data.Item1);
 
             JObject json = JObject.Parse(data.Item1);
+            if (!json.ContainsKey("description"))
+                throw new InvalidDataException("서버는 열려있지만 아직 로딩중입니다. 잠시후에 다시 시도해보세요. (JSON: " + json + ")");
+
             model.Motd = (string)json["description"]["text"];
             model.PlayersOnline = (int)json["players"]["online"];
             model.PlayersMax = (int)json["players"]["max"];
@@ -35,7 +38,7 @@ namespace Minecraft_Launcher_2.ServerConnections
             int serverPort = Properties.Settings.Default.MinecraftServerPort;
 
             TcpClient client = new TcpClient();
-            Connect(client, serverIP, serverPort, ServerInfoRetriever.Timeout);
+            Connect(client, serverIP, serverPort, APIServerInfoRetriever.Timeout);
 
             Logger.Debug("[ServerStatus] Connected to " + serverIP);
             BufferedStream stream = new BufferedStream(client.GetStream());

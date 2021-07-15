@@ -4,6 +4,8 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
 {
     public class SettingDialogVM : ObservableObject
     {
+        public bool UseForceUpdate { get; set; } = false;
+
         public ICommand SaveCommand => new RelayCommand(() =>
         {
             Properties.Settings.Default.Save();

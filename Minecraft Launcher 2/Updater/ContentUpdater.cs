@@ -86,7 +86,7 @@ namespace Minecraft_Launcher_2.Updater
             string cfg = await client.DownloadStringTaskAsync(URLs.LauncherConfig);
             client.Dispose();
 
-            // save cfg file
+            // save launcher-config file
             Directory.CreateDirectory(settings.MinecraftDir);
             File.WriteAllText(Path.Combine(settings.MinecraftDir, Path.GetFileName(URLs.LauncherConfig)), cfg);
 

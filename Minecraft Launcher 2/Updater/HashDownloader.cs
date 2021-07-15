@@ -205,7 +205,7 @@ namespace Minecraft_Launcher_2.Updater
             {
                 Parallel.ForEach(files,
                     new ParallelOptions { MaxDegreeOfParallelism = 10, CancellationToken = _tknSrc.Token },
-                    (file) => DownloadFile(parentFolder, file, 0));
+                    (file) => DownloadFile(parentFolder, file));
             }
             catch (OperationCanceledException)
             {
@@ -216,58 +216,61 @@ namespace Minecraft_Launcher_2.Updater
             return _failed;
         }
 
-        private void DownloadFile(string path, FileObj file, int retry)
+        private void DownloadFile(string path, FileObj file)
         {
-            BinaryReader reader = null;
-            BinaryWriter writer = null;
-            try
+            int i;
+            for (i = 0; i < RetryCount; i++)
             {
-                string _path = file.GetActualPath(path, UseHashPath);
-
-                DirectoryInfo parent = Directory.GetParent(_path);
-                if (!parent.Exists)
-                    Directory.CreateDirectory(parent.FullName);
-
-                string downloadUrl = Path.Combine(_resourceUrl, file.Hash.Substring(0, 2) + "/" + file.Hash);
-                Stream s = WebRequest.Create(downloadUrl).GetResponse().GetResponseStream();
-
-                reader = new BinaryReader(s);
-                writer = new BinaryWriter(new FileStream(_path, FileMode.Create));
-                Logger.Debug("Download: " + _path);
-
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = reader.Read(buf, 0, buf.Length)) > 0)
-                    writer.Write(buf, 0, len);
-
-                reader.Close();
-                writer.Close();
-                Interlocked.Increment(ref _count);
-                Logger.Debug("Finish: " + _path);
-
-                UpdateStatus(_count * 100.0 / _total, _isCanceling ? "취소하고 있습니다.." : "다운로드 중..");
-                if (_count == _total)
+                BinaryReader reader = null;
+                BinaryWriter writer = null;
+                try
                 {
-                    _isRunning = false;
+                    string _path = file.GetActualPath(path, UseHashPath);
+
+                    DirectoryInfo parent = Directory.GetParent(_path);
+                    if (!parent.Exists)
+                        Directory.CreateDirectory(parent.FullName);
+
+                    string fileServerPath = file.FilePath;
+                    if (UseHashPath)
+                        fileServerPath = file.Hash.Substring(0, 2) + "/" + file.Hash;
+
+                    string downloadUrl = Path.Combine(_resourceUrl, fileServerPath);
+                    Stream s = WebRequest.Create(downloadUrl).GetResponse().GetResponseStream();
+
+                    reader = new BinaryReader(s);
+                    writer = new BinaryWriter(new FileStream(_path, FileMode.Create));
+                    Logger.Debug("Download: " + _path);
+
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = reader.Read(buf, 0, buf.Length)) > 0)
+                        writer.Write(buf, 0, len);
+
+                    Interlocked.Increment(ref _count);
+                    Logger.Debug("Finish: " + _path);
+
+                    UpdateStatus(_count * 100.0 / _total, _isCanceling ? "취소하고 있습니다.." : "다운로드 중..");
+                    if (_count == _total)
+                        _isRunning = false;
+                    break;
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-                if (++retry < RetryCount)
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                    Logger.Log("Retry download(" + (i + 1) + "): " + file.FilePath);
+                }
+                finally
                 {
                     if (reader != null)
                         reader.Close();
                     if (writer != null)
                         writer.Close();
-                    Logger.Log("Retry download(" + retry + "): " + path);
-                    DownloadFile(path, file, retry);
-                }
-                else
-                {
-                    Interlocked.Increment(ref _failed);
                 }
             }
+
+            if (i == RetryCount)
+                Interlocked.Increment(ref _failed);
         }
     }
 }

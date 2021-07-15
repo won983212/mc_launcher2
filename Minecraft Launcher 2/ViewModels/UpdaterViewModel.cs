@@ -1,5 +1,6 @@
 ﻿using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
+using Minecraft_Launcher_2.Updater.ServerConnections;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -29,6 +30,8 @@ namespace Minecraft_Launcher_2.Updater
             settings.Save();
 
             IsRunning = true;
+            _launcher.IsAutoJoin = _launcher.Context.Retriever.ConnectionState.State == RetrieveState.Loaded && settings.AutoJoinServer;
+
             await _launcher.Start();
             IsRunning = false;
 

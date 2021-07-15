@@ -17,21 +17,21 @@ namespace Minecraft_Launcher_2.ViewModels
         public string PlayerCount { get; set; }
         public string Ping { get; private set; }
 
-        public ServerInfo(ServerInfoRetriever status)
+        public ServerInfo(MinecraftServerInfo status)
         {
-            Motd = status.MinecraftServerData.Motd;
-            PlayerCount = status.MinecraftServerData.PlayersOnline + "/" + status.MinecraftServerData.PlayersMax;
-            Ping = status.MinecraftServerData.Ping + "ms";
+            Motd = status.Motd;
+            PlayerCount = status.PlayersOnline + "/" + status.PlayersMax;
+            Ping = status.Ping + "ms";
         }
     }
 
-    // TODO 서버 설정 Panel 제작
     internal class MainViewModel : ObservableObject
     {
         private readonly ServerDataContext _context;
 
-        private string _signalIcon = "";
+        private string _signalIcon = "SignalOff";
         private ServerInfo _serverInfo;
+
         private string _welcomeMessage = "Loading...";
         private string _startButtonText = "연결 중..";
         private LauncherState _launchState;
@@ -43,18 +43,22 @@ namespace Minecraft_Launcher_2.ViewModels
             Updater = new UpdaterViewModel(_context);
             SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
 
-            ServerInfoRetriever status = _context.Retriever;
+            APIServerInfoRetriever status = _context.Retriever;
             status.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
             if (status.ConnectionState.State != RetrieveState.Processing)
                 ServerStatus_OnConnectionStateChanged(null, status.ConnectionState);
 
             _context.ReadInstalledPatchVersion();
-            status.RetrieveAll();
+            status.RetrieveFromAPIServer();
+            RetrieveMinecraftServerStatus();
         }
 
-        private void UpdateStartButton()
+        private void UpdateStartButton(bool useForceUpdate)
         {
             _launchState = _context.GetLauncherState();
+            if (useForceUpdate && _launchState == LauncherState.CanStart)
+                _launchState = LauncherState.NeedUpdate;
+
             switch (_launchState)
             {
                 case LauncherState.CanStart:
@@ -91,7 +95,7 @@ namespace Minecraft_Launcher_2.ViewModels
             if (_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
                 Updater.StartMinecraft();
             else
-                Updater.StartDownload().ContinueWith((t) => UpdateStartButton());
+                Updater.StartDownload().ContinueWith((t) => UpdateStartButton(false));
         }
 
         private bool CanStart(object parameter)
@@ -99,34 +103,42 @@ namespace Minecraft_Launcher_2.ViewModels
             return _context.Retriever.ConnectionState.State != RetrieveState.Processing && !Updater.IsRunning;
         }
 
-        private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
+        private async void RetrieveMinecraftServerStatus()
         {
-            if (e.State == RetrieveState.Loaded)
-            {
-                ServerInfoRetriever status = _context.Retriever;
+            if (SignalIcon == "Loading")
+                return;
 
+            SignalIcon = "Loading";
+            MinecraftServerConnection con = new MinecraftServerConnection();
+            try
+            {
+                MinecraftServerInfo info = await con.RetrieveServerStatusAsync();
                 SignalIcon = "SignalCellular1";
-                if (status.MinecraftServerData.Ping < 150)
+                if (info.Ping < 150)
                 {
                     SignalIcon = "SignalCellular3";
                 }
-                else if (status.MinecraftServerData.Ping < 300)
+                else if (info.Ping < 300)
                 {
                     SignalIcon = "SignalCellular2";
                 }
-
-                ServerInfo = new ServerInfo(status);
-                WelcomeMessage = status.ResourceServerData.Notice;
+                ServerInfo = new ServerInfo(info);
             }
-            else
+            catch (Exception e)
             {
-                SignalIcon = "";
+                Logger.Error(e);
+                SignalIcon = "SignalOff";
             }
+        }
+
+        private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
+        {
+            if (e.State == RetrieveState.Loaded)
+                WelcomeMessage = _context.Retriever.Notice;
 
             OnPropertyChanged(nameof(ConnectionErrorMessage));
             OnPropertyChanged(nameof(ConnectionState));
-            UpdateStartButton();
-
+            UpdateStartButton(false);
             Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
         }
 
@@ -189,9 +201,11 @@ namespace Minecraft_Launcher_2.ViewModels
         }
 
 
-        public ICommand ReconnectCommand => new RelayCommand(() => _context.Retriever.RetrieveAll());
+        public ICommand ReconnectAPIServerCommand => new RelayCommand(() => _context.Retriever.RetrieveFromAPIServer());
 
-        public ICommand ShowSettingCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM()));
+        public ICommand ReconnectMinecraftServerCommand => new RelayCommand(RetrieveMinecraftServerStatus);
+
+        public ICommand ShowSettingCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(), (vm, a) => UpdateStartButton(vm.UseForceUpdate)));
 
         public ICommand StartCommand => new RelayCommand(OnStartClick, CanStart);
 

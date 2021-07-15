@@ -18,12 +18,12 @@
                     <Style TargetType="{x:Type TextBlock}">
                         <Setter Property="FontSize" Value="8pt" />
                         <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="Margin" Value="0,28,0,4" />
+                        <Setter Property="Margin" Value="0,24,0,4" />
                     </Style>
                     <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource MaterialDesignCheckBox}">
                         <Setter Property="FontSize" Value="9pt" />
                         <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="Margin" Value="0,28,0,4" />
+                        <Setter Property="Margin" Value="0,20,0,4" />
                     </Style>
                 </StackPanel.Resources>
                 <TextBlock Margin="0,16,0,8"
@@ -46,6 +46,8 @@
                 <CheckBox IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}">실행시 콘솔에 Game Output 연결</CheckBox>
 
                 <CheckBox IsChecked="{Binding AutoJoinServer, Source={x:Static properties:Settings.Default}}">실행시 서버 자동 접속</CheckBox>
+
+                <CheckBox IsChecked="{Binding UseForceUpdate}" Checked="ForceUpdate_Checked">1회 강제 업데이트</CheckBox>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"

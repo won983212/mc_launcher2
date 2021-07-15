@@ -11,7 +11,7 @@ namespace Minecraft_Launcher_2.Launcher
 
     public class ServerDataContext
     {
-        public ServerInfoRetriever Retriever { get; private set; } = new ServerInfoRetriever();
+        public APIServerInfoRetriever Retriever { get; private set; } = new APIServerInfoRetriever();
         public string InstalledVersion { get; private set; }
 
         public ServerDataContext()
@@ -30,7 +30,7 @@ namespace Minecraft_Launcher_2.Launcher
                 return LauncherState.Offline;
             else if (InstalledVersion == "Unknown")
                 return LauncherState.NeedInstall;
-            else if (InstalledVersion != Retriever.ResourceServerData.PatchVersion)
+            else if (InstalledVersion != Retriever.PatchVersion)
                 return LauncherState.NeedUpdate;
 
             return LauncherState.CanStart;

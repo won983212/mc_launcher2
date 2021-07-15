@@ -1,5 +1,4 @@
-﻿using Minecraft_Launcher_2.Updater.ServerConnections;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -56,6 +55,8 @@ namespace Minecraft_Launcher_2.Launcher
 
         public ServerDataContext Context { get; }
 
+        public bool IsAutoJoin { get; set; }
+
         public MinecraftLauncher(ServerDataContext context)
         {
             Context = context;
@@ -104,7 +105,7 @@ namespace Minecraft_Launcher_2.Launcher
             sb.Append(' ');
             sb.Append(GetLaunchAdditionalArguments(launchSettings));
 
-            if (Context.Retriever.ConnectionState.State == RetrieveState.Loaded && settings.AutoJoinServer)
+            if (IsAutoJoin)
             {
                 sb.Append(" --server ");
                 sb.Append(settings.MinecraftServerIP);
