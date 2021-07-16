@@ -72,10 +72,11 @@ namespace Minecraft_Launcher_2.ViewModels
                 return;
             }
 
+            bool useAutoJoin = SignalIcon != "Loading" && SignalIcon != "SignalOff" && Settings.Default.AutoJoinServer;
             if (_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
-                Updater.StartMinecraft();
+                Updater.StartMinecraft(useAutoJoin);
             else
-                Updater.StartDownload().ContinueWith((t) => UpdateStartButton(false));
+                Updater.StartDownload(useAutoJoin).ContinueWith((t) => UpdateStartButton(false));
         }
 
         private bool CanStart(object parameter)

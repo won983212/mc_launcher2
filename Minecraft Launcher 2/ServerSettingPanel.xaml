@@ -13,7 +13,8 @@
     <Border BorderThickness="1"
             BorderBrush="{StaticResource BorderColor}">
         <Grid>
-            <DockPanel Margin="24">
+            <DockPanel Margin="24"
+                       IsEnabled="{Binding ProgressData.IsShow, Converter={StaticResource InverseBooleanConverter}}">
                 <DockPanel.Resources>
                     <Style TargetType="TextBox">
                         <Setter Property="Padding" Value="4" />
@@ -120,14 +121,14 @@
                         <Button HorizontalAlignment="Left"
                         Width="250"
                         Command="{Binding UpgradeGameVersionCommand}">마크 및 포지 버전 업그레이드</Button>
-                        <TextBlock Style="{StaticResource DescriptionTextStyle}">업그레이드를 하면 launcher-config.json을 다시 생성하고 minecraft.jar와 라이브러리들을 추출해옵니다.</TextBlock>
+                        <TextBlock Style="{StaticResource DescriptionTextStyle}">업그레이드를 하면 launch-config.json을 다시 생성하고 minecraft.jar와 라이브러리들을 추출해옵니다.</TextBlock>
                     </StackPanel>
 
                     <TextBlock Grid.Row="4"
                        Style="{StaticResource LabelTextStyle}">업데이트 작업후 버전 갱신</TextBlock>
                     <StackPanel Grid.Row="4" Grid.Column="1">
                         <CheckBox IsChecked="{Binding UseAutoRefreshVersion, Source={x:Static properties:Settings.Default}}">버전 자동 갱신</CheckBox>
-                        <TextBlock Style="{StaticResource DescriptionTextStyle}">파일 Hash를 생성하거나 launcher-config를 추출하면 자동으로 버전을 업데이트합니다.</TextBlock>
+                        <TextBlock Style="{StaticResource DescriptionTextStyle}">파일 Hash를 생성하거나 launch-config를 추출하면 자동으로 버전을 업데이트합니다.</TextBlock>
                     </StackPanel>
                 </Grid>
             </DockPanel>

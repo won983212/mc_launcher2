@@ -16,6 +16,9 @@ namespace Minecraft_Launcher_2.ServerConnections
             MinecraftServerInfo model = new MinecraftServerInfo();
             Tuple<string, int> data = await Task.Factory.StartNew(() => RetrieveServerStatusSync(model));
 
+            if (data.Item2 == -1)
+                throw new InvalidDataException(data.Item1);
+
             if (data.Item2 == 0x19)
                 throw new InvalidDataException(data.Item1);
 
@@ -38,7 +41,14 @@ namespace Minecraft_Launcher_2.ServerConnections
             int serverPort = Properties.Settings.Default.MinecraftServerPort;
 
             TcpClient client = new TcpClient();
-            Connect(client, serverIP, serverPort, APIServerInfoRetriever.Timeout);
+            try
+            {
+                Connect(client, serverIP, serverPort, APIServerInfoRetriever.Timeout);
+            }
+            catch (SocketException e)
+            {
+                return new Tuple<string, int>("연결할 수 없습니다: " + e.Message, -1);
+            }
 
             Logger.Debug("[ServerStatus] Connected to " + serverIP);
             BufferedStream stream = new BufferedStream(client.GetStream());

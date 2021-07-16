@@ -80,16 +80,16 @@ namespace Minecraft_Launcher_2.Updater
             }
         }
 
-        public Task<int> DownloadTask()
+        public async Task<int> DownloadTask()
         {
             if (!_isRunning)
             {
                 _isRunning = true;
                 _count = 0;
                 _failed = 0;
-                return Task.Factory.StartNew(Download);
+                return await Task.Run(Download);
             }
-            return null;
+            return 0;
         }
 
         private void UpdateStatus(double progress, string status)
@@ -106,7 +106,7 @@ namespace Minecraft_Launcher_2.Updater
                 return false;
 
             StringBuilder sb = new StringBuilder(40);
-            using (FileStream fs = new FileStream(path, FileMode.Open))
+            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
                 byte[] hash = sha1.ComputeHash(fs);
                 foreach (byte b in hash)

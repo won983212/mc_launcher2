@@ -97,7 +97,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommonUtils.cs" />
+    <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\ObjectToStringConverter.cs" />
+    <Compile Include="Dialogs\ComboMessageBox.xaml.cs">
+      <DependentUpon>ComboMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ViewModels\ComboMessageBoxVM.cs" />
+    <Compile Include="Launcher\LaunchConfigContext.cs" />
     <Compile Include="ServerSettingPanel.xaml.cs">
       <DependentUpon>ServerSettingPanel.xaml</DependentUpon>
     </Compile>
@@ -141,6 +147,10 @@
     <Page Include="Controls\BackgroundImage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ComboMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ServerSettingPanel.xaml">
       <SubType>Designer</SubType>

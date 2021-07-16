@@ -1,7 +1,7 @@
 ﻿using Minecraft_Launcher_2.Controls;
 using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
-using Minecraft_Launcher_2.Updater.ServerConnections;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -20,14 +20,14 @@ namespace Minecraft_Launcher_2.Updater
             _launcher.OnExited += (s, t) => Logger.Info(" Exited (code: " + t + ")");
         }
 
-        public async Task StartMinecraft()
+        public async Task StartMinecraft(bool useAutoJoin)
         {
             Settings settings = Settings.Default;
             _launcher.PlayerName = settings.PlayerName;
             settings.Save();
 
             IsRunning = true;
-            _launcher.IsAutoJoin = _launcher.Context.Retriever.ConnectionState.State == RetrieveState.Loaded && settings.AutoJoinServer;
+            _launcher.IsAutoJoin = useAutoJoin;
 
             await _launcher.Start();
             IsRunning = false;
@@ -38,7 +38,7 @@ namespace Minecraft_Launcher_2.Updater
             App.Current.Shutdown(0);
         }
 
-        public async Task StartDownload()
+        public async Task StartDownload(bool useAutoJoin)
         {
             IsRunning = true;
             ProgressData.IsShow = true;
@@ -46,21 +46,35 @@ namespace Minecraft_Launcher_2.Updater
 
             ContentUpdater updater = new ContentUpdater();
             updater.OnProgress += Updater_OnProgress;
-            int failed = await updater.BeginDownload();
 
-            ProgressData.IsShow = false;
-            _launcher.Context.ReadInstalledPatchVersion();
+            int failed = 0;
+            try
+            {
+                failed = await updater.BeginDownload();
+                _launcher.Context.ReadInstalledPatchVersion();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "업데이트 실패", MessageBoxButton.OK, MessageBoxImage.Error);
+                Logger.Error(e);
+                IsRunning = false;
+                return;
+            }
+            finally
+            {
+                ProgressData.IsShow = false;
+            }
 
             if (failed > 0)
             {
                 MessageBoxResult res = MessageBox.Show("파일 " + failed + "개를 받지 못했습니다. 그래도 실행합니까?", "주의", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (res == MessageBoxResult.Yes)
-                    StartMinecraft();
+                    StartMinecraft(useAutoJoin);
                 else
                     IsRunning = false;
             }
             else
-                StartMinecraft();
+                StartMinecraft(useAutoJoin);
         }
 
         private void Updater_OnProgress(object sender, ProgressArgs e)

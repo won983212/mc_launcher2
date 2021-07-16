@@ -21,7 +21,7 @@ namespace Minecraft_Launcher_2.Updater
                 string assetsURL = await RetrieveAssetsIndex();
                 int failed = 0;
 
-                _currentDownloader = new HashDownloader(Path.Combine(settings.MinecraftDir, "assets"), assetsURL, URLs.AssetsURL);
+                _currentDownloader = new HashDownloader(Path.Combine(settings.MinecraftDir, "assets"), assetsURL, URLs.AssetsResourceURL);
                 _currentDownloader.OnProgress += (s, a) => { UpdateProgress(a.Progress / 2 + 10, "에셋파일: " + a.Status); };
                 _currentDownloader.UseHashPath = true;
                 failed += await _currentDownloader.DownloadTask();
@@ -41,12 +41,11 @@ namespace Minecraft_Launcher_2.Updater
                 UpdateProgress(100, "설치완료");
                 return failed;
             }
-            catch (TaskCanceledException)
+            catch (Exception)
             {
                 UpdateProgress(100, "작업 취소됨");
+                throw;
             }
-
-            return 0;
         }
 
         private void CheckDownloadTaskCancelled()
@@ -91,7 +90,7 @@ namespace Minecraft_Launcher_2.Updater
             File.WriteAllText(Path.Combine(settings.MinecraftDir, Path.GetFileName(URLs.LauncherConfigPath)), cfg);
 
             JObject cfgJson = JObject.Parse(cfg);
-            return (string)cfgJson["assetIndex"]["url"];
+            return (string)cfgJson["assetsUrl"];
         }
 
         private void UpdateProgress(double progress, string status)

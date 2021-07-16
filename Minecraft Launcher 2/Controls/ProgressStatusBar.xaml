@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              UseLayoutRounding="True"
+             Width="320"
              mc:Ignorable="d" >
     <Border DataContext="{Binding ElementName=controlRoot}"
             Background="#ff181818" 
@@ -52,9 +53,18 @@
         </Border.Style>
         
         <StackPanel>
-            <TextBlock Margin="0,12,0,4" FontWeight="Light" Foreground="LightGray" HorizontalAlignment="Center" Text="{Binding Progress.Status}"/>
-            <ProgressBar Margin="12,8" Width="280" Value="{Binding Progress.Progress, Mode=OneWay}" Background="#ff101010" Foreground="{StaticResource PrimaryHueMidBrush}"
-                             BorderThickness="0" materialDesign:TransitionAssist.DisableTransitions="True" />
+            <TextBlock Margin="12,12,12,4" 
+                       FontWeight="Light" 
+                       Foreground="LightGray"
+                       HorizontalAlignment="Center"
+                       TextTrimming="CharacterEllipsis"
+                       Text="{Binding Progress.Status}"/>
+            <ProgressBar Margin="12,8"
+                         Value="{Binding Progress.Progress, Mode=OneWay}" 
+                         Background="#ff101010" 
+                         Foreground="{StaticResource PrimaryHueMidBrush}"
+                         BorderThickness="0"
+                         materialDesign:TransitionAssist.DisableTransitions="True" />
         </StackPanel>
     </Border>
 </UserControl>

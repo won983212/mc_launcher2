@@ -25,6 +25,7 @@
             <!-- Converters -->
             <converter:EnumToIntConverter x:Key="EnumToIntConverter" />
             <converter:ObjectToStringConverter x:Key="ObjectToStringConverter" />
+            <converter:InverseBooleanConverter x:Key="InverseBooleanConverter" />
 
             <!-- DataTemplates -->
             <DataTemplate DataType="{x:Type dialogvm:ErrorDialogVM}">
@@ -32,6 +33,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type dialogvm:SettingDialogVM}">
                 <dialog:SettingDialog />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type dialogvm:ComboMessageBoxVM}">
+                <dialog:ComboMessageBox />
             </DataTemplate>
 
             <!-- Styles -->

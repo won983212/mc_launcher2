@@ -1,5 +1,9 @@
 ﻿using MaterialDesignThemes.Wpf;
 using Minecraft_Launcher_2.ServerConnections;
+using Minecraft_Launcher_2.Updater;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -39,6 +43,48 @@ namespace Minecraft_Launcher_2
             {
                 return false;
             }
+        }
+
+        public static void CopyDirectory(string src, string dest, Action<ProgressArgs> onProcess = null)
+        {
+            int total = 0;
+            int current = 0;
+            Stack<string> folders = new Stack<string>();
+            folders.Push(src);
+
+            if (onProcess != null)
+            {
+                while (folders.Count > 0)
+                {
+                    string path = folders.Pop();
+                    foreach (string dir in Directory.EnumerateDirectories(path))
+                        folders.Push(dir);
+                    total += Directory.GetFiles(path).Length;
+                }
+            }
+
+            folders.Push(src);
+            while (folders.Count > 0)
+            {
+                string path = folders.Pop();
+                foreach (string dir in Directory.EnumerateDirectories(path))
+                {
+                    Directory.CreateDirectory(Path.Combine(dest, dir.Substring(src.Length + 1)));
+                    folders.Push(dir);
+                }
+                foreach (string file in Directory.EnumerateFiles(path))
+                {
+                    File.Copy(file, Path.Combine(dest, file.Substring(src.Length + 1)));
+                    onProcess?.Invoke(new ProgressArgs(++current / (double)total * 100, Path.GetFileName(file)));
+                }
+            }
+        }
+
+        public static void DeleteDirectory(string path)
+        {
+            DirectoryInfo di = new DirectoryInfo(path);
+            if (di.Exists)
+                di.Delete(true);
         }
 
         #region Dialog

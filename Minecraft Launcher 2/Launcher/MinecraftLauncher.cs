@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,11 +12,6 @@ namespace Minecraft_Launcher_2.Launcher
     internal class LaunchSetting
     {
         private readonly ServerDataContext _context;
-        public string MainClass { get; private set; }
-        public string MinecraftArguments { get; private set; }
-        public string AssetsVersion { get; private set; }
-        public string MinecraftVersion { get; private set; }
-        public List<string> Libraries { get; private set; } = new List<string>();
 
         internal LaunchSetting(ServerDataContext context)
         {
@@ -26,24 +21,17 @@ namespace Minecraft_Launcher_2.Launcher
         public void Load(string settingFile)
         {
             string data = File.ReadAllText(settingFile);
-            JObject json = JObject.Parse(data);
-
             _context.ReadInstalledPatchVersion();
-            MainClass = json.Value<string>("mainClass");
-            MinecraftArguments = json.Value<string>("arguments");
-            AssetsVersion = json.Value<string>("assets");
+            LaunchConfig = new LaunchConfigContext(JObject.Parse(data));
             MinecraftVersion = _context.InstalledVersion.Split('@')[0];
-
-            JArray libs = json["libraries"] as JArray;
-            foreach (JObject obj in libs)
-            {
-                string[] names = obj.Value<string>("name").Split(':');
-                string jarfile = string.Format("{0}\\{1}\\{2}\\{1}-{2}.jar", names[0].Replace('.', '\\'), names[1], names[2]);
-                Libraries.Add(Path.Combine(Properties.Settings.Default.MinecraftDir, "libraries", jarfile));
-            }
         }
+
+        public LaunchConfigContext LaunchConfig { get; private set; }
+
+        public string MinecraftVersion { get; private set; }
     }
 
+    // TODO arguements 가 형식이 바뀌었으므로 적응해야함
     public class MinecraftLauncher
     {
         private static readonly Properties.Settings settings = Properties.Settings.Default;
@@ -53,9 +41,6 @@ namespace Minecraft_Launcher_2.Launcher
         public event EventHandler<string> OnError;
         public event EventHandler<int> OnExited;
 
-        public ServerDataContext Context { get; }
-
-        public bool IsAutoJoin { get; set; }
 
         public MinecraftLauncher(ServerDataContext context)
         {
@@ -63,17 +48,20 @@ namespace Minecraft_Launcher_2.Launcher
         }
 
 
-        private string GetLaunchAdditionalArguments(LaunchSetting launchSettings)
+        private string GetParsedArguments(string arg, LaunchSetting launchSettings)
         {
-            string arg = launchSettings.MinecraftArguments;
             arg = arg.Replace("${auth_player_name}", PlayerName);
             arg = arg.Replace("${version_name}", launchSettings.MinecraftVersion);
             arg = arg.Replace("${game_directory}", settings.MinecraftDir);
             arg = arg.Replace("${assets_root}", Path.Combine(settings.MinecraftDir, "assets"));
-            arg = arg.Replace("${assets_index_name}", launchSettings.AssetsVersion);
+            arg = arg.Replace("${assets_index_name}", launchSettings.LaunchConfig.AssetsVersion);
             arg = arg.Replace("${auth_uuid}", "sessionid");
             arg = arg.Replace("${auth_access_token}", "-");
-            arg = arg.Replace("${user_type}", "-");
+            arg = arg.Replace("${user_type}", "mojang");
+            arg = arg.Replace("${version_type}", "release");
+            arg = arg.Replace("${natives_directory}", Path.Combine(settings.MinecraftDir, "natives"));
+            arg = arg.Replace("${launcher_name}", "loot-launcher");
+            arg = arg.Replace("${launcher_version}", Assembly.GetExecutingAssembly().GetName().Version.ToString());
             return arg;
         }
 
@@ -86,24 +74,26 @@ namespace Minecraft_Launcher_2.Launcher
             Log("Building arguments....");
 
             StringBuilder sb = new StringBuilder();
+            sb.Append('\"');
+            foreach (Library lib in launchSettings.LaunchConfig.Libraries)
+            {
+                sb.Append(lib.GetPath());
+                sb.Append(';');
+            }
+            sb.Append(Path.Combine(settings.MinecraftDir, "minecraft.jar"));
+            sb.Append('\"');
+
+            string classpath = sb.ToString();
+            sb = new StringBuilder();
             sb.Append("-Xmx");
             sb.Append(settings.MemorySize);
             sb.Append("G ");
-            sb.Append("-Djava.library.path=");
-            sb.Append(Path.Combine(settings.MinecraftDir, "natives"));
-            sb.Append(" -cp ");
-
-            foreach (string lib in launchSettings.Libraries)
-            {
-                sb.Append(Path.Combine(settings.MinecraftDir, "libraries", lib));
-                sb.Append(';');
-            }
-
-            sb.Append(Path.Combine(settings.MinecraftDir, "minecraft.jar"));
+            sb.Append(GetParsedArguments(launchSettings.LaunchConfig.MinecraftJVMArguments, launchSettings)
+                .Replace("${classpath}", classpath));
             sb.Append(' ');
-            sb.Append(launchSettings.MainClass);
+            sb.Append(launchSettings.LaunchConfig.MainClass);
             sb.Append(' ');
-            sb.Append(GetLaunchAdditionalArguments(launchSettings));
+            sb.Append(GetParsedArguments(launchSettings.LaunchConfig.MinecraftGameArguments, launchSettings));
 
             if (IsAutoJoin)
             {
@@ -134,6 +124,8 @@ namespace Minecraft_Launcher_2.Launcher
                 info.WorkingDirectory = settings.MinecraftDir;
                 info.CreateNoWindow = true;
                 info.UseShellExecute = false;
+
+                Log("Argument: " + info.Arguments);
 
                 if (settings.UseLogging)
                 {
@@ -181,5 +173,9 @@ namespace Minecraft_Launcher_2.Launcher
         public string PlayerName { get; set; } = "Unnamed";
 
         public bool IsRunning => _isRunning;
+
+        public ServerDataContext Context { get; }
+
+        public bool IsAutoJoin { get; set; }
     }
 }

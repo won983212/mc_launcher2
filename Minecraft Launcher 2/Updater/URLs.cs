@@ -15,6 +15,6 @@
         public static string LauncherConfigPath => settings.APIServerLocation + "/" + LauncherConfigFilename;
 
         public static readonly string LocalInfoFile = "http://127.0.0.1/" + InfoFilename;
-        public static readonly string AssetsURL = "http://resources.download.minecraft.net/";
+        public static readonly string AssetsResourceURL = "http://resources.download.minecraft.net/";
     }
 }
