@@ -49,7 +49,6 @@ namespace Minecraft_Launcher_2.Launcher
 
         public void DeserializeMinecraftJsonData(JObject json)
         {
-
             if (json.TryGetValue("mainClass", out JToken value))
                 MainClass = value.ToString();
 

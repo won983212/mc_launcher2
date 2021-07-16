@@ -31,7 +31,6 @@ namespace Minecraft_Launcher_2.Launcher
         public string MinecraftVersion { get; private set; }
     }
 
-    // TODO arguements 가 형식이 바뀌었으므로 적응해야함
     public class MinecraftLauncher
     {
         private static readonly Properties.Settings settings = Properties.Settings.Default;

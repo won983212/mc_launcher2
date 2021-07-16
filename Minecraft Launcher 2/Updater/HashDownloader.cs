@@ -33,24 +33,6 @@ namespace Minecraft_Launcher_2.Updater
     public class HashDownloader
     {
         private const int RetryCount = 3;
-
-        /** 
-         * 저장 경로를 Hash 형태로 저장할 건지?
-         */
-        public bool UseHashPath { get; set; } = false;
-
-        /** 
-         * Hash 검사를 통해 업데이트가 필요한 파일만 다운로드할 건지?
-         */
-        public bool DownloadOnlyNecessary { get; set; } = true;
-
-        /** 
-         * 삭제란? 서버의 파일 리스트와 비교하여 서버에 없는 파일은 삭제하는 것.
-         * 이 필드는 삭제를 지원하는 폴더 리스트 정의. null일 경우 없는 것으로 판단
-         */
-        public string[] DetectDeletionFolder { get; set; } = null;
-
-
         public event EventHandler<ProgressArgs> OnProgress;
 
         private readonly CancellationTokenSource _tknSrc = new CancellationTokenSource();
@@ -63,12 +45,14 @@ namespace Minecraft_Launcher_2.Updater
         private volatile bool _isRunning = false;
         private volatile bool _isCanceling = false;
 
+
         public HashDownloader(string savePath, string indexesURL, string resourceUrl)
         {
             _savePath = savePath;
             _indexesURL = indexesURL;
             _resourceUrl = resourceUrl;
         }
+
 
         public void Cancel()
         {
@@ -272,5 +256,22 @@ namespace Minecraft_Launcher_2.Updater
             if (i == RetryCount)
                 Interlocked.Increment(ref _failed);
         }
+
+
+        /** 
+         * 저장 경로를 Hash 형태로 저장할 건지?
+         */
+        public bool UseHashPath { get; set; } = false;
+
+        /** 
+         * Hash 검사를 통해 업데이트가 필요한 파일만 다운로드할 건지?
+         */
+        public bool DownloadOnlyNecessary { get; set; } = true;
+
+        /** 
+         * 삭제란? 서버의 파일 리스트와 비교하여 서버에 없는 파일은 삭제하는 것.
+         * 이 필드는 삭제를 지원하는 폴더 리스트 정의. null일 경우 없는 것으로 판단
+         */
+        public string[] DetectDeletionFolder { get; set; } = null;
     }
 }

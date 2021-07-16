@@ -26,9 +26,17 @@ namespace Minecraft_Launcher_2.ViewModels
 
         private bool IsVaildAPIServerDirectory(string path)
         {
-            if (!string.IsNullOrWhiteSpace(path) && File.Exists(Path.Combine(path, URLs.InfoFilename)))
+            string infoFilePath = Path.Combine(path, URLs.InfoFilename);
+            if (!string.IsNullOrWhiteSpace(path) && File.Exists(infoFilePath))
             {
-                LoadServerInfo();
+                try
+                {
+                    LoadServerInfo(infoFilePath);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
                 return Version != null && WelcomeMessage != null;
             }
             return false;
@@ -56,10 +64,9 @@ namespace Minecraft_Launcher_2.ViewModels
             return false;
         }
 
-        private void LoadServerInfo()
+        private void LoadServerInfo(string infoFilePath)
         {
-            string path = Settings.Default.APIServerDirectory;
-            JObject json = JObject.Parse(File.ReadAllText(Path.Combine(path, URLs.InfoFilename)));
+            JObject json = JObject.Parse(File.ReadAllText(infoFilePath));
             Version = json.Value<string>("patchVersion");
             WelcomeMessage = json.Value<string>("notice");
         }

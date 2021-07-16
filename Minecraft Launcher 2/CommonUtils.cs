@@ -87,8 +87,6 @@ namespace Minecraft_Launcher_2
                 di.Delete(true);
         }
 
-        #region Dialog
-
         public static Task<object> ShowDialog<T>(T content, DialogCompleteEventHandler<T> closingHandler = null) where T : ObservableObject
         {
             return ShowDialog(content, "RootDialogHost", closingHandler);
@@ -103,7 +101,5 @@ namespace Minecraft_Launcher_2
         {
             DialogHost.Close("RootDialogHost");
         }
-
-        #endregion
     }
 }
