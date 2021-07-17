@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2
@@ -13,6 +14,17 @@ namespace Minecraft_Launcher_2
     {
         public delegate void DialogCompleteEventHandler<T>(T vm, DialogClosingEventArgs eventArgs) where T : ObservableObject;
 
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
+
+
+
+        public static int GetTotalMemorySizeGB()
+        {
+            GetPhysicallyInstalledSystemMemory(out long memKb);
+            return (int)(memKb / 1024 / 1024);
+        }
 
         public static bool IsLegalUsername(string name)
         {

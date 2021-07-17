@@ -162,6 +162,7 @@ namespace Minecraft_Launcher_2.Launcher
             return sb.ToString().Substring(0, sb.Length - 1);
         }
 
+
         public string MainClass { get; set; } = "";
 
         public string MinecraftGameArguments { get; set; } = "";

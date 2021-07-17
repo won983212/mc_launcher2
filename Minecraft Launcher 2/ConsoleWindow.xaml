@@ -8,64 +8,76 @@
         mc:Ignorable="d"
         Closing="Window_Closing"
         FontFamily="{StaticResource PrimaryFont}"
-        Title="Console" Height="500" Width="750">
+        Title="Console"
+        Height="500"
+        Width="750">
     <DockPanel>
-        <Border DockPanel.Dock="Top" Background="{StaticResource BackgroundColor}">
-            <Grid Margin="8,12">
+        <Border DockPanel.Dock="Top"
+                UseLayoutRounding="True">
+            <Grid Margin="12,16">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="16"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
-                
+
                 <TextBlock FontWeight="Bold"
                            FontSize="8pt"
                            Text="로그 필터링" />
                 <TextBox x:Name="tbxFilter"
                          Grid.Row="1"
                          MinWidth="300"
+                         BorderBrush="{StaticResource TextColor}"
+                         BorderThickness="1"
+                         Padding="4,2"
                          VerticalContentAlignment="Center"
                          materialDesign:HintAssist.Hint="필터링 키워드 입력..."
                          VerticalAlignment="Top"
-                         TextChanged="TextBox_FilterBox_TextChanged"/>
+                         TextChanged="TextBox_FilterBox_TextChanged" />
 
                 <TextBlock Grid.Column="1"
                            FontSize="8pt"
                            FontWeight="Bold"
-                           Margin="16,0"
-                           Text="설정"/>
+                           Margin="24,0"
+                           Text="설정" />
                 <StackPanel Orientation="Horizontal"
-                            Margin="16,0"
+                            Margin="24,0"
                             Grid.Column="1"
                             Grid.Row="1">
-                    <CheckBox x:Name="chbAutoScroll" 
-                          VerticalAlignment="Center"
-                          Content="자동 스크롤"
-                          IsChecked="True" 
-                          Click="Checkbox_AutoScroll_Click" />
-                    <CheckBox x:Name="chbOnlyDisplayError" 
-                          Margin="8,0"
-                          VerticalAlignment="Center"
-                          Content="에러만 보기"
-                          IsChecked="False" 
-                          Click="Checkbox_OnlyDisplayError_Click" />
+                    <CheckBox x:Name="chbAutoScroll"
+                              VerticalAlignment="Center"
+                              Content="자동 스크롤"
+                              IsChecked="True"
+                              Click="Checkbox_AutoScroll_Click" />
+                    <CheckBox x:Name="chbOnlyDisplayError"
+                              Margin="8,0"
+                              VerticalAlignment="Center"
+                              Content="에러만 보기"
+                              IsChecked="False"
+                              Click="Checkbox_OnlyDisplayError_Click" />
                 </StackPanel>
 
-                <TextBlock Grid.Column="2" 
+                <TextBlock Grid.Column="2"
                            FontSize="8pt"
                            FontWeight="Bold"
                            Text="콘솔 조작" />
-                <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="2"
+                            Grid.Row="1">
+                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="0"
+                            BorderBrush="{StaticResource TextColor}"
                             Click="SaveConsole_Click"
                             Margin="0,0,8,0"
                             FontSize="9pt"
                             Content="저장" />
-                    <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                    <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                            materialDesign:ButtonAssist.CornerRadius="0"
+                            BorderBrush="{StaticResource TextColor}"
                             Click="ClearConsole_Click"
                             FontSize="9pt"
                             Content="콘솔 비우기" />
@@ -73,8 +85,11 @@
             </Grid>
         </Border>
 
-        <ListBox x:Name="listLog" 
-                 ItemsSource="{x:Static local:Logger.Logs}" 
+        <ListBox x:Name="listLog"
+                 Margin="12,0,12,12"
+                 BorderBrush="{StaticResource TextColor}"
+                 BorderThickness="1"
+                 ItemsSource="{x:Static local:Logger.Logs}"
                  ItemContainerStyle="{StaticResource NoFocusHighlight}"
                  materialDesign:RippleAssist.IsDisabled="True"
                  VirtualizingStackPanel.VirtualizationMode="Recycling">
@@ -85,28 +100,32 @@
                 <DataTemplate>
                     <Grid>
                         <Grid.Resources>
-                            <Style x:Key="errorColoredStyle" TargetType="FrameworkElement">
-                                <Setter Property="TextElement.Foreground" Value="Black" />
+                            <Style x:Key="errorColoredStyle"
+                                   TargetType="FrameworkElement">
+                                <Setter Property="TextElement.Foreground"
+                                        Value="Black" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Type}" Value="Error">
-                                        <Setter Property="TextElement.Foreground" Value="{StaticResource ErrorColor}"/>
+                                    <DataTrigger Binding="{Binding Type}"
+                                                 Value="Error">
+                                        <Setter Property="TextElement.Foreground"
+                                                Value="{StaticResource ErrorColor}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Grid.Resources>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock FontWeight="Bold"
                                    Margin="0,0,16,0"
-                                   Text="{Binding Time, StringFormat=HH:mm:ss.fff}"/>
+                                   Text="{Binding Time, StringFormat=HH:mm:ss.fff}" />
                         <TextBlock Grid.Column="1"
                                    Style="{StaticResource errorColoredStyle}"
                                    Margin="0,0,8,0"
                                    FontWeight="Bold"
-                                   Text="{Binding Type}"/>
+                                   Text="{Binding Type}" />
                         <TextBox Grid.Column="2"
                                  Style="{StaticResource errorColoredStyle}"
                                  BorderThickness="0"

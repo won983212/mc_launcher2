@@ -38,9 +38,9 @@ namespace Minecraft_Launcher_2.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public float MemorySize {
+        public int MemorySize {
             get {
-                return ((float)(this["MemorySize"]));
+                return ((int)(this["MemorySize"]));
             }
             set {
                 this["MemorySize"] = value;

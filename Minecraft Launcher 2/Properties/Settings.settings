@@ -5,7 +5,7 @@
     <Setting Name="APIServerLocation" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://won983212.iptime.org</Value>
     </Setting>
-    <Setting Name="MemorySize" Type="System.Single" Scope="User">
+    <Setting Name="MemorySize" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="MinecraftDir" Type="System.String" Scope="User">

@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3D8100C8-6059-4843-AC1D-B4FB843E46A9}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>Minecraft_Launcher_2</RootNamespace>
     <AssemblyName>Minecraft Launcher 2</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -108,6 +108,8 @@
       <DependentUpon>ServerSettingPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ViewModels\ErrorDialogVM.cs" />
+    <Compile Include="Validations\StringValidationRule.cs" />
+    <Compile Include="Validations\MemoryValidationRule.cs" />
     <Compile Include="Validations\VersionValidationRule.cs" />
     <Compile Include="ViewModels\ServerSettingPanelVM.cs" />
     <Compile Include="Dialogs\ViewModels\SettingDialogVM.cs" />

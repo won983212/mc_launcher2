@@ -40,7 +40,7 @@
                 </DockPanel.Resources>
 
                 <TextBlock DockPanel.Dock="Top"
-                   FontSize="12pt">API Server Management Panel</TextBlock>
+                           FontSize="12pt">API Server Management Panel</TextBlock>
 
                 <StackPanel DockPanel.Dock="Bottom"
                     Orientation="Horizontal"
