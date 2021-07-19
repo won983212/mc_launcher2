@@ -16,6 +16,41 @@
         KeyDown="Window_KeyDown"
         Width="854"
         Height="480">
+    <Window.Resources>
+        <Storyboard x:Key="Storyboard1">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"
+                                           Storyboard.TargetName="stackPanel">
+                <EasingDoubleKeyFrame KeyTime="0"
+                                      Value="-450">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <QuadraticEase EasingMode="EaseInOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5"
+                                      Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <QuarticEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                           Storyboard.TargetName="stackPanel">
+                <EasingDoubleKeyFrame KeyTime="0"
+                                      Value="0.3" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5"
+                                      Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <QuadraticEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource Storyboard1}" />
+        </EventTrigger>
+    </Window.Triggers>
     <Window.DataContext>
         <viewmodel:MainViewModel />
     </Window.DataContext>
@@ -27,9 +62,19 @@
             <controls:BackgroundImage />
 
             <!-- login panel -->
-            <StackPanel Orientation="Horizontal"
+            <StackPanel x:Name="stackPanel"
+                        Orientation="Horizontal"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+                        VerticalAlignment="Center"
+                        RenderTransformOrigin="0.5,0.5">
+                <StackPanel.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform />
+                        <SkewTransform />
+                        <RotateTransform />
+                        <TranslateTransform Y="-450" />
+                    </TransformGroup>
+                </StackPanel.RenderTransform>
                 <StackPanel.Effect>
                     <DropShadowEffect Color="#FF636363"
                                       BlurRadius="15"
@@ -96,7 +141,7 @@
                         Width="400"
                         Height="350">
                     <DockPanel HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
+                               VerticalAlignment="Center"
                                Height="250">
                         <StackPanel DockPanel.Dock="Top"
                                     Orientation="Horizontal"
@@ -111,7 +156,7 @@
                                        Margin="8,0"
                                        FontWeight="Light">Login</TextBlock>
                         </StackPanel>
-                        
+
                         <Button DockPanel.Dock="Bottom"
                                 md:ButtonAssist.CornerRadius="0"
                                 Width="120"

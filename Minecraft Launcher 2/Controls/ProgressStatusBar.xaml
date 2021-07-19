@@ -40,7 +40,7 @@
                             <BeginStoryboard>
                                 <Storyboard>
                                     <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                                                     Duration="0:0:0.5"
+                                                     Duration="0:0:0.4"
                                                      To="70">
                                         <DoubleAnimation.EasingFunction>
                                             <QuadraticEase EasingMode="EaseOut" />
@@ -53,7 +53,7 @@
                             <BeginStoryboard>
                                 <Storyboard>
                                     <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                                                     Duration="0:0:0.5"
+                                                     Duration="0:0:0.4"
                                                      To="0">
                                         <DoubleAnimation.EasingFunction>
                                             <QuadraticEase EasingMode="EaseOut" />

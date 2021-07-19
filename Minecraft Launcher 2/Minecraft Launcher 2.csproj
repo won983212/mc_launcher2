@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3D8100C8-6059-4843-AC1D-B4FB843E46A9}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>Minecraft_Launcher_2</RootNamespace>
     <AssemblyName>Minecraft Launcher 2</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -226,23 +226,15 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
-    <Resource Include="Resources\Fonts\Roboto-Black.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-BlackItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-Bold.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-BoldItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-Italic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-Light.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-LightItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-Medium.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-MediumItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-Regular.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-Thin.ttf" />
-    <Resource Include="Resources\Fonts\Roboto-ThinItalic.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Fonts\NotoSansKR-Bold.otf" />
+    <Resource Include="Resources\Fonts\NotoSansKR-Light.otf" />
+    <Resource Include="Resources\Fonts\NotoSansKR-Medium.otf" />
+    <Resource Include="Resources\Fonts\NotoSansKR-Regular.otf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

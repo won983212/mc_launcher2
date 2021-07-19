@@ -66,7 +66,7 @@ namespace Minecraft_Launcher_2.Updater
         private void UpdatePatchVersion()
         {
             string patchVersionPath = Path.Combine(settings.MinecraftDir, "version");
-            using (WebClient client = new WebClient())
+            using (WebClient client = new WebClient() { Encoding = System.Text.Encoding.UTF8 })
             {
                 string data = client.DownloadString(URLs.InfoFilePath);
                 JObject json = JObject.Parse(data);

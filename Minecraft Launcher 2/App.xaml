@@ -17,10 +17,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Fonts -->
-            <!-- <FontFamily x:Key="PrimaryFont">#Roboto</FontFamily> -->
-
-            <!-- For release version font -->
-            <FontFamily x:Key="PrimaryFont">pack://application:,,,/Resources/Fonts/#Roboto</FontFamily>
+            <FontFamily x:Key="PrimaryFont">pack://application:,,,/Resources/Fonts/#NotoSansKR</FontFamily>
 
             <!-- Converters -->
             <converter:EnumToIntConverter x:Key="EnumToIntConverter" />

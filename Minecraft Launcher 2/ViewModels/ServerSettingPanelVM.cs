@@ -47,6 +47,9 @@ namespace Minecraft_Launcher_2.ViewModels
             Settings setting = Settings.Default;
             string path = CommonUtils.SelectDirectory("API Server의 Root폴더 선택");
 
+            if (path == null)
+                return false;
+
             if (!IsVaildAPIServerDirectory(path))
             {
                 MessageBox.Show("선택한 폴더는 올바른 API Server폴더가 아닙니다.");

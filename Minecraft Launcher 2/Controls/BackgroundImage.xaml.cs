@@ -9,7 +9,7 @@ namespace Minecraft_Launcher_2.Controls
 {
     public partial class BackgroundImage : UserControl
     {
-        public const int CountPhoto = 3;
+        public const int CountPhoto = 5;
         private static readonly int[] _photoOrder = new int[CountPhoto];
         private static int _photoIdx = 0;
 
