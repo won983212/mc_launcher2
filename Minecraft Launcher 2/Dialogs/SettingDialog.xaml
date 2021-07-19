@@ -52,7 +52,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.Resources>
-                    <Style x:Key="LabelTextBlock" TargetType="{x:Type TextBlock}">
+                    <Style x:Key="LabelTextBlock"
+                           TargetType="{x:Type TextBlock}">
                         <Setter Property="FontSize"
                                 Value="10pt" />
                         <Setter Property="Margin"
@@ -63,12 +64,13 @@
                 </Grid.Resources>
 
                 <TextBlock Style="{StaticResource LabelTextBlock}">마인크래프트 폴더 위치</TextBlock>
-                <DockPanel Grid.Column="1" VerticalAlignment="Top">
+                <DockPanel Grid.Column="1"
+                           VerticalAlignment="Top">
                     <Button DockPanel.Dock="Right"
                             Content="..."
                             materialDesign:ButtonAssist.CornerRadius="0"
                             Command="{Binding FindMCDirectory}"
-                            Margin="8,0,0,0"/>
+                            Margin="8,0,0,0" />
                     <TextBox HorizontalAlignment="Stretch"
                              VerticalAlignment="Center"
                              BorderThickness="1"
@@ -134,25 +136,32 @@
                             TickPlacement="BottomRight"
                             IsSnapToTickEnabled="True"
                             VerticalAlignment="Center"
-                            Margin="0,0,16,0"/>
+                            Margin="0,0,16,0" />
                 </DockPanel>
 
                 <TextBlock Grid.Row="2"
                            Style="{StaticResource LabelTextBlock}">실행시 동작</TextBlock>
-                <StackPanel Grid.Row="2"
-                            Grid.Column="1"
-                            Orientation="Horizontal"
-                            VerticalAlignment="Top"
-                            Margin="0,8,0,0">
-                    <CheckBox Margin="0,0,16,0"
-                              IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}">
-                        콘솔에 Game Output 연결
-                    </CheckBox>
+                <DockPanel Grid.Row="2"
+                           Grid.Column="1"
+                           VerticalAlignment="Top">
+                    <TextBlock DockPanel.Dock="Bottom"
+                               FontSize="8pt"
+                               Margin="0,8,0,0"
+                               Foreground="{StaticResource TextColor}">
+                        콘솔에 Output 연결하면 게임 시작시 콘솔이 켜집니다. F12를 눌러도 콘솔을 열 수 있습니다.
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Top">
+                        <CheckBox Margin="0,0,16,0"
+                                  IsChecked="{Binding UseLogging, Source={x:Static properties:Settings.Default}}">
+                            콘솔에 Game Output 연결
+                        </CheckBox>
 
-                    <CheckBox IsChecked="{Binding AutoJoinServer, Source={x:Static properties:Settings.Default}}">
-                        서버 자동 접속
-                    </CheckBox>
-                </StackPanel>
+                        <CheckBox IsChecked="{Binding AutoJoinServer, Source={x:Static properties:Settings.Default}}">
+                            서버 자동 접속
+                        </CheckBox>
+                    </StackPanel>
+                </DockPanel>
 
                 <TextBlock Grid.Row="3"
                            Style="{StaticResource LabelTextBlock}">업데이트</TextBlock>

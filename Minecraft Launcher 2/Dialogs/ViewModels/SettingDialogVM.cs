@@ -62,14 +62,9 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
 
         public ICommand FindMCDirectory => new RelayCommand(() =>
         {
-            using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
-            {
-                fbd.Description = "마인크래프트 폴더 선택";
-                var result = fbd.ShowDialog();
-                if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                    return;
-                Settings.Default.MinecraftDir = fbd.SelectedPath;
-            }
+            string path = CommonUtils.SelectDirectory("마인크래프트 폴더 선택", Settings.Default.MinecraftDir);
+            if (path != null)
+                Settings.Default.MinecraftDir = path;
         });
     }
 }

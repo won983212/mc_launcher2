@@ -149,8 +149,6 @@ namespace Minecraft_Launcher_2.Launcher
                     OnExited?.Invoke(this, p.ExitCode);
                     _isRunning = false;
                 }
-                else
-                    Application.Current.Dispatcher.Invoke(() => Application.Current.Shutdown(0));
             }
             catch (Exception e)
             {

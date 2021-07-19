@@ -45,23 +45,17 @@ namespace Minecraft_Launcher_2.ViewModels
         private bool ResetAPIServerDirectory()
         {
             Settings setting = Settings.Default;
-            using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
+            string path = CommonUtils.SelectDirectory("API Server의 Root폴더 선택");
+
+            if (!IsVaildAPIServerDirectory(path))
             {
-                fbd.Description = "API Server의 Root폴더 선택";
-                var result = fbd.ShowDialog();
-                if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                    return true;
-
-                if (!IsVaildAPIServerDirectory(fbd.SelectedPath))
-                {
-                    MessageBox.Show("선택한 폴더는 올바른 API Server폴더가 아닙니다.");
-                    return true;
-                }
-
-                setting.APIServerDirectory = fbd.SelectedPath;
-                setting.Save();
+                MessageBox.Show("선택한 폴더는 올바른 API Server폴더가 아닙니다.");
+                return false;
             }
-            return false;
+
+            setting.APIServerDirectory = path;
+            setting.Save();
+            return true;
         }
 
         private void LoadServerInfo(string infoFilePath)
@@ -82,7 +76,7 @@ namespace Minecraft_Launcher_2.ViewModels
         {
             if (!IsShow)
             {
-                if (!IsVaildAPIServerDirectory(Settings.Default.APIServerDirectory) && ResetAPIServerDirectory())
+                if (!IsVaildAPIServerDirectory(Settings.Default.APIServerDirectory) && !ResetAPIServerDirectory())
                     return;
                 IsShow = true;
             }
@@ -104,23 +98,66 @@ namespace Minecraft_Launcher_2.ViewModels
             Version = Version.Split(new char[] { '@' }, 2)[0] + '@' + DateTime.Now.ToString("yyMMdd");
         }
 
+        private void UpgradeGameVersionImpl(string serverHtmlDir, string minecraftDir, string selectedProfile)
+        {
+            // extract json from target profile
+            string versionsDir = Path.Combine(minecraftDir, "versions");
+            string jsonPath = Path.Combine(versionsDir, selectedProfile, selectedProfile + ".json");
+            JObject cur = JObject.Parse(File.ReadAllText(jsonPath));
+
+            LaunchConfigContext launchConfig = new LaunchConfigContext();
+            Stack<JObject> stack = new Stack<JObject>();
+            stack.Push(cur);
+
+            while (cur.ContainsKey("inheritsFrom"))
+            {
+                string parentPath = Path.Combine(versionsDir, (string)cur["inheritsFrom"], cur["inheritsFrom"] + ".json");
+                JObject json = JObject.Parse(File.ReadAllText(parentPath));
+                stack.Push(json);
+                cur = json;
+            }
+
+            // merge all related jsons
+            while (stack.Count > 0)
+                launchConfig.DeserializeMinecraftJsonData(stack.Pop());
+
+            ProgressData.SetProgress("launch-config 작성중...", 20);
+
+            // write launch-config.json
+            File.WriteAllText(Path.Combine(serverHtmlDir, URLs.LauncherConfigFilename), launchConfig.Serialize().ToString());
+
+            string resourceDir = Path.Combine(serverHtmlDir, URLs.ResourceFolderName);
+            if (!Directory.Exists(resourceDir))
+                Directory.CreateDirectory(resourceDir);
+
+            ProgressData.SetProgress("복사할 library 폴더 검색중...", 30);
+
+            // Copy libraries
+            string libraryFolder = Path.Combine(resourceDir, "libraries");
+            CommonUtils.DeleteDirectory(libraryFolder);
+            CommonUtils.CopyDirectory(Path.Combine(minecraftDir, "libraries"), libraryFolder,
+                (arg) => ProgressData.SetProgress("Library 복사: " + arg.Status, 30 + arg.Progress * 0.7));
+
+            // copy minecraft.jar
+            ProgressData.SetProgress("minecraft.jar 복사중...", 100);
+            string minecraftFile = Path.Combine(resourceDir, "minecraft.jar");
+            if (File.Exists(minecraftFile))
+                File.Delete(minecraftFile);
+            File.Copy(Path.Combine(versionsDir, selectedProfile, selectedProfile + ".jar"), minecraftFile);
+        }
+
         private async Task<bool> UpgradeGameVersion()
         {
             try
             {
                 string serverHtmlPath = Settings.Default.APIServerDirectory;
                 string resourceDir = Path.Combine(serverHtmlPath, URLs.ResourceFolderName);
-                string minecraftDir = "";
 
-                using (var fbd = new System.Windows.Forms.FolderBrowserDialog())
-                {
-                    fbd.Description = "추출할 마인크래프트 폴더 선택";
-                    fbd.SelectedPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft");
-                    var result = fbd.ShowDialog();
-                    if (result != System.Windows.Forms.DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                        return false;
-                    minecraftDir = fbd.SelectedPath;
-                }
+                string minecraftDir = CommonUtils.SelectDirectory("추출할 마인크래프트 폴더 선택", 
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft"));
+
+                if (minecraftDir == null)
+                    return false;
 
                 string versionsDir = Path.Combine(minecraftDir, "versions");
                 if (!Directory.Exists(versionsDir))
@@ -139,52 +176,11 @@ namespace Minecraft_Launcher_2.ViewModels
                 ProgressData.IsShow = true;
                 ProgressData.SetProgress("프로필 병합중...", 0);
 
-                await Task.Run(() =>
-                {
-                    // extract json from target profile
-                    string jsonPath = Path.Combine(versionsDir, profileDirs[selected], profileDirs[selected] + ".json");
-                    JObject cur = JObject.Parse(File.ReadAllText(jsonPath));
-
-                    LaunchConfigContext launchConfig = new LaunchConfigContext();
-                    Stack<JObject> stack = new Stack<JObject>();
-                    stack.Push(cur);
-
-                    while (cur.ContainsKey("inheritsFrom"))
-                    {
-                        string parentPath = Path.Combine(versionsDir, (string)cur["inheritsFrom"], cur["inheritsFrom"] + ".json");
-                        JObject json = JObject.Parse(File.ReadAllText(parentPath));
-                        stack.Push(json);
-                        cur = json;
-                    }
-
-                    // merge all related jsons
-                    while (stack.Count > 0)
-                        launchConfig.DeserializeMinecraftJsonData(stack.Pop());
-
-                    ProgressData.SetProgress("launch-config 작성중...", 20);
-
-                    // write launch-config.json
-                    File.WriteAllText(Path.Combine(serverHtmlPath, URLs.LauncherConfigFilename), launchConfig.Serialize().ToString());
-
-                    if (!Directory.Exists(resourceDir))
-                        Directory.CreateDirectory(resourceDir);
-
-                    ProgressData.SetProgress("복사할 library 폴더 검색중...", 30);
-
-                    // Copy libraries, minecraft.jar
-                    string libraryFolder = Path.Combine(resourceDir, "libraries");
-                    CommonUtils.DeleteDirectory(libraryFolder);
-                    CommonUtils.CopyDirectory(Path.Combine(minecraftDir, "libraries"), libraryFolder,
-                        (arg) => ProgressData.SetProgress("Library 복사: " + arg.Status, 30 + arg.Progress * 0.7));
-
-                    ProgressData.SetProgress("minecraft.jar 복사중...", 100);
-                    string minecraftFile = Path.Combine(resourceDir, "minecraft.jar");
-                    if (File.Exists(minecraftFile))
-                        File.Delete(minecraftFile);
-                    File.Copy(Path.Combine(versionsDir, profileDirs[selected], profileDirs[selected] + ".jar"), minecraftFile);
-                });
+                await Task.Run(() => UpgradeGameVersionImpl(serverHtmlPath, minecraftDir, profileDirs[selected]));
 
                 ProgressData.IsShow = false;
+
+                // update file indexes
                 await GenerateIndexJson();
                 return true;
             }

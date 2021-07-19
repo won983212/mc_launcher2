@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater;
 using System;
@@ -55,6 +56,19 @@ namespace Minecraft_Launcher_2
             {
                 return false;
             }
+        }
+
+        public static string SelectDirectory(string title, string initialPath = "C:/users")
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.Title = title;
+            dialog.InitialDirectory = initialPath;
+            dialog.IsFolderPicker = true;
+
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok || string.IsNullOrWhiteSpace(dialog.FileName))
+                return null;
+
+            return dialog.FileName;
         }
 
         public static void CopyDirectory(string src, string dest, Action<ProgressArgs> onProcess = null)

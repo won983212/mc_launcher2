@@ -6,8 +6,10 @@ using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater;
 using Minecraft_Launcher_2.Updater.ServerConnections;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Minecraft_Launcher_2.ViewModels
 {
@@ -29,10 +31,12 @@ namespace Minecraft_Launcher_2.ViewModels
     {
         private readonly ServerDataContext _context;
         private bool _isManagementButtonActive = false;
+        private bool _isSplashActive = false;
 
         private string _signalIcon = "SignalOff";
         private ServerInfo _serverInfo;
 
+        private string _loginErrorMessage = "";
         private string _welcomeMessage = "Loading...";
         private string _startButtonText = "연결 중..";
         private LauncherState _launchState;
@@ -42,7 +46,6 @@ namespace Minecraft_Launcher_2.ViewModels
         {
             _context = new ServerDataContext();
             Updater = new UpdaterViewModel(_context);
-            SnackMessages = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
 
             APIServerInfoRetriever status = _context.Retriever;
             status.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
@@ -63,20 +66,46 @@ namespace Minecraft_Launcher_2.ViewModels
             string playerName = Settings.Default.PlayerName;
             if (string.IsNullOrWhiteSpace(playerName))
             {
-                AddErrorSnackbar("닉네임을 입력해주세요.");
+                LoginErrorMessage = "닉네임을 입력해주세요.";
                 return;
             }
             else if (!CommonUtils.IsLegalUsername(playerName))
             {
-                AddErrorSnackbar("닉네임은 영문, 숫자, 언더바(_)로만 구성해야합니다.");
+                LoginErrorMessage = "닉네임은 영문, 숫자, 언더바(_)로만 구성해야합니다.";
                 return;
             }
 
-            bool useAutoJoin = SignalIcon != "Loading" && SignalIcon != "SignalOff" && Settings.Default.AutoJoinServer;
+            LoginErrorMessage = "";
             if (_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
-                Updater.StartMinecraft(useAutoJoin);
+            {
+                GoStartingScreen();
+            }
             else
-                Updater.StartDownload(useAutoJoin).ContinueWith((t) => UpdateStartButton(false));
+            {
+                Updater.StartDownload().ContinueWith((t) =>
+                {
+                    UpdateStartButton(false);
+                    GoStartingScreen();
+                });
+            }
+        }
+
+        private async void GoStartingScreen()
+        {
+            IsSplashActive = true;
+
+            await Task.Delay(2000);
+            Updater.StartMinecraft(SignalIcon != "Loading" && SignalIcon != "SignalOff" && Settings.Default.AutoJoinServer);
+
+            if (Settings.Default.UseLogging)
+            {
+                if (App.Console != null)
+                    App.Console.Show();
+                return;
+            }
+
+            await Task.Delay(5000);
+            App.Current.Shutdown(0);
         }
 
         private bool CanStart(object parameter)
@@ -149,13 +178,6 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
-        public void AddErrorSnackbar(string message)
-        {
-            SnackMessages.Enqueue(message);
-        }
-
-
-        public SnackbarMessageQueue SnackMessages { get; private set; }
 
         public string WelcomeMessage
         {
@@ -199,10 +221,22 @@ namespace Minecraft_Launcher_2.ViewModels
             set => SetProperty(ref _startButtonText, value);
         }
 
+        public bool IsSplashActive
+        {
+            get => _isSplashActive;
+            set => SetProperty(ref _isSplashActive, value);
+        }
+
         public bool IsManagementButtonActive
         {
             get => _isManagementButtonActive;
             set => SetProperty(ref _isManagementButtonActive, value);
+        }
+
+        public string LoginErrorMessage
+        {
+            get => _loginErrorMessage;
+            set => SetProperty(ref _loginErrorMessage, value);
         }
 
 
@@ -215,11 +249,5 @@ namespace Minecraft_Launcher_2.ViewModels
         public ICommand OpenSettingDialogCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(), (vm, a) => UpdateStartButton(vm.UseForceUpdate)));
 
         public ICommand OpenServerSettingPanelCommand => new RelayCommand(ServerSettingPanelViewModel.Open);
-
-        public ICommand OpenConsoleCommand => new RelayCommand(() =>
-        {
-            if (App.Console != null)
-                App.Console.Show();
-        });
     }
 }

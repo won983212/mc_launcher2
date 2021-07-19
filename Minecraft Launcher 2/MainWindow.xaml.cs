@@ -17,5 +17,11 @@ namespace Minecraft_Launcher_2
         {
             Application.Current.Shutdown();
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F12 && App.Console != null)
+                App.Console.Show();
+        }
     }
 }

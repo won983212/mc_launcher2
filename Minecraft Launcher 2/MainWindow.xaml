@@ -10,10 +10,14 @@
         mc:Ignorable="d"
         WindowStyle="None"
         FontFamily="{StaticResource PrimaryFont}"
-        ResizeMode="NoResize" Title="Minecraft Launcher"
-        MouseDown="Window_MouseDown" Width="854" Height="480">
+        ResizeMode="NoResize"
+        Title="Minecraft Launcher"
+        MouseDown="Window_MouseDown"
+        KeyDown="Window_KeyDown"
+        Width="854"
+        Height="480">
     <Window.DataContext>
-        <viewmodel:MainViewModel/>
+        <viewmodel:MainViewModel />
     </Window.DataContext>
     <md:DialogHost Style="{StaticResource MaterialDesignEmbeddedDialogHost}"
                    Identifier="RootDialogHost"
@@ -23,141 +27,216 @@
             <controls:BackgroundImage />
 
             <!-- login panel -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
                 <StackPanel.Effect>
-                    <DropShadowEffect Color="#FF636363" BlurRadius="15" ShadowDepth="0" RenderingBias="Quality" Opacity="0.5"/>
+                    <DropShadowEffect Color="#FF636363"
+                                      BlurRadius="15"
+                                      ShadowDepth="0"
+                                      RenderingBias="Quality"
+                                      Opacity="0.5" />
                 </StackPanel.Effect>
                 <controls:MultiplexerPanel TextElement.Foreground="{StaticResource PrimaryContent}"
-                                           Width="250" Height="350"
+                                           Width="250"
+                                           Height="350"
                                            Background="{StaticResource BlueGradient}"
                                            ActiveChildIndex="{Binding ConnectionState, Converter={StaticResource EnumToIntConverter}}">
                     <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
                                  Foreground="White"
                                  Value="0"
                                  IsIndeterminate="True"
-                                 Width="40" Height="40"/>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock FontSize="28" HorizontalAlignment="Center" Margin="8">Welcome!</TextBlock>
-                        <TextBlock FontSize="12" HorizontalAlignment="Center" LineHeight="20" TextAlignment="Center" Text="{Binding WelcomeMessage}"/>
-                        <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
-                                BorderBrush="{StaticResource BorderColor}" Width="100" 
+                                 Width="40"
+                                 Height="40" />
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <TextBlock FontSize="28"
+                                   HorizontalAlignment="Center"
+                                   Margin="8">Welcome!</TextBlock>
+                        <TextBlock FontSize="12"
+                                   HorizontalAlignment="Center"
+                                   LineHeight="20"
+                                   TextAlignment="Center"
+                                   Text="{Binding WelcomeMessage}" />
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                BorderBrush="{StaticResource BorderColor}"
+                                Width="100"
                                 Foreground="{StaticResource PrimaryContent}"
                                 FontSize="8pt"
-                                Margin="50,8" 
+                                Margin="50,8"
                                 Command="{Binding OpenServerSettingPanelCommand}"
                                 Visibility="{Binding IsManagementButtonActive, Converter={StaticResource BooleanToVisibilityConverter}}">
                             관리
                         </Button>
                     </StackPanel>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="{Binding ConnectionErrorMessage}">
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ToolTip="{Binding ConnectionErrorMessage}">
                         <StackPanel Orientation="Horizontal">
-                            <md:PackIcon Kind="Warning" Width="20" Height="20" Margin="10" VerticalAlignment="Center" />
-                            <TextBlock FontSize="12" VerticalAlignment="Center">서버와 연결할 수 없습니다.</TextBlock>
+                            <md:PackIcon Kind="Warning"
+                                         Width="20"
+                                         Height="20"
+                                         Margin="10"
+                                         VerticalAlignment="Center" />
+                            <TextBlock FontSize="12"
+                                       VerticalAlignment="Center">서버와 연결할 수 없습니다.</TextBlock>
                         </StackPanel>
-                        <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
-                                BorderBrush="{StaticResource BorderColor}" Width="100" 
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                                BorderBrush="{StaticResource BorderColor}"
+                                Width="100"
                                 Foreground="{StaticResource PrimaryContent}"
                                 FontSize="8pt"
-                                Margin="50,10" 
+                                Margin="50,10"
                                 Command="{Binding ReconnectAPIServerCommand}">
                             재접속 시도
                         </Button>
                     </StackPanel>
                 </controls:MultiplexerPanel>
-                <Border Background="{StaticResource CardColor}" Width="400" Height="350">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" TextElement.Foreground="{StaticResource Primary}" Margin="0,0,0,10">
-                            <md:PackIcon Kind="Account" Width="32" Height="32"></md:PackIcon>
-                            <TextBlock FontSize="20pt" VerticalAlignment="Center"
-                                       Margin="8,0" FontWeight="Light">Login</TextBlock>
+                <Border Background="{StaticResource CardColor}"
+                        Width="400"
+                        Height="350">
+                    <DockPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                               Height="250">
+                        <StackPanel DockPanel.Dock="Top"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    TextElement.Foreground="{StaticResource Primary}"
+                                    Margin="0,0,0,10">
+                            <md:PackIcon Kind="Account"
+                                         Width="32"
+                                         Height="32"></md:PackIcon>
+                            <TextBlock FontSize="20pt"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0"
+                                       FontWeight="Light">Login</TextBlock>
                         </StackPanel>
-                        <TextBox md:HintAssist.Hint="닉네임" 
-                                 Width="300" 
-                                 Height="30"
-                                 VerticalContentAlignment="Center"
-                                 FontSize="10pt"
-                                 Margin="0,60" 
-                                 Text="{Binding PlayerName, Source={x:Static properties:Settings.Default}}">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
-                                    <Setter Property="IsEnabled" Value="True"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Updater.IsRunning}" Value="True">
-                                            <Setter Property="IsEnabled" Value="False"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-                        <Button md:ButtonAssist.CornerRadius="0" 
-                                Width="120" FontSize="12" 
-                                HorizontalAlignment="Right" 
+                        
+                        <Button DockPanel.Dock="Bottom"
+                                md:ButtonAssist.CornerRadius="0"
+                                Width="120"
+                                FontSize="12"
+                                HorizontalAlignment="Right"
                                 Content="{Binding StartButtonText}"
-                                Command="{Binding StartCommand}"/>
-                    </StackPanel>
+                                Command="{Binding StartCommand}" />
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBox md:HintAssist.Hint="닉네임"
+                                     Width="300"
+                                     Height="30"
+                                     VerticalContentAlignment="Center"
+                                     FontSize="10pt"
+                                     Text="{Binding PlayerName, Source={x:Static properties:Settings.Default}}">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox"
+                                           BasedOn="{StaticResource MaterialDesignTextBox}">
+                                        <Setter Property="IsEnabled"
+                                                Value="True" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Updater.IsRunning}"
+                                                         Value="True">
+                                                <Setter Property="IsEnabled"
+                                                        Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <TextBlock FontSize="8pt"
+                                       Margin="0,4,0,0"
+                                       Foreground="{StaticResource ErrorColor}"
+                                       Text="{Binding LoginErrorMessage}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding LoginErrorMessage}"
+                                                         Value="">
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </DockPanel>
                 </Border>
             </StackPanel>
 
             <!-- Download status bar -->
-            <controls:ProgressStatusBar HorizontalAlignment="Center" 
+            <controls:ProgressStatusBar HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom"
                                         Progress="{Binding Updater.ProgressData}"
                                         Margin="0,0,0,5" />
 
-            <!-- Top Snackbar -->
-            <md:Snackbar x:Name="ErrorSnackbar" 
-                         VerticalAlignment="Bottom"
-                         HorizontalAlignment="Right"
-                         Margin="16"
-                         Background="{StaticResource ErrorColor}" 
-                         Foreground="White" 
-                         MessageQueue="{Binding SnackMessages}">
-                <md:Snackbar.Resources>
-                    <Style BasedOn="{StaticResource {x:Type md:SnackbarMessage}}" TargetType="{x:Type md:SnackbarMessage}">
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                </md:Snackbar.Resources>
-            </md:Snackbar>
+            <!-- Splash screen -->
+            <controls:SplashIcon IsActive="{Binding IsSplashActive}" />
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
                 <!-- Signal button -->
-                <Button Width="30" Height="30"
+                <Button Width="30"
+                        Height="30"
                         Command="{Binding ReconnectMinecraftServerCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource MaterialDesignIconButton}">
                             <Setter Property="ToolTip">
                                 <Setter.Value>
                                     <StackPanel Margin="8,4">
-                                        <TextBlock Text="{Binding ServerInfo.Motd}" FontSize="12pt"/>
-                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                            <md:PackIcon Kind="AccountGroup" Margin="0,0,4,0" Width="16" Height="16" />
-                                            <TextBlock Text="{Binding ServerInfo.PlayerCount}" Margin="0,0,12,0"/>
-                                            <md:PackIcon Kind="SignalCellular3" Margin="0,0,4,0" Width="16" Height="16" />
-                                            <TextBlock Text="{Binding ServerInfo.Ping}"/>
+                                        <TextBlock Text="{Binding ServerInfo.Motd}"
+                                                   FontSize="12pt" />
+                                        <StackPanel Orientation="Horizontal"
+                                                    Margin="0,4,0,0">
+                                            <md:PackIcon Kind="AccountGroup"
+                                                         Margin="0,0,4,0"
+                                                         Width="16"
+                                                         Height="16" />
+                                            <TextBlock Text="{Binding ServerInfo.PlayerCount}"
+                                                       Margin="0,0,12,0" />
+                                            <md:PackIcon Kind="SignalCellular3"
+                                                         Margin="0,0,4,0"
+                                                         Width="16"
+                                                         Height="16" />
+                                            <TextBlock Text="{Binding ServerInfo.Ping}" />
                                         </StackPanel>
-                                        <Separator Margin="0,8"/>
-                                        <TextBlock Text="클릭시 새로고침합니다." HorizontalAlignment="Center"/>
+                                        <Separator Margin="0,8" />
+                                        <TextBlock Text="클릭시 새로고침합니다."
+                                                   HorizontalAlignment="Center" />
                                     </StackPanel>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding SignalIcon}" Value="SignalOff">
-                                    <Setter Property="ToolTip" Value="마인크래프트 서버가 닫혀있습니다. &#x0a;다시 연결시도를 하려면 클릭하세요." />
+                                <DataTrigger Binding="{Binding SignalIcon}"
+                                             Value="SignalOff">
+                                    <Setter Property="ToolTip"
+                                            Value="마인크래프트 서버가 닫혀있습니다. &#x0a;다시 연결시도를 하려면 클릭하세요." />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding SignalIcon}" Value="Loading">
-                                    <Setter Property="ToolTip" Value="마인크래프트 서버와 연결을 시도중입니다..." />
+                                <DataTrigger Binding="{Binding SignalIcon}"
+                                             Value="Loading">
+                                    <Setter Property="ToolTip"
+                                            Value="마인크래프트 서버와 연결을 시도중입니다..." />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
                     <Grid>
-                        <md:PackIcon Kind="{Binding SignalIcon}" Foreground="White" Width="18" Height="18">
+                        <md:PackIcon Kind="{Binding SignalIcon}"
+                                     Foreground="White"
+                                     Width="18"
+                                     Height="18">
                             <md:PackIcon.Style>
                                 <Style TargetType="md:PackIcon">
-                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SignalIcon}" Value="Loading">
-                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        <DataTrigger Binding="{Binding SignalIcon}"
+                                                     Value="Loading">
+                                            <Setter Property="Visibility"
+                                                    Value="Collapsed" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -165,13 +244,18 @@
                         </md:PackIcon>
                         <ProgressBar Foreground="White"
                                      IsIndeterminate="True"
-                                     Width="18" Height="18">
+                                     Width="18"
+                                     Height="18">
                             <ProgressBar.Style>
-                                <Style TargetType="ProgressBar" BasedOn="{StaticResource MaterialDesignCircularProgressBar}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                <Style TargetType="ProgressBar"
+                                       BasedOn="{StaticResource MaterialDesignCircularProgressBar}">
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SignalIcon}" Value="Loading">
-                                            <Setter Property="Visibility" Value="Visible" />
+                                        <DataTrigger Binding="{Binding SignalIcon}"
+                                                     Value="Loading">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -180,23 +264,33 @@
                     </Grid>
                 </Button>
 
-                <!-- Console button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="콘솔 열기" Command="{Binding OpenConsoleCommand}">
-                    <md:PackIcon Kind="Console" Foreground="White" Width="18" Height="18" />
-                </Button>
-
                 <!-- Config button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" ToolTip="설정" Command="{Binding OpenSettingDialogCommand}">
-                    <md:PackIcon Kind="Settings" Foreground="White" Width="18" Height="18" />
+                <Button Style="{StaticResource MaterialDesignIconButton}"
+                        Width="30"
+                        Height="30"
+                        ToolTip="설정"
+                        Command="{Binding OpenSettingDialogCommand}">
+                    <md:PackIcon Kind="Settings"
+                                 Foreground="White"
+                                 Width="18"
+                                 Height="18" />
                 </Button>
 
                 <!-- Exit button -->
-                <Button Style="{StaticResource MaterialDesignIconButton}" Click="Exit_Click" Width="30" Height="30" ToolTip="종료">
-                    <md:PackIcon Kind="Close" Foreground="White" Width="18" Height="18" />
+                <Button Style="{StaticResource MaterialDesignIconButton}"
+                        Click="Exit_Click"
+                        Width="30"
+                        Height="30"
+                        ToolTip="종료">
+                    <md:PackIcon Kind="Close"
+                                 Foreground="White"
+                                 Width="18"
+                                 Height="18" />
                 </Button>
             </StackPanel>
 
-            <local:ServerSettingPanel xmlns:local="clr-namespace:Minecraft_Launcher_2" DataContext="{Binding ServerSettingPanelViewModel}" />
+            <local:ServerSettingPanel xmlns:local="clr-namespace:Minecraft_Launcher_2"
+                                      DataContext="{Binding ServerSettingPanelViewModel}" />
         </Grid>
     </md:DialogHost>
 </Window>

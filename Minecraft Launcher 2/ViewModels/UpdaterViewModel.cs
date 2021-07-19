@@ -31,14 +31,9 @@ namespace Minecraft_Launcher_2.Updater
 
             await _launcher.Start();
             IsRunning = false;
-
-            if (Settings.Default.UseLogging)
-                return;
-
-            App.Current.Shutdown(0);
         }
 
-        public async Task StartDownload(bool useAutoJoin)
+        public async Task<bool> StartDownload()
         {
             IsRunning = true;
             ProgressData.IsShow = true;
@@ -58,23 +53,21 @@ namespace Minecraft_Launcher_2.Updater
                 MessageBox.Show(e.Message, "업데이트 실패", MessageBoxButton.OK, MessageBoxImage.Error);
                 Logger.Error(e);
                 IsRunning = false;
-                return;
+                return false;
             }
             finally
             {
                 ProgressData.IsShow = false;
             }
 
+            IsRunning = false;
             if (failed > 0)
             {
                 MessageBoxResult res = MessageBox.Show("파일 " + failed + "개를 받지 못했습니다. 그래도 실행합니까?", "주의", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (res == MessageBoxResult.Yes)
-                    StartMinecraft(useAutoJoin);
-                else
-                    IsRunning = false;
+                if (res != MessageBoxResult.Yes)
+                    return false;
             }
-            else
-                StartMinecraft(useAutoJoin);
+            return true;
         }
 
         private void Updater_OnProgress(object sender, ProgressArgs e)
