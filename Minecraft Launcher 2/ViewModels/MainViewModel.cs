@@ -1,5 +1,4 @@
-﻿using MaterialDesignThemes.Wpf;
-using Minecraft_Launcher_2.Dialogs.ViewModels;
+﻿using Minecraft_Launcher_2.Dialogs.ViewModels;
 using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.ServerConnections;
@@ -9,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
+using System.Linq;
 
 namespace Minecraft_Launcher_2.ViewModels
 {
@@ -101,10 +100,17 @@ namespace Minecraft_Launcher_2.ViewModels
             {
                 if (App.Console != null)
                     App.Console.Show();
-                return;
             }
 
             await Task.Delay(5000);
+
+            if (Settings.Default.UseLogging)
+            {
+                App.Current.Windows.OfType<Window>().Where((wnd) => wnd.Title == "Minecraft Launcher").Single().Close();
+                App.Console.UseCloseShutdown = true;
+                return;
+            }
+
             App.Current.Shutdown(0);
         }
 

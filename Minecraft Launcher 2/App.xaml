@@ -7,6 +7,7 @@
              xmlns:dialogvm="clr-namespace:Minecraft_Launcher_2.Dialogs.ViewModels"
              DispatcherUnhandledException="Application_DispatcherUnhandledException"
              Startup="Application_Startup"
+             ShutdownMode="OnLastWindowClose"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

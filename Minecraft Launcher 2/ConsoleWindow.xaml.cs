@@ -43,6 +43,8 @@ namespace Minecraft_Launcher_2
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            if (UseCloseShutdown)
+                return;
             e.Cancel = true;
             Visibility = Visibility.Hidden;
         }
@@ -90,5 +92,8 @@ namespace Minecraft_Launcher_2
         {
             UpdateFilter(tbxFilter.Text, chbOnlyDisplayError.IsChecked == true);
         }
+
+
+        public bool UseCloseShutdown { get; set; } = false;
     }
 }

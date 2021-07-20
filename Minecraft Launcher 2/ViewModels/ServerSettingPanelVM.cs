@@ -156,7 +156,7 @@ namespace Minecraft_Launcher_2.ViewModels
                 string serverHtmlPath = Settings.Default.APIServerDirectory;
                 string resourceDir = Path.Combine(serverHtmlPath, URLs.ResourceFolderName);
 
-                string minecraftDir = CommonUtils.SelectDirectory("추출할 마인크래프트 폴더 선택", 
+                string minecraftDir = CommonUtils.SelectDirectory("추출할 마인크래프트 폴더 선택",
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft"));
 
                 if (minecraftDir == null)
