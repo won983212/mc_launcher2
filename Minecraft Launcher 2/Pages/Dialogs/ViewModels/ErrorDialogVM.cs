@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace Minecraft_Launcher_2.Dialogs.ViewModels
+namespace Minecraft_Launcher_2.Pages.Dialogs.ViewModels
 {
     public class ErrorDialogVM : ObservableObject
     {
@@ -20,16 +20,6 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
             FullMessage = e.ToString();
         }
 
-        private void ShowDetail()
-        {
-            if (FullMessage != null)
-            {
-                MessageBoxResult res = MessageBox.Show("발생한 오류의 모든 내용을 복사하시겠습니까?", "복사", MessageBoxButton.YesNo);
-                if (res == MessageBoxResult.Yes)
-                    Clipboard.SetText(FullMessage);
-            }
-        }
-
         public string Title { get; set; }
 
         public string Message { get; set; }
@@ -39,5 +29,15 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
         public bool HasFullMessage => FullMessage != null;
 
         public ICommand ShowDetailCommand => new RelayCommand(ShowDetail);
+
+        private void ShowDetail()
+        {
+            if (FullMessage != null)
+            {
+                var res = MessageBox.Show("발생한 오류의 모든 내용을 복사하시겠습니까?", "복사", MessageBoxButton.YesNo);
+                if (res == MessageBoxResult.Yes)
+                    Clipboard.SetText(FullMessage);
+            }
+        }
     }
 }

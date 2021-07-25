@@ -132,8 +132,7 @@
                                  Background="Transparent"
                                  IsReadOnly="True"
                                  TextWrapping="Wrap"
-                                 Text="{Binding Message, Mode=OneWay}">
-                        </TextBox>
+                                 Text="{Binding Message, Mode=OneWay}" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

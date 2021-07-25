@@ -11,7 +11,21 @@ namespace Minecraft_Launcher_2.Controls
     {
         public const int CountPhoto = 5;
         private static readonly int[] _photoOrder = new int[CountPhoto];
-        private static int _photoIdx = 0;
+        private static int _photoIdx;
+
+        static BackgroundImage()
+        {
+            var r = new Random();
+            for (var i = 0; i < CountPhoto; i++)
+                _photoOrder[i] = i;
+            for (var i = 0; i < CountPhoto - 1; i++)
+            {
+                var j = r.Next(i, CountPhoto);
+                var t = _photoOrder[j];
+                _photoOrder[j] = _photoOrder[i];
+                _photoOrder[i] = t;
+            }
+        }
 
         public BackgroundImage()
         {
@@ -20,7 +34,7 @@ namespace Minecraft_Launcher_2.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            DispatcherTimer timer = new DispatcherTimer();
+            var timer = new DispatcherTimer();
             timer.Tick += Timer_Tick;
             timer.Interval = TimeSpan.FromSeconds(30);
             timer.Start();
@@ -33,27 +47,14 @@ namespace Minecraft_Launcher_2.Controls
             _photoIdx = (_photoIdx + 1) % CountPhoto;
             SetBackground(imgBg, _photoIdx);
 
-            DoubleAnimation animation = new DoubleAnimation(1, 0, TimeSpan.FromSeconds(0.3));
+            var animation = new DoubleAnimation(1, 0, TimeSpan.FromSeconds(0.3));
             imgTransition.BeginAnimation(OpacityProperty, animation);
         }
 
         private void SetBackground(Image img, int idx)
         {
-            img.Source = new BitmapImage(new Uri("../Resources/background" + _photoOrder[idx] + ".png", UriKind.Relative));
-        }
-
-        static BackgroundImage()
-        {
-            Random r = new Random();
-            for (int i = 0; i < CountPhoto; i++)
-                _photoOrder[i] = i;
-            for (int i = 0; i < CountPhoto - 1; i++)
-            {
-                int j = r.Next(i, CountPhoto);
-                int t = _photoOrder[j];
-                _photoOrder[j] = _photoOrder[i];
-                _photoOrder[i] = t;
-            }
+            img.Source =
+                new BitmapImage(new Uri("../Resources/background" + _photoOrder[idx] + ".png", UriKind.Relative));
         }
     }
 }

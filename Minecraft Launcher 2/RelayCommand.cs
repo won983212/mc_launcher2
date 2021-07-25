@@ -5,12 +5,13 @@ namespace Minecraft_Launcher_2
 {
     public class RelayCommand<T> : ICommand
     {
-        private readonly Action<T> execute;
         private readonly Predicate<T> canExecute;
+        private readonly Action<T> execute;
 
         public RelayCommand(Action<T> execute)
             : this(execute, null)
-        { }
+        {
+        }
 
         public RelayCommand(Action<T> execute, Predicate<T> canExecute)
         {
@@ -26,23 +27,24 @@ namespace Minecraft_Launcher_2
 
         public bool CanExecute(object parameter)
         {
-            return canExecute == null || parameter == null || canExecute((T)parameter);
+            return canExecute == null || parameter == null || canExecute((T) parameter);
         }
 
         public void Execute(object parameter)
         {
-            execute((T)parameter);
+            execute((T) parameter);
         }
     }
 
     public class RelayCommand : ICommand
     {
-        private readonly Action execute;
         private readonly Predicate<object> canExecute;
+        private readonly Action execute;
 
         public RelayCommand(Action execute)
             : this(execute, null)
-        { }
+        {
+        }
 
         public RelayCommand(Action execute, Predicate<object> canExecute)
         {

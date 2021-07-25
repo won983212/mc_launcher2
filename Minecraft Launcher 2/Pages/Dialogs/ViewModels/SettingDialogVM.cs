@@ -1,8 +1,8 @@
-﻿using Minecraft_Launcher_2.Properties;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
+using Minecraft_Launcher_2.Properties;
 
-namespace Minecraft_Launcher_2.Dialogs.ViewModels
+namespace Minecraft_Launcher_2.Pages.Dialogs.ViewModels
 {
     public class SettingDialogVM : ObservableObject
     {
@@ -12,15 +12,6 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
         {
             MaxMemory = CommonUtils.GetTotalMemorySizeGB();
             UpdateMemoryAlertText();
-        }
-
-
-        private void UpdateMemoryAlertText()
-        {
-            if (MemorySize > MaxMemory / 2)
-                MemorySizeAlertText = "주의! 전체 메모리의 절반이 넘게 할당하면 오히려 성능이 하락할 수 있습니다.";
-            else
-                MemorySizeAlertText = "";
         }
 
 
@@ -41,9 +32,9 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
             }
         }
 
-        public int MaxMemory { get; private set; }
+        public int MaxMemory { get; }
 
-        public bool UseForceUpdate { get; set; } = false;
+        public bool UseForceUpdate { get; set; }
 
         public ICommand SaveCommand => new RelayCommand(() =>
         {
@@ -62,9 +53,18 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
 
         public ICommand FindMCDirectory => new RelayCommand(() =>
         {
-            string path = CommonUtils.SelectDirectory("마인크래프트 폴더 선택", Settings.Default.MinecraftDir);
+            var path = CommonUtils.SelectDirectory("마인크래프트 폴더 선택", Settings.Default.MinecraftDir);
             if (path != null)
                 Settings.Default.MinecraftDir = path;
         });
+
+
+        private void UpdateMemoryAlertText()
+        {
+            if (MemorySize > MaxMemory / 2)
+                MemorySizeAlertText = "주의! 전체 메모리의 절반이 넘게 할당하면 오히려 성능이 하락할 수 있습니다.";
+            else
+                MemorySizeAlertText = "";
+        }
     }
 }

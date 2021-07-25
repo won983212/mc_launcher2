@@ -1,11 +1,11 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.Win32;
 
 namespace Minecraft_Launcher_2
 {
@@ -14,9 +14,12 @@ namespace Minecraft_Launcher_2
         public ConsoleWindow()
         {
             InitializeComponent();
-            ((INotifyCollectionChanged)listLog.Items).CollectionChanged += ConsoleWindow_CollectionChanged;
+            ((INotifyCollectionChanged) listLog.Items).CollectionChanged += ConsoleWindow_CollectionChanged;
             UpdateFilter(tbxFilter.Text, chbOnlyDisplayError.IsChecked == true);
         }
+
+
+        public bool UseCloseShutdown { get; set; } = false;
 
         private void ScrollToEnd()
         {
@@ -26,10 +29,10 @@ namespace Minecraft_Launcher_2
 
         private void UpdateFilter(string filter, bool onlyDisplayError)
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(Logger.Logs);
-            view.Filter = (o) =>
+            var view = CollectionViewSource.GetDefaultView(Logger.Logs);
+            view.Filter = o =>
             {
-                LogMessage log = (LogMessage)o;
+                var log = (LogMessage) o;
                 if (onlyDisplayError && log.Type != LogType.Error)
                     return false;
 
@@ -62,17 +65,18 @@ namespace Minecraft_Launcher_2
 
         private void SaveConsole_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog { FileName = "console_log.txt" };
+            var dialog = new SaveFileDialog {FileName = "console_log.txt"};
 
             if (dialog.ShowDialog() == true)
             {
-                using (StreamWriter writer = new StreamWriter(new FileStream(dialog.FileName, FileMode.Create)))
+                using (var writer = new StreamWriter(new FileStream(dialog.FileName, FileMode.Create)))
                 {
-                    foreach (LogMessage message in Logger.Logs)
+                    foreach (var message in Logger.Logs)
                     {
-                        writer.WriteLine("[" + message.Type.ToString() + "] " + message.Message);
+                        writer.WriteLine("[" + message.Type + "] " + message.Message);
                     }
                 }
+
                 MessageBox.Show("저장되었습니다.");
             }
         }
@@ -92,8 +96,5 @@ namespace Minecraft_Launcher_2
         {
             UpdateFilter(tbxFilter.Text, chbOnlyDisplayError.IsChecked == true);
         }
-
-
-        public bool UseCloseShutdown { get; set; } = false;
     }
 }

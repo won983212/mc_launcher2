@@ -18,8 +18,9 @@
         Height="480">
     <Window.Resources>
         <Storyboard x:Key="Storyboard1">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"
-                                           Storyboard.TargetName="stackPanel">
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"
+                Storyboard.TargetName="stackPanel">
                 <EasingDoubleKeyFrame KeyTime="0"
                                       Value="-450">
                     <EasingDoubleKeyFrame.EasingFunction>
@@ -97,7 +98,9 @@
                                 VerticalAlignment="Center">
                         <TextBlock FontSize="28"
                                    HorizontalAlignment="Center"
-                                   Margin="8">Welcome!</TextBlock>
+                                   Margin="8">
+                            Welcome!
+                        </TextBlock>
                         <TextBlock FontSize="12"
                                    HorizontalAlignment="Center"
                                    LineHeight="20"
@@ -124,7 +127,9 @@
                                          Margin="10"
                                          VerticalAlignment="Center" />
                             <TextBlock FontSize="12"
-                                       VerticalAlignment="Center">서버와 연결할 수 없습니다.</TextBlock>
+                                       VerticalAlignment="Center">
+                                서버와 연결할 수 없습니다.
+                            </TextBlock>
                         </StackPanel>
                         <Button Style="{StaticResource MaterialDesignOutlinedButton}"
                                 BorderBrush="{StaticResource BorderColor}"
@@ -150,11 +155,13 @@
                                     Margin="0,0,0,10">
                             <md:PackIcon Kind="Account"
                                          Width="32"
-                                         Height="32"></md:PackIcon>
+                                         Height="32" />
                             <TextBlock FontSize="20pt"
                                        VerticalAlignment="Center"
                                        Margin="8,0"
-                                       FontWeight="Light">Login</TextBlock>
+                                       FontWeight="Light">
+                                Login
+                            </TextBlock>
                         </StackPanel>
 
                         <Button DockPanel.Dock="Bottom"

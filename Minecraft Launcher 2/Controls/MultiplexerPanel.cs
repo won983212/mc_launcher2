@@ -6,13 +6,16 @@ namespace Minecraft_Launcher_2.Controls
 {
     internal class MultiplexerPanel : Panel
     {
-        public static readonly DependencyProperty ActiveChildIndexProperty = DependencyProperty.Register("ActiveChildIndex",
-            typeof(int), typeof(MultiplexerPanel), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsArrange, OnActiveChildIndexChanged));
+        public static readonly DependencyProperty ActiveChildIndexProperty = DependencyProperty.Register(
+            "ActiveChildIndex",
+            typeof(int), typeof(MultiplexerPanel),
+            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsArrange,
+                OnActiveChildIndexChanged));
 
         public int ActiveChildIndex
         {
-            get => (int)GetValue(ActiveChildIndexProperty);
-            set { SetValue(ActiveChildIndexProperty, value); }
+            get => (int) GetValue(ActiveChildIndexProperty);
+            set => SetValue(ActiveChildIndexProperty, value);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -24,7 +27,7 @@ namespace Minecraft_Launcher_2.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Rect rect = new Rect(0, 0, finalSize.Width, finalSize.Height);
+            var rect = new Rect(0, 0, finalSize.Width, finalSize.Height);
             foreach (UIElement child in InternalChildren)
                 child.Arrange(rect);
             return finalSize;
@@ -44,6 +47,7 @@ namespace Minecraft_Launcher_2.Controls
             {
                 InternalChildren[oldValue].Visibility = Visibility.Collapsed;
             }
+
             if (InternalChildren.Count > newValue)
             {
                 InternalChildren[newValue].Visibility = Visibility.Visible;
@@ -52,8 +56,8 @@ namespace Minecraft_Launcher_2.Controls
 
         private static void OnActiveChildIndexChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            MultiplexerPanel panel = sender as MultiplexerPanel;
-            panel.UpdateVisibility((int)e.OldValue, (int)e.NewValue);
+            var panel = sender as MultiplexerPanel;
+            panel.UpdateVisibility((int) e.OldValue, (int) e.NewValue);
         }
     }
 }

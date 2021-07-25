@@ -1,31 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Minecraft_Launcher_2
 {
     public enum LogType
     {
-        Info, Error, Debug
+        Info,
+        Error,
+        Debug
     }
 
     public class LogMessage
     {
-        public DateTime Time { get; }
-        public LogType Type { get; }
-        public string Message { get; }
-
         internal LogMessage(LogType type, string message)
         {
             Time = DateTime.Now;
             Type = type;
             Message = message;
         }
+
+        public DateTime Time { get; }
+        public LogType Type { get; }
+        public string Message { get; }
     }
 
     public static class Logger
     {
         private static readonly ObservableCollection<LogMessage> _logs = new ObservableCollection<LogMessage>();
+
+        public static IEnumerable<LogMessage> Logs => _logs;
 
         public static void Info(object data)
         {
@@ -44,8 +49,8 @@ namespace Minecraft_Launcher_2
 
         private static void AppendLog(LogType type, object data)
         {
-            Console.WriteLine("[" + type.ToString() + "] " + (data ?? "null"));
-            App.Current.Dispatcher.Invoke(() =>
+            Console.WriteLine("[" + type + "] " + (data ?? "null"));
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 _logs.Add(new LogMessage(type, (data ?? "null").ToString()));
             });
@@ -55,7 +60,5 @@ namespace Minecraft_Launcher_2
         {
             _logs.Clear();
         }
-
-        public static IEnumerable<LogMessage> Logs => _logs;
     }
 }

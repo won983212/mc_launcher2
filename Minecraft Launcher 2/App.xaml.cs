@@ -1,6 +1,7 @@
-﻿using Minecraft_Launcher_2.Dialogs.ViewModels;
+﻿using System.Windows;
+using System.Windows.Threading;
+using Minecraft_Launcher_2.Pages.Dialogs.ViewModels;
 using Minecraft_Launcher_2.ViewModels;
-using System.Windows;
 
 namespace Minecraft_Launcher_2
 {
@@ -8,14 +9,15 @@ namespace Minecraft_Launcher_2
     {
         public static ConsoleWindow Console { get; private set; }
 
-        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MainViewModel vmodel = Current.MainWindow.DataContext as MainViewModel;
+            var vmodel = Current.MainWindow.DataContext as MainViewModel;
             if (vmodel != null)
             {
                 CommonUtils.ShowDialog(new ErrorDialogVM(e.Exception));
                 e.Handled = true;
             }
+
             Logger.Error(e.Exception);
         }
 

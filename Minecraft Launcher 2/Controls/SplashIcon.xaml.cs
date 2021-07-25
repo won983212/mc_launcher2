@@ -16,22 +16,22 @@ namespace Minecraft_Launcher_2.Controls
             InitializeComponent();
         }
 
-        private static void IsActiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue)
-            {
-                SplashIcon comp = (SplashIcon)d;
-                Storyboard sb = comp.FindResource("Storyboard1") as Storyboard;
-                if (sb != null)
-                    comp.BeginStoryboard(sb);
-            }
-        }
-
 
         public bool IsActive
         {
-            get => (bool)GetValue(IsActiveProperty);
+            get => (bool) GetValue(IsActiveProperty);
             set => SetValue(IsActiveProperty, value);
+        }
+
+        private static void IsActiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool) e.NewValue)
+            {
+                var comp = (SplashIcon) d;
+                var sb = comp.FindResource("Storyboard1") as Storyboard;
+                if (sb != null)
+                    comp.BeginStoryboard(sb);
+            }
         }
     }
 }

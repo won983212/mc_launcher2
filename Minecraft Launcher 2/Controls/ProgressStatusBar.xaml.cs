@@ -8,30 +8,23 @@ namespace Minecraft_Launcher_2.Controls
         public static readonly DependencyProperty ProgressProperty =
             DependencyProperty.Register("Progress", typeof(ProgressStatus), typeof(ProgressStatusBar));
 
-        public ProgressStatus Progress
-        {
-            get => (ProgressStatus)GetValue(ProgressProperty);
-            set { SetValue(ProgressProperty, value); }
-        }
-
         public ProgressStatusBar()
         {
             InitializeComponent();
+        }
+
+        public ProgressStatus Progress
+        {
+            get => (ProgressStatus) GetValue(ProgressProperty);
+            set => SetValue(ProgressProperty, value);
         }
     }
 
     public class ProgressStatus : ObservableObject
     {
-        private bool _isShow = false;
+        private bool _isShow;
+        private double _progress;
         private string _status = "";
-        private double _progress = 0;
-
-
-        public void SetProgress(string status, double progress)
-        {
-            Status = status;
-            Progress = progress;
-        }
 
 
         public double Progress
@@ -50,6 +43,13 @@ namespace Minecraft_Launcher_2.Controls
         {
             get => _isShow;
             set => SetProperty(ref _isShow, value);
+        }
+
+
+        public void SetProgress(string status, double progress)
+        {
+            Status = status;
+            Progress = progress;
         }
     }
 }

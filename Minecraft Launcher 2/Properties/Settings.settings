@@ -3,25 +3,28 @@
   <Profiles />
   <Settings>
     <Setting Name="APIServerLocation" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://won983212.iptime.org</Value>
+      <Value Profile="(Default)">http://won983212.iptime.org:12654</Value>
     </Setting>
-    <Setting Name="MemorySize" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
-    <Setting Name="MinecraftDir" Type="System.String" Scope="User">
+    <Setting Name="APIServerDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="UseLogging" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MinecraftServerIP" Type="System.String" Scope="User">
       <Value Profile="(Default)">won983212.iptime.org</Value>
     </Setting>
-    <Setting Name="FolderName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">loot_server</Value>
-    </Setting>
     <Setting Name="MinecraftServerPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">25565</Value>
+    </Setting>
+    <Setting Name="MinecraftDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MemorySize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="UseLogging" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="FolderName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">loot_server</Value>
     </Setting>
     <Setting Name="PlayerName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -31,9 +34,6 @@
     </Setting>
     <Setting Name="UseAutoRefreshVersion" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="APIServerDirectory" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

@@ -2,7 +2,9 @@
 {
     public enum RetrieveState
     {
-        Processing, Loaded, Error
+        Processing,
+        Loaded,
+        Error
     }
 
     public class ConnectionState

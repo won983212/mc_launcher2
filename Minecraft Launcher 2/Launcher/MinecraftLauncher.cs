@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Minecraft_Launcher_2.Properties;
+using Newtonsoft.Json.Linq;
 
 namespace Minecraft_Launcher_2.Launcher
 {
@@ -17,33 +18,42 @@ namespace Minecraft_Launcher_2.Launcher
             _context = context;
         }
 
+        public LaunchConfigContext LaunchConfig { get; private set; }
+
+        public string MinecraftVersion { get; private set; }
+
         public void Load(string settingFile)
         {
-            string data = File.ReadAllText(settingFile);
+            var data = File.ReadAllText(settingFile);
             _context.ReadInstalledPatchVersion();
             LaunchConfig = new LaunchConfigContext(JObject.Parse(data));
             MinecraftVersion = _context.InstalledVersion.Split('@')[0];
         }
-
-        public LaunchConfigContext LaunchConfig { get; private set; }
-
-        public string MinecraftVersion { get; private set; }
     }
 
     public class MinecraftLauncher
     {
-        private static readonly Properties.Settings settings = Properties.Settings.Default;
-        private volatile bool _isRunning = false;
-
-        public event EventHandler<string> OnLog;
-        public event EventHandler<string> OnError;
-        public event EventHandler<int> OnExited;
+        private static readonly Settings settings = Settings.Default;
+        private volatile bool _isRunning;
 
 
         public MinecraftLauncher(ServerDataContext context)
         {
             Context = context;
         }
+
+
+        public string PlayerName { get; set; } = "Unnamed";
+
+        public bool IsRunning => _isRunning;
+
+        public ServerDataContext Context { get; }
+
+        public bool IsAutoJoin { get; set; }
+
+        public event EventHandler<string> OnLog;
+        public event EventHandler<string> OnError;
+        public event EventHandler<int> OnExited;
 
 
         private string GetParsedArguments(string arg, LaunchSetting launchSettings)
@@ -66,22 +76,23 @@ namespace Minecraft_Launcher_2.Launcher
         private string GetArguments()
         {
             Log("Extracting launcher info....");
-            LaunchSetting launchSettings = new LaunchSetting(Context);
+            var launchSettings = new LaunchSetting(Context);
             launchSettings.Load(Path.Combine(settings.MinecraftDir, "launch-config.json"));
 
             Log("Building arguments....");
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append('\"');
-            foreach (Library lib in launchSettings.LaunchConfig.Libraries)
+            foreach (var lib in launchSettings.LaunchConfig.Libraries)
             {
                 sb.Append(lib.GetPath());
                 sb.Append(';');
             }
+
             sb.Append(Path.Combine(settings.MinecraftDir, "minecraft.jar"));
             sb.Append('\"');
 
-            string classpath = sb.ToString();
+            var classpath = sb.ToString();
             sb = new StringBuilder();
             sb.Append("-Xmx");
             sb.Append(settings.MemorySize);
@@ -114,8 +125,8 @@ namespace Minecraft_Launcher_2.Launcher
             _isRunning = true;
             try
             {
-                Process p = new Process();
-                ProcessStartInfo info = new ProcessStartInfo();
+                var p = new Process();
+                var info = new ProcessStartInfo();
 
                 info.FileName = "java";
                 info.Arguments = GetArguments();
@@ -164,14 +175,5 @@ namespace Minecraft_Launcher_2.Launcher
         {
             OnError?.Invoke(this, str);
         }
-
-
-        public string PlayerName { get; set; } = "Unnamed";
-
-        public bool IsRunning => _isRunning;
-
-        public ServerDataContext Context { get; }
-
-        public bool IsAutoJoin { get; set; }
     }
 }

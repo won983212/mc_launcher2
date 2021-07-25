@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converter="clr-namespace:Minecraft_Launcher_2.Converters"
-             xmlns:dialog="clr-namespace:Minecraft_Launcher_2.Dialogs"
-             xmlns:dialogvm="clr-namespace:Minecraft_Launcher_2.Dialogs.ViewModels"
+             xmlns:dialogvm="clr-namespace:Minecraft_Launcher_2.Pages.Dialogs.ViewModels"
+             xmlns:dialogs="clr-namespace:Minecraft_Launcher_2.Pages.Dialogs"
              DispatcherUnhandledException="Application_DispatcherUnhandledException"
              Startup="Application_Startup"
              ShutdownMode="OnLastWindowClose"
@@ -13,7 +13,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <md:BundledTheme BaseTheme="Light" PrimaryColor="Indigo" SecondaryColor="DeepOrange" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary Source="Themes/Theme.Light.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
@@ -27,13 +28,13 @@
 
             <!-- DataTemplates -->
             <DataTemplate DataType="{x:Type dialogvm:ErrorDialogVM}">
-                <dialog:ErrorDialog />
+                <dialogs:ErrorDialog />
             </DataTemplate>
             <DataTemplate DataType="{x:Type dialogvm:SettingDialogVM}">
-                <dialog:SettingDialog />
+                <dialogs:SettingDialog />
             </DataTemplate>
             <DataTemplate DataType="{x:Type dialogvm:ComboMessageBoxVM}">
-                <dialog:ComboMessageBox />
+                <dialogs:ComboMessageBox />
             </DataTemplate>
 
             <!-- Styles -->
@@ -42,20 +43,27 @@
                 <Setter Property="Background" Value="{DynamicResource CardColor}" />
                 <Setter Property="Padding" Value="6" />
                 <Setter Property="Placement" Value="Custom" />
-                <Setter Property="CustomPopupPlacementCallback" Value="{x:Static md:ToolTipAssist.CustomPopupPlacementCallback}" />
+                <Setter Property="CustomPopupPlacementCallback"
+                        Value="{x:Static md:ToolTipAssist.CustomPopupPlacementCallback}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ToolTip}">
-                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding Foreground}" BorderThickness="1" Margin="{TemplateBinding Margin}">
-                                <ContentPresenter Name="ContentPresenter" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentStringFormat="{TemplateBinding ContentStringFormat}" />
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding Foreground}" BorderThickness="1"
+                                    Margin="{TemplateBinding Margin}">
+                                <ContentPresenter Name="ContentPresenter" Margin="{TemplateBinding Padding}"
+                                                  Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  ContentStringFormat="{TemplateBinding ContentStringFormat}" />
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
 
-            <Style x:Key="NoFocusHighlight" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
-                <Setter Property="Focusable" Value="False"/>
+            <Style x:Key="NoFocusHighlight" TargetType="{x:Type ListBoxItem}"
+                   BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                <Setter Property="Focusable" Value="False" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

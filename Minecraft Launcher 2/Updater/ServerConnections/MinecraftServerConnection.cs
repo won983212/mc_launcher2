@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Minecraft_Launcher_2.Properties;
+using Newtonsoft.Json.Linq;
 
 namespace Minecraft_Launcher_2.ServerConnections
 {
@@ -13,8 +14,8 @@ namespace Minecraft_Launcher_2.ServerConnections
 
         public async Task<MinecraftServerInfo> RetrieveServerStatusAsync()
         {
-            MinecraftServerInfo model = new MinecraftServerInfo();
-            Tuple<string, int> data = await Task.Factory.StartNew(() => RetrieveServerStatusSync(model));
+            var model = new MinecraftServerInfo();
+            var data = await Task.Factory.StartNew(() => RetrieveServerStatusSync(model));
 
             if (data.Item2 == -1)
                 throw new InvalidDataException(data.Item1);
@@ -22,14 +23,14 @@ namespace Minecraft_Launcher_2.ServerConnections
             if (data.Item2 == 0x19)
                 throw new InvalidDataException(data.Item1);
 
-            JObject json = JObject.Parse(data.Item1);
+            var json = JObject.Parse(data.Item1);
             if (!json.ContainsKey("description"))
                 throw new InvalidDataException("서버는 열려있지만 아직 로딩중입니다. 잠시후에 다시 시도해보세요. (JSON: " + json + ")");
 
-            model.Motd = (string)json["description"]["text"];
-            model.PlayersOnline = (int)json["players"]["online"];
-            model.PlayersMax = (int)json["players"]["max"];
-            model.Protocol = (int)json["version"]["protocol"];
+            model.Motd = (string) json["description"]["text"];
+            model.PlayersOnline = (int) json["players"]["online"];
+            model.PlayersMax = (int) json["players"]["max"];
+            model.Protocol = (int) json["version"]["protocol"];
 
             Logger.Debug("[ServerStatus] Server status has retrieved");
             return model;
@@ -37,10 +38,10 @@ namespace Minecraft_Launcher_2.ServerConnections
 
         private Tuple<string, int> RetrieveServerStatusSync(MinecraftServerInfo infoHolder)
         {
-            string serverIP = Properties.Settings.Default.MinecraftServerIP;
-            int serverPort = Properties.Settings.Default.MinecraftServerPort;
+            var serverIP = Settings.Default.MinecraftServerIP;
+            var serverPort = Settings.Default.MinecraftServerPort;
 
-            TcpClient client = new TcpClient();
+            var client = new TcpClient();
             try
             {
                 Connect(client, serverIP, serverPort, APIServerInfoRetriever.Timeout);
@@ -51,10 +52,10 @@ namespace Minecraft_Launcher_2.ServerConnections
             }
 
             Logger.Debug("[ServerStatus] Connected to " + serverIP);
-            BufferedStream stream = new BufferedStream(client.GetStream());
+            var stream = new BufferedStream(client.GetStream());
 
             // handshake
-            BinaryWriter bw = new BinaryWriter(stream);
+            var bw = new BinaryWriter(stream);
             WriteVarInt(ms, -1);
             WriteString(ms, serverIP);
             WriteUnsignedShort(ms, serverPort);
@@ -62,21 +63,21 @@ namespace Minecraft_Launcher_2.ServerConnections
             Flush(bw, 0);
             Flush(bw, 0);
 
-            BinaryReader br = new BinaryReader(stream);
-            int len = ReadVarInt(br); // content-length
-            int id = ReadVarInt(br); // id
-            string data = ReadString(br);
+            var br = new BinaryReader(stream);
+            var len = ReadVarInt(br); // content-length
+            var id = ReadVarInt(br); // id
+            var data = ReadString(br);
 
             // ping pong
-            long ticks = DateTime.UtcNow.Ticks;
+            var ticks = DateTime.UtcNow.Ticks;
             WriteLong(ms, ticks);
             Flush(bw, 1);
 
             len = ReadVarInt(br); // content-length
             id = ReadVarInt(br); // id
-            long pong = ReadLong(br);
+            var pong = ReadLong(br);
 
-            infoHolder.Ping = (int)((DateTime.UtcNow.Ticks - pong) / 10000.0);
+            infoHolder.Ping = (int) ((DateTime.UtcNow.Ticks - pong) / 10000.0);
             Logger.Debug("[ServerStatus] Pong! " + infoHolder.Ping);
 
             client.Close();
@@ -85,11 +86,11 @@ namespace Minecraft_Launcher_2.ServerConnections
 
         private void Flush(BinaryWriter bw, int id)
         {
-            byte[] data = ms.ToArray();
+            var data = ms.ToArray();
             ms.SetLength(0);
 
-            int idLen = WriteVarInt(ms, id);
-            byte[] idData = ms.ToArray();
+            var idLen = WriteVarInt(ms, id);
+            var idData = ms.ToArray();
             ms.SetLength(0);
 
             WriteVarInt(bw.BaseStream, data.Length + idLen);
@@ -109,63 +110,66 @@ namespace Minecraft_Launcher_2.ServerConnections
                 if (size > 5)
                     throw new IOException("This VarInt is too big!");
             }
+
             return value | ((b & 0x7F) << (size * 7));
         }
 
         private string ReadString(BinaryReader br)
         {
-            int size = ReadVarInt(br);
-            byte[] data = br.ReadBytes(size);
+            var size = ReadVarInt(br);
+            var data = br.ReadBytes(size);
             return Encoding.UTF8.GetString(data);
         }
 
         private long ReadLong(BinaryReader br)
         {
             long data = 0;
-            for (int i = 0; i < 8; i++)
+            for (var i = 0; i < 8; i++)
             {
                 data |= br.ReadByte();
                 if (i != 7) data <<= 8;
             }
+
             return data;
         }
 
         private void WriteString(Stream stream, string value)
         {
-            byte[] data = Encoding.UTF8.GetBytes(value);
+            var data = Encoding.UTF8.GetBytes(value);
             WriteVarInt(stream, data.Length);
             stream.Write(data, 0, data.Length);
         }
 
         private int WriteVarInt(Stream stream, int value)
         {
-            int size = 1;
+            var size = 1;
             while ((value & -128) != 0)
             {
-                stream.WriteByte((byte)(value & 127 | 128));
-                value = (byte)(((uint)value) >> 7);
+                stream.WriteByte((byte) ((value & 127) | 128));
+                value = (byte) ((uint) value >> 7);
                 size++;
             }
-            stream.WriteByte((byte)value);
+
+            stream.WriteByte((byte) value);
             return size;
         }
 
         private void WriteUnsignedShort(Stream stream, int value)
         {
-            stream.WriteByte((byte)((value >> 8) & 0xff));
-            stream.WriteByte((byte)(value & 0xff));
+            stream.WriteByte((byte) ((value >> 8) & 0xff));
+            stream.WriteByte((byte) (value & 0xff));
         }
 
         private void WriteLong(Stream stream, long value)
         {
-            for (int i = 7; i >= 0; i--)
-                stream.WriteByte((byte)((value >> (8 * i)) & 0xff));
+            for (var i = 7; i >= 0; i--)
+                stream.WriteByte((byte) ((value >> (8 * i)) & 0xff));
         }
 
         private static void Connect(TcpClient client, string hostname, int port, int timeout)
         {
-            IAsyncResult res = client.BeginConnect(hostname, port, null, null);
-            bool success = res.AsyncWaitHandle.WaitOne(timeout, true);
+            var res = client.BeginConnect(hostname, port, null, null);
+            var success = res.AsyncWaitHandle.WaitOne(timeout, true);
             if (success)
                 client.EndConnect(res);
             else

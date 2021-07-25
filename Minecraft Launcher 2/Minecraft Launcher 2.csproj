@@ -108,31 +108,31 @@
     </Compile>
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\ObjectToStringConverter.cs" />
-    <Compile Include="Dialogs\ComboMessageBox.xaml.cs">
+    <Compile Include="Pages\Dialogs\ComboMessageBox.xaml.cs">
       <DependentUpon>ComboMessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ViewModels\ComboMessageBoxVM.cs" />
+    <Compile Include="Pages\Dialogs\ViewModels\ComboMessageBoxVM.cs" />
     <Compile Include="Launcher\LaunchConfigContext.cs" />
     <Compile Include="ServerSettingPanel.xaml.cs">
       <DependentUpon>ServerSettingPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ViewModels\ErrorDialogVM.cs" />
+    <Compile Include="Pages\Dialogs\ViewModels\ErrorDialogVM.cs" />
     <Compile Include="Validations\StringValidationRule.cs" />
     <Compile Include="Validations\MemoryValidationRule.cs" />
     <Compile Include="Validations\VersionValidationRule.cs" />
     <Compile Include="ViewModels\ServerSettingPanelVM.cs" />
-    <Compile Include="Dialogs\ViewModels\SettingDialogVM.cs" />
+    <Compile Include="Pages\Dialogs\ViewModels\SettingDialogVM.cs" />
     <Compile Include="Updater\ServerConnections\ConnectionState.cs" />
     <Compile Include="Controls\BackgroundImage.xaml.cs">
       <DependentUpon>BackgroundImage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\SettingDialog.xaml.cs">
+    <Compile Include="Pages\Dialogs\SettingDialog.xaml.cs">
       <DependentUpon>SettingDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProgressStatusBar.xaml.cs">
       <DependentUpon>ProgressStatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ErrorDialog.xaml.cs">
+    <Compile Include="Pages\Dialogs\ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MultiplexerPanel.cs" />
@@ -163,7 +163,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\ComboMessageBox.xaml">
+    <Page Include="Pages\Dialogs\ComboMessageBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -171,7 +171,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\SettingDialog.xaml">
+    <Page Include="Pages\Dialogs\SettingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -179,7 +179,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\ErrorDialog.xaml">
+    <Page Include="Pages\Dialogs\ErrorDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -267,6 +267,7 @@
     <Resource Include="Resources\icon.png" />
     <Resource Include="Resources\icon_text.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

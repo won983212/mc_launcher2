@@ -1,16 +1,16 @@
-﻿using Minecraft_Launcher_2.Controls;
-using Minecraft_Launcher_2.Launcher;
-using Minecraft_Launcher_2.Properties;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using Minecraft_Launcher_2.Controls;
+using Minecraft_Launcher_2.Launcher;
+using Minecraft_Launcher_2.Properties;
 
 namespace Minecraft_Launcher_2.Updater
 {
     public class UpdaterViewModel : ObservableObject
     {
         private readonly MinecraftLauncher _launcher;
-        private bool _running = false;
+        private bool _running;
 
         public UpdaterViewModel(ServerDataContext context)
         {
@@ -20,9 +20,17 @@ namespace Minecraft_Launcher_2.Updater
             _launcher.OnExited += (s, t) => Logger.Info(" Exited (code: " + t + ")");
         }
 
+        public ProgressStatus ProgressData { get; } = new ProgressStatus();
+
+        public bool IsRunning
+        {
+            get => _running;
+            private set => SetProperty(ref _running, value);
+        }
+
         public async Task StartMinecraft(bool useAutoJoin)
         {
-            Settings settings = Settings.Default;
+            var settings = Settings.Default;
             _launcher.PlayerName = settings.PlayerName;
             settings.Save();
 
@@ -39,10 +47,10 @@ namespace Minecraft_Launcher_2.Updater
             ProgressData.IsShow = true;
             ProgressData.SetProgress("다운로드 중..", 0);
 
-            ContentUpdater updater = new ContentUpdater();
+            var updater = new ContentUpdater();
             updater.OnProgress += Updater_OnProgress;
 
-            int failed = 0;
+            var failed = 0;
             try
             {
                 failed = await updater.BeginDownload();
@@ -63,24 +71,18 @@ namespace Minecraft_Launcher_2.Updater
             IsRunning = false;
             if (failed > 0)
             {
-                MessageBoxResult res = MessageBox.Show("파일 " + failed + "개를 받지 못했습니다. 그래도 실행합니까?", "주의", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                var res = MessageBox.Show("파일 " + failed + "개를 받지 못했습니다. 그래도 실행합니까?", "주의", MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
                 if (res != MessageBoxResult.Yes)
                     return false;
             }
+
             return true;
         }
 
         private void Updater_OnProgress(object sender, ProgressArgs e)
         {
             ProgressData.SetProgress(e.Status, e.Progress);
-        }
-
-        public ProgressStatus ProgressData { get; } = new ProgressStatus();
-
-        public bool IsRunning
-        {
-            get => _running;
-            private set => SetProperty(ref _running, value);
         }
     }
 }

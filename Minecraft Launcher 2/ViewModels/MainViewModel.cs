@@ -1,44 +1,44 @@
-﻿using Minecraft_Launcher_2.Dialogs.ViewModels;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using Minecraft_Launcher_2.Launcher;
+using Minecraft_Launcher_2.Pages.Dialogs.ViewModels;
 using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater;
 using Minecraft_Launcher_2.Updater.ServerConnections;
-using System;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Linq;
 
 namespace Minecraft_Launcher_2.ViewModels
 {
     internal class ServerInfo
     {
-        public string Motd { get; set; }
-        public string PlayerCount { get; set; }
-        public string Ping { get; private set; }
-
         public ServerInfo(MinecraftServerInfo status)
         {
             Motd = status.Motd;
             PlayerCount = status.PlayersOnline + "/" + status.PlayersMax;
             Ping = status.Ping + "ms";
         }
+
+        public string Motd { get; set; }
+        public string PlayerCount { get; set; }
+        public string Ping { get; }
     }
 
     internal class MainViewModel : ObservableObject
     {
         private readonly ServerDataContext _context;
-        private bool _isManagementButtonActive = false;
-        private bool _isSplashActive = false;
-
-        private string _signalIcon = "SignalOff";
-        private ServerInfo _serverInfo;
+        private bool _isManagementButtonActive;
+        private bool _isSplashActive;
+        private LauncherState _launchState;
 
         private string _loginErrorMessage = "";
-        private string _welcomeMessage = "Loading...";
+        private ServerInfo _serverInfo;
+
+        private string _signalIcon = "SignalOff";
         private string _startButtonText = "연결 중..";
-        private LauncherState _launchState;
+        private string _welcomeMessage = "Loading...";
 
 
         public MainViewModel()
@@ -46,7 +46,7 @@ namespace Minecraft_Launcher_2.ViewModels
             _context = new ServerDataContext();
             Updater = new UpdaterViewModel(_context);
 
-            APIServerInfoRetriever status = _context.Retriever;
+            var status = _context.Retriever;
             status.OnConnectionStateChanged += ServerStatus_OnConnectionStateChanged;
             if (status.ConnectionState.State != RetrieveState.Processing)
                 ServerStatus_OnConnectionStateChanged(null, status.ConnectionState);
@@ -57,131 +57,6 @@ namespace Minecraft_Launcher_2.ViewModels
             _context.ReadInstalledPatchVersion();
             status.RetrieveFromAPIServer();
             RetrieveMinecraftServerStatus();
-        }
-
-
-        private void OnStartClick()
-        {
-            string playerName = Settings.Default.PlayerName;
-            if (string.IsNullOrWhiteSpace(playerName))
-            {
-                LoginErrorMessage = "닉네임을 입력해주세요.";
-                return;
-            }
-            else if (!CommonUtils.IsLegalUsername(playerName))
-            {
-                LoginErrorMessage = "닉네임은 영문, 숫자, 언더바(_)로만 구성해야합니다.";
-                return;
-            }
-
-            LoginErrorMessage = "";
-            if (_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
-            {
-                GoStartingScreen();
-            }
-            else
-            {
-                Updater.StartDownload().ContinueWith((t) =>
-                {
-                    UpdateStartButton(false);
-                    GoStartingScreen();
-                });
-            }
-        }
-
-        private async void GoStartingScreen()
-        {
-            IsSplashActive = true;
-
-            await Task.Delay(2000);
-            Updater.StartMinecraft(SignalIcon != "Loading" && SignalIcon != "SignalOff" && Settings.Default.AutoJoinServer);
-
-            if (Settings.Default.UseLogging)
-            {
-                if (App.Console != null)
-                    App.Console.Show();
-            }
-
-            await Task.Delay(5000);
-
-            if (Settings.Default.UseLogging)
-            {
-                App.Current.Windows.OfType<Window>().Where((wnd) => wnd.Title == "Minecraft Launcher").Single().Close();
-                App.Console.UseCloseShutdown = true;
-                return;
-            }
-
-            App.Current.Shutdown(0);
-        }
-
-        private bool CanStart(object parameter)
-        {
-            return _context.Retriever.ConnectionState.State != RetrieveState.Processing && !Updater.IsRunning;
-        }
-
-        private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
-        {
-            if (e.State == RetrieveState.Loaded)
-                WelcomeMessage = _context.Retriever.Notice;
-
-            OnPropertyChanged(nameof(ConnectionErrorMessage));
-            OnPropertyChanged(nameof(ConnectionState));
-            UpdateStartButton(false);
-            Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
-            CommonUtils.IsActiveHttpServer(URLs.LocalInfoFile).ContinueWith((t) => IsManagementButtonActive = t.Result);
-        }
-
-        private void UpdateStartButton(bool useForceUpdate)
-        {
-            _launchState = _context.GetLauncherState();
-            if (useForceUpdate && _launchState == LauncherState.CanStart)
-                _launchState = LauncherState.NeedUpdate;
-
-            switch (_launchState)
-            {
-                case LauncherState.CanStart:
-                    StartButtonText = "시작";
-                    break;
-                case LauncherState.NeedInstall:
-                    StartButtonText = "설치";
-                    break;
-                case LauncherState.NeedUpdate:
-                    StartButtonText = "업데이트";
-                    break;
-                case LauncherState.Offline:
-                    StartButtonText = "오프라인 시작";
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private async void RetrieveMinecraftServerStatus()
-        {
-            if (SignalIcon == "Loading")
-                return;
-
-            SignalIcon = "Loading";
-            MinecraftServerConnection con = new MinecraftServerConnection();
-            try
-            {
-                MinecraftServerInfo info = await con.RetrieveServerStatusAsync();
-                SignalIcon = "SignalCellular1";
-                if (info.Ping < 150)
-                {
-                    SignalIcon = "SignalCellular3";
-                }
-                else if (info.Ping < 300)
-                {
-                    SignalIcon = "SignalCellular2";
-                }
-                ServerInfo = new ServerInfo(info);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-                SignalIcon = "SignalOff";
-            }
         }
 
 
@@ -207,16 +82,13 @@ namespace Minecraft_Launcher_2.ViewModels
 
         public ServerSettingPanelVM ServerSettingPanelViewModel { get; }
 
-        public RetrieveState ConnectionState
-        {
-            get => _context.Retriever.ConnectionState.State;
-        }
+        public RetrieveState ConnectionState => _context.Retriever.ConnectionState.State;
 
         public string ConnectionErrorMessage
         {
             get
             {
-                string message = _context.Retriever.ConnectionState.ErrorMessage;
+                var message = _context.Retriever.ConnectionState.ErrorMessage;
                 return string.IsNullOrEmpty(message) ? "연결 성공" : message;
             }
         }
@@ -252,8 +124,136 @@ namespace Minecraft_Launcher_2.ViewModels
 
         public ICommand StartCommand => new RelayCommand(OnStartClick, CanStart);
 
-        public ICommand OpenSettingDialogCommand => new RelayCommand(() => CommonUtils.ShowDialog(new SettingDialogVM(), (vm, a) => UpdateStartButton(vm.UseForceUpdate)));
+        public ICommand OpenSettingDialogCommand => new RelayCommand(() =>
+            CommonUtils.ShowDialog(new SettingDialogVM(), (vm, a) => UpdateStartButton(vm.UseForceUpdate)));
 
         public ICommand OpenServerSettingPanelCommand => new RelayCommand(ServerSettingPanelViewModel.Open);
+
+
+        private void OnStartClick()
+        {
+            var playerName = Settings.Default.PlayerName;
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                LoginErrorMessage = "닉네임을 입력해주세요.";
+                return;
+            }
+
+            if (!CommonUtils.IsLegalUsername(playerName))
+            {
+                LoginErrorMessage = "닉네임은 영문, 숫자, 언더바(_)로만 구성해야합니다.";
+                return;
+            }
+
+            LoginErrorMessage = "";
+            if (_launchState == LauncherState.Offline || _launchState == LauncherState.CanStart)
+            {
+                GoStartingScreen();
+            }
+            else
+            {
+                Updater.StartDownload().ContinueWith(t =>
+                {
+                    UpdateStartButton(false);
+                    GoStartingScreen();
+                });
+            }
+        }
+
+        private async void GoStartingScreen()
+        {
+            IsSplashActive = true;
+
+            await Task.Delay(2000);
+            Updater.StartMinecraft(SignalIcon != "Loading" && SignalIcon != "SignalOff" &&
+                                   Settings.Default.AutoJoinServer);
+
+            if (Settings.Default.UseLogging)
+            {
+                if (App.Console != null)
+                    App.Console.Show();
+            }
+
+            await Task.Delay(5000);
+
+            if (Settings.Default.UseLogging)
+            {
+                Application.Current.Windows.OfType<Window>().Where(wnd => wnd.Title == "Minecraft Launcher").Single()
+                    .Close();
+                App.Console.UseCloseShutdown = true;
+                return;
+            }
+
+            Application.Current.Shutdown(0);
+        }
+
+        private bool CanStart(object parameter)
+        {
+            return _context.Retriever.ConnectionState.State != RetrieveState.Processing && !Updater.IsRunning;
+        }
+
+        private void ServerStatus_OnConnectionStateChanged(object sender, ConnectionState e)
+        {
+            if (e.State == RetrieveState.Loaded)
+                WelcomeMessage = _context.Retriever.Notice;
+
+            OnPropertyChanged(nameof(ConnectionErrorMessage));
+            OnPropertyChanged(nameof(ConnectionState));
+            UpdateStartButton(false);
+            Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
+            CommonUtils.IsActiveHttpServer(URLs.LocalInfoFile).ContinueWith(t => IsManagementButtonActive = t.Result);
+        }
+
+        private void UpdateStartButton(bool useForceUpdate)
+        {
+            _launchState = _context.GetLauncherState();
+            if (useForceUpdate && _launchState == LauncherState.CanStart)
+                _launchState = LauncherState.NeedUpdate;
+
+            switch (_launchState)
+            {
+                case LauncherState.CanStart:
+                    StartButtonText = "시작";
+                    break;
+                case LauncherState.NeedInstall:
+                    StartButtonText = "설치";
+                    break;
+                case LauncherState.NeedUpdate:
+                    StartButtonText = "업데이트";
+                    break;
+                case LauncherState.Offline:
+                    StartButtonText = "오프라인 시작";
+                    break;
+            }
+        }
+
+        private async void RetrieveMinecraftServerStatus()
+        {
+            if (SignalIcon == "Loading")
+                return;
+
+            SignalIcon = "Loading";
+            var con = new MinecraftServerConnection();
+            try
+            {
+                var info = await con.RetrieveServerStatusAsync();
+                SignalIcon = "SignalCellular1";
+                if (info.Ping < 150)
+                {
+                    SignalIcon = "SignalCellular3";
+                }
+                else if (info.Ping < 300)
+                {
+                    SignalIcon = "SignalCellular2";
+                }
+
+                ServerInfo = new ServerInfo(info);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                SignalIcon = "SignalOff";
+            }
+        }
     }
 }

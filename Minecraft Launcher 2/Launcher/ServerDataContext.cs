@@ -1,25 +1,26 @@
-﻿using Minecraft_Launcher_2.ServerConnections;
+﻿using System.IO;
+using Minecraft_Launcher_2.Properties;
+using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater.ServerConnections;
-using System.IO;
 
 namespace Minecraft_Launcher_2.Launcher
 {
     public enum LauncherState
     {
-        NeedInstall, NeedUpdate, CanStart, Offline
+        NeedInstall,
+        NeedUpdate,
+        CanStart,
+        Offline
     }
 
     public class ServerDataContext
     {
-        public APIServerInfoRetriever Retriever { get; private set; } = new APIServerInfoRetriever();
+        public APIServerInfoRetriever Retriever { get; } = new APIServerInfoRetriever();
         public string InstalledVersion { get; private set; }
-
-        public ServerDataContext()
-        { }
 
         public void ReadInstalledPatchVersion()
         {
-            string filePath = Path.Combine(Properties.Settings.Default.MinecraftDir, "version");
+            var filePath = Path.Combine(Settings.Default.MinecraftDir, "version");
             InstalledVersion = File.Exists(filePath) ? File.ReadAllText(filePath) : "Unknown";
         }
 
@@ -28,9 +29,9 @@ namespace Minecraft_Launcher_2.Launcher
             ReadInstalledPatchVersion();
             if (Retriever.ConnectionState.State == RetrieveState.Error)
                 return LauncherState.Offline;
-            else if (InstalledVersion == "Unknown")
+            if (InstalledVersion == "Unknown")
                 return LauncherState.NeedInstall;
-            else if (InstalledVersion != Retriever.PatchVersion)
+            if (InstalledVersion != Retriever.PatchVersion)
                 return LauncherState.NeedUpdate;
 
             return LauncherState.CanStart;

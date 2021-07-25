@@ -11,6 +11,7 @@ namespace Minecraft_Launcher_2.Controls
             {
                 Child.Measure(new Size(0, 0));
             }
+
             return new Size(0, 0);
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Minecraft_Launcher_2.Dialogs.ViewModels
+namespace Minecraft_Launcher_2.Pages.Dialogs.ViewModels
 {
     public class ComboMessageBoxVM : ObservableObject
     {
@@ -10,9 +10,9 @@ namespace Minecraft_Launcher_2.Dialogs.ViewModels
             Items = items;
         }
 
-        public string Message { get; private set; }
+        public string Message { get; }
 
-        public IEnumerable<object> Items { get; private set; }
+        public IEnumerable<object> Items { get; }
 
         public int SelectedIndex { get; set; } = 0;
     }

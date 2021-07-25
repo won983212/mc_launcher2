@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Minecraft_Launcher_2.Dialogs.SettingDialog"
+﻿<UserControl x:Class="Minecraft_Launcher_2.Pages.Dialogs.SettingDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -22,7 +22,9 @@
         <DockPanel Margin="32,28">
             <TextBlock DockPanel.Dock="Top"
                        FontSize="14pt"
-                       HorizontalAlignment="Center">환경설정</TextBlock>
+                       HorizontalAlignment="Center">
+                환경설정
+            </TextBlock>
 
             <StackPanel Orientation="Horizontal"
                         DockPanel.Dock="Bottom"
@@ -89,7 +91,9 @@
                 </DockPanel>
 
                 <TextBlock Grid.Row="1"
-                           Style="{StaticResource LabelTextBlock}">메모리 할당량</TextBlock>
+                           Style="{StaticResource LabelTextBlock}">
+                    메모리 할당량
+                </TextBlock>
                 <DockPanel Grid.Row="1"
                            Grid.Column="1"
                            VerticalAlignment="Top">
@@ -140,7 +144,9 @@
                 </DockPanel>
 
                 <TextBlock Grid.Row="2"
-                           Style="{StaticResource LabelTextBlock}">실행시 동작</TextBlock>
+                           Style="{StaticResource LabelTextBlock}">
+                    실행시 동작
+                </TextBlock>
                 <DockPanel Grid.Row="2"
                            Grid.Column="1"
                            VerticalAlignment="Top">
@@ -164,7 +170,9 @@
                 </DockPanel>
 
                 <TextBlock Grid.Row="3"
-                           Style="{StaticResource LabelTextBlock}">업데이트</TextBlock>
+                           Style="{StaticResource LabelTextBlock}">
+                    업데이트
+                </TextBlock>
                 <DockPanel Grid.Row="3"
                            Grid.Column="1"
                            VerticalAlignment="Top">

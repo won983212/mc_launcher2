@@ -1,26 +1,26 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <SolidColorBrush x:Key="Primary" Color="#3F51B5"/>
-    <SolidColorBrush x:Key="PrimaryContent" Color="#ffffff"/>
+    <SolidColorBrush x:Key="Primary" Color="#3F51B5" />
+    <SolidColorBrush x:Key="PrimaryContent" Color="#ffffff" />
 
-    <SolidColorBrush x:Key="TextColor" Color="#707070"/>
-    <SolidColorBrush x:Key="HeaderTextColor" Color="#000000"/>
+    <SolidColorBrush x:Key="TextColor" Color="#707070" />
+    <SolidColorBrush x:Key="HeaderTextColor" Color="#000000" />
 
-    <SolidColorBrush x:Key="CardColor" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="DarkCardColor" Color="#202020"/>
-    <SolidColorBrush x:Key="BackgroundColor" Color="#eeeeee"/>
-    <SolidColorBrush x:Key="BorderColor" Color="#dfdfdf"/>
-    
-    <SolidColorBrush x:Key="WarningColor" Color="#ffa62b"/>
-    <SolidColorBrush x:Key="SuccessfulColor" Color="#4fab52"/>
-    <SolidColorBrush x:Key="ErrorColor" Color="#f44336"/>
+    <SolidColorBrush x:Key="CardColor" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="DarkCardColor" Color="#202020" />
+    <SolidColorBrush x:Key="BackgroundColor" Color="#eeeeee" />
+    <SolidColorBrush x:Key="BorderColor" Color="#dfdfdf" />
+
+    <SolidColorBrush x:Key="WarningColor" Color="#ffa62b" />
+    <SolidColorBrush x:Key="SuccessfulColor" Color="#4fab52" />
+    <SolidColorBrush x:Key="ErrorColor" Color="#f44336" />
 
     <LinearGradientBrush x:Key="BlueGradient" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#aa303F9F" Offset="0"/>
-        <GradientStop Color="#aa3949AB" Offset="1"/>
+        <GradientStop Color="#aa303F9F" Offset="0" />
+        <GradientStop Color="#aa3949AB" Offset="1" />
     </LinearGradientBrush>
 
     <!-- Custom secondary color -->
-    <SolidColorBrush x:Key="SecondaryHueMidBrush" Color="#d45659"/>
-    <SolidColorBrush x:Key="SecondaryHueMidForegroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="SecondaryHueMidBrush" Color="#d45659" />
+    <SolidColorBrush x:Key="SecondaryHueMidForegroundBrush" Color="#FFFFFF" />
 </ResourceDictionary>

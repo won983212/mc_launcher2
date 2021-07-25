@@ -25,7 +25,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://won983212.iptime.org")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://won983212.iptime.org:12654")]
         public string APIServerLocation {
             get {
                 return ((string)(this["APIServerLocation"]));
