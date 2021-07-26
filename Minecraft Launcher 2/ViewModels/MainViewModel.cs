@@ -1,14 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using Minecraft_Launcher_2.Launcher;
-using Minecraft_Launcher_2.Pages.Dialogs.ViewModels;
+﻿using Minecraft_Launcher_2.Launcher;
+using Minecraft_Launcher_2.Pages.ViewModels.Dialogs;
+using Minecraft_Launcher_2.Pages.ViewModels.ServerSetting;
 using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater;
 using Minecraft_Launcher_2.Updater.ServerConnections;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Minecraft_Launcher_2.ViewModels
 {
@@ -178,8 +179,7 @@ namespace Minecraft_Launcher_2.ViewModels
 
             if (Settings.Default.UseLogging)
             {
-                Application.Current.Windows.OfType<Window>().Where(wnd => wnd.Title == "Minecraft Launcher").Single()
-                    .Close();
+                Application.Current.Windows.OfType<Window>().Single(wnd => wnd.Title == "Minecraft Launcher").Close();
                 App.Console.UseCloseShutdown = true;
                 return;
             }

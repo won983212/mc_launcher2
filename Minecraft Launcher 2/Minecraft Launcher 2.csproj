@@ -111,17 +111,31 @@
     <Compile Include="Pages\Dialogs\ComboMessageBox.xaml.cs">
       <DependentUpon>ComboMessageBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Dialogs\ViewModels\ComboMessageBoxVM.cs" />
+    <Compile Include="Pages\ServerSetting\Tabs\GeneralTab.xaml.cs">
+      <DependentUpon>GeneralTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ServerSetting\Tabs\SkinTab.xaml.cs">
+      <DependentUpon>SkinTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ServerSetting\Tabs\UpdateTab.xaml.cs">
+      <DependentUpon>UpdateTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ViewModels\Dialogs\ComboMessageBoxVM.cs" />
     <Compile Include="Launcher\LaunchConfigContext.cs" />
-    <Compile Include="ServerSettingPanel.xaml.cs">
+    <Compile Include="Pages\ServerSetting\ServerSettingPanel.xaml.cs">
       <DependentUpon>ServerSettingPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Dialogs\ViewModels\ErrorDialogVM.cs" />
+    <Compile Include="Pages\ViewModels\Dialogs\ErrorDialogVM.cs" />
+    <Compile Include="Pages\ViewModels\ServerSetting\GeneralTabVM.cs" />
+    <Compile Include="Pages\ViewModels\ServerSetting\SkinTabVM.cs" />
+    <Compile Include="Pages\ViewModels\ServerSetting\UpdateTabVM.cs" />
+    <Compile Include="Pages\ViewModels\TabChild.cs" />
+    <Compile Include="Pages\ViewModels\TabContainer.cs" />
     <Compile Include="Validations\StringValidationRule.cs" />
     <Compile Include="Validations\MemoryValidationRule.cs" />
     <Compile Include="Validations\VersionValidationRule.cs" />
-    <Compile Include="ViewModels\ServerSettingPanelVM.cs" />
-    <Compile Include="Pages\Dialogs\ViewModels\SettingDialogVM.cs" />
+    <Compile Include="Pages\ViewModels\ServerSetting\ServerSettingPanelVM.cs" />
+    <Compile Include="Pages\ViewModels\Dialogs\SettingDialogVM.cs" />
     <Compile Include="Updater\ServerConnections\ConnectionState.cs" />
     <Compile Include="Controls\BackgroundImage.xaml.cs">
       <DependentUpon>BackgroundImage.xaml</DependentUpon>
@@ -167,7 +181,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ServerSettingPanel.xaml">
+    <Page Include="Pages\ServerSetting\ServerSettingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -198,9 +212,25 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\ServerSetting\Tabs\GeneralTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ServerSetting\Tabs\SkinTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ServerSetting\Tabs\UpdateTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Theme.Light.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Theme.Listbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -267,7 +297,9 @@
     <Resource Include="Resources\icon.png" />
     <Resource Include="Resources\icon_text.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\steve_head.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.3.2.0\build\MaterialDesignThemes.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

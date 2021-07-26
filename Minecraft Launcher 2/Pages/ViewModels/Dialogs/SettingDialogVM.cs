@@ -1,8 +1,8 @@
-﻿using System.Windows;
+﻿using Minecraft_Launcher_2.Properties;
+using System.Windows;
 using System.Windows.Input;
-using Minecraft_Launcher_2.Properties;
 
-namespace Minecraft_Launcher_2.Pages.Dialogs.ViewModels
+namespace Minecraft_Launcher_2.Pages.ViewModels.Dialogs
 {
     public class SettingDialogVM : ObservableObject
     {

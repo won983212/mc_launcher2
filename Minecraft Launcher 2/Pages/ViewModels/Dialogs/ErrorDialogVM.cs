@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace Minecraft_Launcher_2.Pages.Dialogs.ViewModels
+namespace Minecraft_Launcher_2.Pages.ViewModels.Dialogs
 {
     public class ErrorDialogVM : ObservableObject
     {

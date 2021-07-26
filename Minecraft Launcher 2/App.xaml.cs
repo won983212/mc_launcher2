@@ -1,7 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Threading;
-using Minecraft_Launcher_2.Pages.Dialogs.ViewModels;
+﻿using Minecraft_Launcher_2.Pages.ViewModels.Dialogs;
 using Minecraft_Launcher_2.ViewModels;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Minecraft_Launcher_2
 {

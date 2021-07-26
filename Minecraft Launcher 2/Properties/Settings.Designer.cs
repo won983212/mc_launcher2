@@ -25,7 +25,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://won983212.iptime.org:12654")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://won983212.iptime.org")]
         public string APIServerLocation {
             get {
                 return ((string)(this["APIServerLocation"]));
@@ -37,13 +37,37 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int MemorySize {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string APIServerDirectory {
             get {
-                return ((int)(this["MemorySize"]));
+                return ((string)(this["APIServerDirectory"]));
             }
             set {
-                this["MemorySize"] = value;
+                this["APIServerDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("won983212.iptime.org")]
+        public string MinecraftServerIP {
+            get {
+                return ((string)(this["MinecraftServerIP"]));
+            }
+            set {
+                this["MinecraftServerIP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25565")]
+        public int MinecraftServerPort {
+            get {
+                return ((int)(this["MinecraftServerPort"]));
+            }
+            set {
+                this["MinecraftServerPort"] = value;
             }
         }
         
@@ -61,6 +85,18 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int MemorySize {
+            get {
+                return ((int)(this["MemorySize"]));
+            }
+            set {
+                this["MemorySize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool UseLogging {
             get {
@@ -71,36 +107,12 @@ namespace Minecraft_Launcher_2.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("won983212.iptime.org")]
-        public string MinecraftServerIP {
-            get {
-                return ((string)(this["MinecraftServerIP"]));
-            }
-            set {
-                this["MinecraftServerIP"] = value;
-            }
-        }
-        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("loot_server")]
         public string FolderName {
             get {
                 return ((string)(this["FolderName"]));
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("25565")]
-        public int MinecraftServerPort {
-            get {
-                return ((int)(this["MinecraftServerPort"]));
-            }
-            set {
-                this["MinecraftServerPort"] = value;
             }
         }
         
@@ -142,13 +154,13 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string APIServerDirectory {
+        [global::System.Configuration.DefaultSettingValueAttribute("12654")]
+        public string APIServerPort {
             get {
-                return ((string)(this["APIServerDirectory"]));
+                return ((string)(this["APIServerPort"]));
             }
             set {
-                this["APIServerDirectory"] = value;
+                this["APIServerPort"] = value;
             }
         }
     }

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.Properties;
+using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Minecraft_Launcher_2.Properties;
-using Newtonsoft.Json.Linq;
 
 namespace Minecraft_Launcher_2.ServerConnections
 {
@@ -27,10 +27,10 @@ namespace Minecraft_Launcher_2.ServerConnections
             if (!json.ContainsKey("description"))
                 throw new InvalidDataException("서버는 열려있지만 아직 로딩중입니다. 잠시후에 다시 시도해보세요. (JSON: " + json + ")");
 
-            model.Motd = (string) json["description"]["text"];
-            model.PlayersOnline = (int) json["players"]["online"];
-            model.PlayersMax = (int) json["players"]["max"];
-            model.Protocol = (int) json["version"]["protocol"];
+            model.Motd = (string)json["description"]["text"];
+            model.PlayersOnline = (int)json["players"]["online"];
+            model.PlayersMax = (int)json["players"]["max"];
+            model.Protocol = (int)json["version"]["protocol"];
 
             Logger.Debug("[ServerStatus] Server status has retrieved");
             return model;
@@ -77,7 +77,7 @@ namespace Minecraft_Launcher_2.ServerConnections
             id = ReadVarInt(br); // id
             var pong = ReadLong(br);
 
-            infoHolder.Ping = (int) ((DateTime.UtcNow.Ticks - pong) / 10000.0);
+            infoHolder.Ping = (int)((DateTime.UtcNow.Ticks - pong) / 10000.0);
             Logger.Debug("[ServerStatus] Pong! " + infoHolder.Ping);
 
             client.Close();
@@ -145,25 +145,25 @@ namespace Minecraft_Launcher_2.ServerConnections
             var size = 1;
             while ((value & -128) != 0)
             {
-                stream.WriteByte((byte) ((value & 127) | 128));
-                value = (byte) ((uint) value >> 7);
+                stream.WriteByte((byte)((value & 127) | 128));
+                value = (byte)((uint)value >> 7);
                 size++;
             }
 
-            stream.WriteByte((byte) value);
+            stream.WriteByte((byte)value);
             return size;
         }
 
         private void WriteUnsignedShort(Stream stream, int value)
         {
-            stream.WriteByte((byte) ((value >> 8) & 0xff));
-            stream.WriteByte((byte) (value & 0xff));
+            stream.WriteByte((byte)((value >> 8) & 0xff));
+            stream.WriteByte((byte)(value & 0xff));
         }
 
         private void WriteLong(Stream stream, long value)
         {
             for (var i = 7; i >= 0; i--)
-                stream.WriteByte((byte) ((value >> (8 * i)) & 0xff));
+                stream.WriteByte((byte)((value >> (8 * i)) & 0xff));
         }
 
         private static void Connect(TcpClient client, string hostname, int port, int timeout)

@@ -15,7 +15,7 @@ namespace Minecraft_Launcher_2.Controls
 
         public ProgressStatus Progress
         {
-            get => (ProgressStatus) GetValue(ProgressProperty);
+            get => (ProgressStatus)GetValue(ProgressProperty);
             set => SetValue(ProgressProperty, value);
         }
     }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.Properties;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Minecraft_Launcher_2.Properties;
-using Newtonsoft.Json.Linq;
 
 namespace Minecraft_Launcher_2.Launcher
 {
@@ -76,20 +76,20 @@ namespace Minecraft_Launcher_2.Launcher
             if (json.TryGetValue("arguments", out value))
             {
                 MinecraftGameArguments =
-                    (MinecraftGameArguments + " " + ParseMinecraftArgument((JArray) value["game"])).Trim();
+                    (MinecraftGameArguments + " " + ParseMinecraftArgument((JArray)value["game"])).Trim();
                 MinecraftJVMArguments =
-                    (MinecraftJVMArguments + " " + ParseMinecraftArgument((JArray) value["jvm"])).Trim();
+                    (MinecraftJVMArguments + " " + ParseMinecraftArgument((JArray)value["jvm"])).Trim();
             }
 
             if (json.TryGetValue("libraries", out value))
             {
-                foreach (JObject obj in (JArray) value)
+                foreach (JObject obj in (JArray)value)
                 {
-                    if (obj.ContainsKey("rules") && !CheckRule((JArray) obj["rules"]))
+                    if (obj.ContainsKey("rules") && !CheckRule((JArray)obj["rules"]))
                         continue;
 
                     var names = obj.Value<string>("name").Split(':');
-                    var lib = new Library {Name = names[0] + ":" + names[1], Version = names[2]};
+                    var lib = new Library { Name = names[0] + ":" + names[1], Version = names[2] };
 
                     if (Libraries.Contains(lib))
                         Libraries.Remove(lib);
@@ -123,7 +123,7 @@ namespace Minecraft_Launcher_2.Launcher
                 var key = category + "#" + p.Name;
                 if (!RuleData.ContainsKey(key))
                     return 0; // ignore
-                if (!((JValue) p.Value).Value.Equals(RuleData[key]))
+                if (!((JValue)p.Value).Value.Equals(RuleData[key]))
                     return -1; // not match
             }
 
@@ -163,7 +163,7 @@ namespace Minecraft_Launcher_2.Launcher
                 }
                 else if (token is JObject)
                 {
-                    if (!CheckRule((JArray) token["rules"]))
+                    if (!CheckRule((JArray)token["rules"]))
                         continue;
                     var value = token["value"];
                     if (value is JValue)

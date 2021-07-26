@@ -14,7 +14,7 @@ namespace Minecraft_Launcher_2.Controls
 
         public int ActiveChildIndex
         {
-            get => (int) GetValue(ActiveChildIndexProperty);
+            get => (int)GetValue(ActiveChildIndexProperty);
             set => SetValue(ActiveChildIndexProperty, value);
         }
 
@@ -57,7 +57,7 @@ namespace Minecraft_Launcher_2.Controls
         private static void OnActiveChildIndexChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var panel = sender as MultiplexerPanel;
-            panel.UpdateVisibility((int) e.OldValue, (int) e.NewValue);
+            panel.UpdateVisibility((int)e.OldValue, (int)e.NewValue);
         }
     }
 }

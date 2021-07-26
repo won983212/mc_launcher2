@@ -1,13 +1,13 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using Minecraft_Launcher_2.ServerConnections;
+using Minecraft_Launcher_2.Updater;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using MaterialDesignThemes.Wpf;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using Minecraft_Launcher_2.ServerConnections;
-using Minecraft_Launcher_2.Updater;
 
 namespace Minecraft_Launcher_2
 {
@@ -24,7 +24,7 @@ namespace Minecraft_Launcher_2
         public static int GetTotalMemorySizeGB()
         {
             GetPhysicallyInstalledSystemMemory(out var memKb);
-            return (int) (memKb / 1024 / 1024);
+            return (int)(memKb / 1024 / 1024);
         }
 
         public static bool IsLegalUsername(string name)
@@ -42,7 +42,7 @@ namespace Minecraft_Launcher_2
         {
             try
             {
-                var req = (HttpWebRequest) WebRequest.Create(url);
+                var req = (HttpWebRequest)WebRequest.Create(url);
                 req.Timeout = APIServerInfoRetriever.Timeout;
                 req.AllowAutoRedirect = false;
                 req.Method = "HEAD";
@@ -102,7 +102,7 @@ namespace Minecraft_Launcher_2
                 foreach (var file in Directory.EnumerateFiles(path))
                 {
                     File.Copy(file, Path.Combine(dest, file.Substring(src.Length + 1)));
-                    onProcess?.Invoke(new ProgressArgs(++current / (double) total * 100, Path.GetFileName(file)));
+                    onProcess?.Invoke(new ProgressArgs(++current / (double)total * 100, Path.GetFileName(file)));
                 }
             }
         }
@@ -124,7 +124,7 @@ namespace Minecraft_Launcher_2
             DialogCompleteEventHandler<T> closingHandler = null) where T : ObservableObject
         {
             return DialogHost.Show(content, dialog,
-                (o, e) => closingHandler?.Invoke((T) ((DialogHost) o).DialogContent, e));
+                (o, e) => closingHandler?.Invoke((T)((DialogHost)o).DialogContent, e));
         }
 
         public static void CloseDialog()

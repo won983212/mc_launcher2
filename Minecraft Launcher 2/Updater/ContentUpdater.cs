@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.Properties;
+using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Minecraft_Launcher_2.Properties;
-using Newtonsoft.Json.Linq;
 
 namespace Minecraft_Launcher_2.Updater
 {
@@ -24,7 +24,7 @@ namespace Minecraft_Launcher_2.Updater
                 var failed = 0;
 
                 _currentDownloader = new HashDownloader(Path.Combine(settings.MinecraftDir, "assets"), assetsURL,
-                    URLs.AssetsResourceURL);
+                    URLs.AssetsResourceUrl);
                 _currentDownloader.OnProgress += (s, a) =>
                 {
                     UpdateProgress(a.Progress / 2 + 10, "에셋파일: " + a.Status);
@@ -35,7 +35,7 @@ namespace Minecraft_Launcher_2.Updater
 
                 _currentDownloader =
                     new HashDownloader(settings.MinecraftDir, URLs.IndexFilePath, URLs.PatchFolderPath);
-                _currentDownloader.DetectDeletionFolder = new[] {"mods", "libraries", "natives", "scripts"};
+                _currentDownloader.DetectDeletionFolder = new[] { "mods", "libraries", "natives", "scripts" };
                 _currentDownloader.OnProgress += (s, a) =>
                 {
                     UpdateProgress(a.Progress * 0.39 + 60, "패치파일: " + a.Status);
@@ -76,11 +76,11 @@ namespace Minecraft_Launcher_2.Updater
         private void UpdatePatchVersion()
         {
             var patchVersionPath = Path.Combine(settings.MinecraftDir, "version");
-            using (var client = new WebClient {Encoding = Encoding.UTF8})
+            using (var client = new WebClient { Encoding = Encoding.UTF8 })
             {
                 var data = client.DownloadString(URLs.InfoFilePath);
                 var json = JObject.Parse(data);
-                File.WriteAllText(patchVersionPath, (string) json["patchVersion"]);
+                File.WriteAllText(patchVersionPath, (string)json["patchVersion"]);
             }
         }
 
@@ -100,7 +100,7 @@ namespace Minecraft_Launcher_2.Updater
             File.WriteAllText(Path.Combine(settings.MinecraftDir, Path.GetFileName(URLs.LauncherConfigPath)), cfg);
 
             var cfgJson = JObject.Parse(cfg);
-            return (string) cfgJson["assetsUrl"];
+            return (string)cfgJson["assetsUrl"];
         }
 
         private void UpdateProgress(double progress, string status)

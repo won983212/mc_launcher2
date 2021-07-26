@@ -7,6 +7,7 @@
         xmlns:controls="clr-namespace:Minecraft_Launcher_2.Controls"
         xmlns:viewmodel="clr-namespace:Minecraft_Launcher_2.ViewModels"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:serverSetting="clr-namespace:Minecraft_Launcher_2.Pages.ServerSetting"
         mc:Ignorable="d"
         WindowStyle="None"
         FontFamily="{StaticResource PrimaryFont}"
@@ -341,8 +342,8 @@
                 </Button>
             </StackPanel>
 
-            <local:ServerSettingPanel xmlns:local="clr-namespace:Minecraft_Launcher_2"
-                                      DataContext="{Binding ServerSettingPanelViewModel}" />
+            <serverSetting:ServerSettingPanel
+                DataContext="{Binding ServerSettingPanelViewModel}" />
         </Grid>
     </md:DialogHost>
 </Window>

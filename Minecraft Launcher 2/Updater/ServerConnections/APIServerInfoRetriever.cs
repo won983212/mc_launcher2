@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.Updater;
+using Minecraft_Launcher_2.Updater.ServerConnections;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Minecraft_Launcher_2.Updater;
-using Minecraft_Launcher_2.Updater.ServerConnections;
-using Newtonsoft.Json.Linq;
 
 namespace Minecraft_Launcher_2.ServerConnections
 {
     public class APIServerInfoRetriever
     {
         public const int Timeout = 2000;
-        private ConnectionState _conState = new ConnectionState {State = RetrieveState.Processing};
+        private ConnectionState _conState = new ConnectionState { State = RetrieveState.Processing };
 
 
         public ConnectionState ConnectionState
@@ -34,7 +34,7 @@ namespace Minecraft_Launcher_2.ServerConnections
         {
             try
             {
-                ConnectionState = new ConnectionState {State = RetrieveState.Processing};
+                ConnectionState = new ConnectionState { State = RetrieveState.Processing };
 
                 var isActive = await CommonUtils.IsActiveHttpServer(URLs.InfoFilePath);
                 if (!isActive)
@@ -48,13 +48,13 @@ namespace Minecraft_Launcher_2.ServerConnections
                     Notice = obj.Value<string>("notice");
                 }
 
-                ConnectionState = new ConnectionState {State = RetrieveState.Loaded};
+                ConnectionState = new ConnectionState { State = RetrieveState.Loaded };
             }
             catch (Exception e)
             {
                 Logger.Error(e);
                 ConnectionState = new ConnectionState
-                    {State = RetrieveState.Error, ErrorMessage = "API 서버: " + e.Message};
+                { State = RetrieveState.Error, ErrorMessage = "API 서버: " + e.Message };
             }
         }
     }

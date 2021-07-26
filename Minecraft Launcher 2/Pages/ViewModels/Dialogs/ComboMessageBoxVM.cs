@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Minecraft_Launcher_2.Pages.Dialogs.ViewModels
+namespace Minecraft_Launcher_2.Pages.ViewModels.Dialogs
 {
     public class ComboMessageBoxVM : ObservableObject
     {

@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.Launcher;
+using Minecraft_Launcher_2.Pages.ViewModels.Dialogs;
+using Minecraft_Launcher_2.Properties;
+using Minecraft_Launcher_2.Updater;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,44 +12,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Minecraft_Launcher_2.Controls;
-using Minecraft_Launcher_2.Launcher;
-using Minecraft_Launcher_2.Pages.Dialogs.ViewModels;
-using Minecraft_Launcher_2.Properties;
-using Minecraft_Launcher_2.Updater;
-using Newtonsoft.Json.Linq;
 
-namespace Minecraft_Launcher_2.ViewModels
+namespace Minecraft_Launcher_2.Pages.ViewModels.ServerSetting
 {
-    public class ServerSettingPanelVM : ObservableObject
+    internal class UpdateTabVM : TabChild<ServerSettingPanelVM>
     {
-        private bool _isShow;
+        public UpdateTabVM(ServerSettingPanelVM parent)
+            : base(parent)
+        { }
 
-        private string _version;
-        private string _welcomeMessage;
-
-
-        public ProgressStatus ProgressData { get; } = new ProgressStatus();
-
-        public bool IsShow
-        {
-            get => _isShow;
-            private set => SetProperty(ref _isShow, value);
-        }
-
-        public string Version
-        {
-            get => _version;
-            set => SetProperty(ref _version, value);
-        }
-
-        public string WelcomeMessage
-        {
-            get => _welcomeMessage;
-            set => SetProperty(ref _welcomeMessage, value);
-        }
-
-        public ICommand UpdateVersionToDateCommand => new RelayCommand(UpdateVersionToToday);
 
         public ICommand UpdateFileHashCommand => new RelayCommand(async () =>
         {
@@ -59,90 +35,6 @@ namespace Minecraft_Launcher_2.ViewModels
                 MessageBox.Show("업그레이드가 완료되었습니다.", "완료", MessageBoxButton.OK, MessageBoxImage.Information);
         });
 
-        public ICommand ChangeAPIServerDirectoryCommand => new RelayCommand(() => ResetAPIServerDirectory());
-
-        public ICommand CloseCommand => new RelayCommand(Close);
-        public event EventHandler PanelClosed;
-
-        private bool IsVaildAPIServerDirectory(string path)
-        {
-            var infoFilePath = Path.Combine(path, URLs.InfoFilename);
-            if (!string.IsNullOrWhiteSpace(path) && File.Exists(infoFilePath))
-            {
-                try
-                {
-                    LoadServerInfo(infoFilePath);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-
-                return Version != null && WelcomeMessage != null;
-            }
-
-            return false;
-        }
-
-        private bool ResetAPIServerDirectory()
-        {
-            var setting = Settings.Default;
-            var path = CommonUtils.SelectDirectory("API Server의 Root폴더 선택");
-
-            if (path == null)
-                return false;
-
-            if (!IsVaildAPIServerDirectory(path))
-            {
-                MessageBox.Show("선택한 폴더는 올바른 API Server폴더가 아닙니다.");
-                return false;
-            }
-
-            setting.APIServerDirectory = path;
-            setting.Save();
-            return true;
-        }
-
-        private void LoadServerInfo(string infoFilePath)
-        {
-            var json = JObject.Parse(File.ReadAllText(infoFilePath));
-            Version = json.Value<string>("patchVersion");
-            WelcomeMessage = json.Value<string>("notice");
-        }
-
-        private void SaveServerInfo()
-        {
-            var path = Settings.Default.APIServerDirectory;
-            var json = new JObject(new JProperty("patchVersion", Version), new JProperty("notice", WelcomeMessage));
-            File.WriteAllText(Path.Combine(path, URLs.InfoFilename), json.ToString());
-        }
-
-        public void Open()
-        {
-            if (!IsShow)
-            {
-                if (!IsVaildAPIServerDirectory(Settings.Default.APIServerDirectory) && !ResetAPIServerDirectory())
-                    return;
-                IsShow = true;
-            }
-        }
-
-        public void Close()
-        {
-            if (IsShow)
-            {
-                Settings.Default.Save();
-                SaveServerInfo();
-                IsShow = false;
-                PanelClosed?.Invoke(this, null);
-            }
-        }
-
-        private void UpdateVersionToToday()
-        {
-            Version = Version.Split(new[] {'@'}, 2)[0] + '@' + DateTime.Now.ToString("yyMMdd");
-        }
-
         private void UpgradeGameVersionImpl(string serverHtmlDir, string minecraftDir, string selectedProfile)
         {
             // extract json from target profile
@@ -156,7 +48,7 @@ namespace Minecraft_Launcher_2.ViewModels
 
             while (cur.ContainsKey("inheritsFrom"))
             {
-                var parentPath = Path.Combine(versionsDir, (string) cur["inheritsFrom"], cur["inheritsFrom"] + ".json");
+                var parentPath = Path.Combine(versionsDir, (string)cur["inheritsFrom"], cur["inheritsFrom"] + ".json");
                 var json = JObject.Parse(File.ReadAllText(parentPath));
                 stack.Push(json);
                 cur = json;
@@ -166,7 +58,7 @@ namespace Minecraft_Launcher_2.ViewModels
             while (stack.Count > 0)
                 launchConfig.DeserializeMinecraftJsonData(stack.Pop());
 
-            ProgressData.SetProgress("launch-config 작성중...", 20);
+            Parent.SetProgress("launch-config 작성중...", 20);
 
             // write launch-config.json
             File.WriteAllText(Path.Combine(serverHtmlDir, URLs.LauncherConfigFilename),
@@ -176,16 +68,16 @@ namespace Minecraft_Launcher_2.ViewModels
             if (!Directory.Exists(resourceDir))
                 Directory.CreateDirectory(resourceDir);
 
-            ProgressData.SetProgress("복사할 library 폴더 검색중...", 30);
+            Parent.SetProgress("복사할 library 폴더 검색중...", 30);
 
             // Copy libraries
             var libraryFolder = Path.Combine(resourceDir, "libraries");
             CommonUtils.DeleteDirectory(libraryFolder);
             CommonUtils.CopyDirectory(Path.Combine(minecraftDir, "libraries"), libraryFolder,
-                arg => ProgressData.SetProgress("Library 복사: " + arg.Status, 30 + arg.Progress * 0.7));
+                arg => Parent.SetProgress("Library 복사: " + arg.Status, 30 + arg.Progress * 0.7));
 
             // copy minecraft.jar
-            ProgressData.SetProgress("minecraft.jar 복사중...", 100);
+            Parent.SetProgress("minecraft.jar 복사중...", 100);
             var minecraftFile = Path.Combine(resourceDir, "minecraft.jar");
             if (File.Exists(minecraftFile))
                 File.Delete(minecraftFile);
@@ -197,7 +89,6 @@ namespace Minecraft_Launcher_2.ViewModels
             try
             {
                 var serverHtmlPath = Settings.Default.APIServerDirectory;
-                var resourceDir = Path.Combine(serverHtmlPath, URLs.ResourceFolderName);
 
                 var minecraftDir = CommonUtils.SelectDirectory("추출할 마인크래프트 폴더 선택",
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft"));
@@ -221,12 +112,9 @@ namespace Minecraft_Launcher_2.ViewModels
                 if (selected < 0 || selected >= profileDirs.Length)
                     throw new ArgumentException("프로필을 선택해주세요.");
 
-                ProgressData.IsShow = true;
-                ProgressData.SetProgress("프로필 병합중...", 0);
-
+                Parent.SetProgress("프로필 병합중...", 0);
                 await Task.Run(() => UpgradeGameVersionImpl(serverHtmlPath, minecraftDir, profileDirs[selected]));
-
-                ProgressData.IsShow = false;
+                Parent.SetProgress("", -1);
 
                 // update file indexes
                 await GenerateIndexJson();
@@ -249,8 +137,7 @@ namespace Minecraft_Launcher_2.ViewModels
                 var indexFile = Path.Combine(serverHtmlPath, URLs.IndexFilename);
                 var resourceDir = Path.Combine(serverHtmlPath, URLs.ResourceFolderName);
 
-                ProgressData.IsShow = true;
-                ProgressData.SetProgress("resource파일 탐색중..", 0);
+                Parent.SetProgress("resource파일 탐색중..", 0);
 
                 if (File.Exists(indexFile))
                     File.Delete(indexFile);
@@ -292,21 +179,21 @@ namespace Minecraft_Launcher_2.ViewModels
                                 new JObject(new JProperty("hash", hash),
                                     new JProperty("size", new FileInfo(file).Length)));
                             Logger.Info("Generated Hash: " + name);
-                            ProgressData.SetProgress("Hash 생성: " + name, ++pass / (double) total * 100);
+                            Parent.SetProgress("Hash 생성: " + name, ++pass / (double)total * 100);
                         }
 
                         foreach (var dir in Directory.EnumerateDirectories(folder))
                             folders.Push(dir);
                     }
 
-                    ProgressData.SetProgress("생성한 Hash 파일로 작성중...", 100);
+                    Parent.SetProgress("생성한 Hash 파일로 작성중...", 100);
                     json = new JObject(new JProperty("objects", json));
                     File.WriteAllText(indexFile, json.ToString());
                 });
 
-                ProgressData.IsShow = false;
+                Parent.SetProgress("", -1);
                 if (Settings.Default.UseAutoRefreshVersion)
-                    UpdateVersionToToday();
+                    Parent.UpdateVersionToToday();
                 return true;
             }
             catch (Exception e)

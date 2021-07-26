@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Minecraft_Launcher_2.Properties;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Minecraft_Launcher_2.Properties;
-using Newtonsoft.Json.Linq;
 
 namespace Minecraft_Launcher_2.Launcher
 {

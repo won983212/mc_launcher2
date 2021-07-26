@@ -12,13 +12,14 @@ namespace Minecraft_Launcher_2.Updater
         public static readonly string ResourceFolderName = "resources";
         public static readonly string SkinFolderName = "skin";
 
-        public static readonly string LocalInfoFile = "http://127.0.0.1/" + InfoFilename;
-        public static readonly string AssetsResourceURL = "http://resources.download.minecraft.net/";
+        public static readonly string LocalInfoFile = "http://127.0.0.1:" + settings.APIServerPort + "/" + InfoFilename;
+        public static readonly string AssetsResourceUrl = "http://resources.download.minecraft.net/";
 
-        public static string InfoFilePath => settings.APIServerLocation + "/" + InfoFilename;
-        public static string IndexFilePath => settings.APIServerLocation + "/" + IndexFilename;
-        public static string LauncherConfigPath => settings.APIServerLocation + "/" + LauncherConfigFilename;
-        public static string PatchFolderPath => settings.APIServerLocation + "/" + ResourceFolderName;
-        public static string SkinFolderPath => settings.APIServerLocation + "/" + SkinFolderName;
+        public static string APIServerUrl => settings.APIServerLocation + ":" + settings.APIServerPort;
+        public static string InfoFilePath => APIServerUrl + "/" + InfoFilename;
+        public static string IndexFilePath => APIServerUrl + "/" + IndexFilename;
+        public static string LauncherConfigPath => APIServerUrl + "/" + LauncherConfigFilename;
+        public static string PatchFolderPath => APIServerUrl + "/" + ResourceFolderName;
+        public static string SkinFolderPath => APIServerUrl + "/" + SkinFolderName;
     }
 }

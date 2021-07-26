@@ -31,11 +31,11 @@ using System.Windows;
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //테마별 리소스 사전의 위치
-    //(페이지 또는 응용 프로그램 리소스 사진에
-    // 리소스가 없는 경우에 사용됨)
+                                     //(페이지 또는 응용 프로그램 리소스 사진에
+                                     // 리소스가 없는 경우에 사용됨)
     ResourceDictionaryLocation.SourceAssembly //제네릭 리소스 사전의 위치
-    //(페이지 또는 응용 프로그램 리소스 사진에
-    // 리소스가 없는 경우에 사용됨)
+                                              //(페이지 또는 응용 프로그램 리소스 사진에
+                                              // 리소스가 없는 경우에 사용됨)
 )]
 
 
@@ -49,4 +49,4 @@ using System.Windows;
 // 모든 값을 지정하거나 아래와 같이 '*'를 사용하여 빌드 번호 및 수정 번호가 자동으로
 // 지정되도록 할 수 있습니다.
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.1.0")]
+[assembly: AssemblyVersion("2.2.0")]

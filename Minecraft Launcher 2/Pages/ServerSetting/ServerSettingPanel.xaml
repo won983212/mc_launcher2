@@ -1,0 +1,119 @@
+﻿<UserControl x:Class="Minecraft_Launcher_2.Pages.ServerSetting.ServerSettingPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Minecraft_Launcher_2.Controls"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d"
+             Background="{StaticResource CardColor}"
+             Visibility="{Binding IsShow, Converter={StaticResource BooleanToVisibilityConverter}}"
+             d:DesignHeight="480"
+             d:DesignWidth="854">
+    <Border BorderThickness="1"
+            BorderBrush="{StaticResource BorderColor}">
+        <Grid>
+            <DockPanel Margin="24"
+                       IsEnabled="{Binding ProgressData.IsShow, Converter={StaticResource InverseBooleanConverter}}">
+                <DockPanel.Resources>
+                    <Style TargetType="TextBox">
+                        <Setter Property="Padding"
+                                Value="4" />
+                    </Style>
+                    <Style TargetType="Button"
+                           BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                        <Setter Property="FontSize"
+                                Value="9pt" />
+                        <Setter Property="md:ButtonAssist.CornerRadius"
+                                Value="0" />
+                        <Setter Property="md:ShadowAssist.ShadowDepth"
+                                Value="Depth1" />
+                    </Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="VerticalAlignment"
+                                Value="Center" />
+                    </Style>
+                </DockPanel.Resources>
+
+                <!-- title -->
+                <TextBlock DockPanel.Dock="Top"
+                           FontSize="12pt">
+                    API Server Management Panel
+                </TextBlock>
+
+                <!-- Tab bar -->
+                <StackPanel DockPanel.Dock="Top"
+                            Orientation="Horizontal"
+                            Margin="0,16,0,24">
+                    <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                 BorderBrush="{StaticResource Primary}"
+                                 Command="{Binding ChangeTabCommand}"
+                                 IsChecked="True">
+                        <RadioButton.CommandParameter>
+                            <system:Int32>
+                                0
+                            </system:Int32>
+                        </RadioButton.CommandParameter>
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Settings"
+                                         Margin="0,0,8,0"/>
+                            <TextBlock VerticalAlignment="Center"
+                                       FontSize="9pt">일반</TextBlock>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                 BorderBrush="{StaticResource Primary}"
+                                 Command="{Binding ChangeTabCommand}">
+                        <RadioButton.CommandParameter>
+                            <system:Int32>
+                                1
+                            </system:Int32>
+                        </RadioButton.CommandParameter>
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="Update"
+                                         Margin="0,0,8,0" />
+                            <TextBlock VerticalAlignment="Center"
+                                       FontSize="9pt">업데이트</TextBlock>
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                 BorderBrush="{StaticResource Primary}"
+                                 Command="{Binding ChangeTabCommand}">
+                        <RadioButton.CommandParameter>
+                            <system:Int32>
+                                2
+                            </system:Int32>
+                        </RadioButton.CommandParameter>
+                        <StackPanel Orientation="Horizontal">
+                            <md:PackIcon Kind="TshirtCrew"
+                                         Margin="0,0,8,0" />
+                            <TextBlock VerticalAlignment="Center"
+                                       FontSize="9pt">스킨</TextBlock>
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+
+                <!-- footer button -->
+                <StackPanel DockPanel.Dock="Bottom"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0,16,0,0">
+                    <Button Width="100"
+                            Command="{Binding CloseCommand}">
+                        적용
+                    </Button>
+                </StackPanel>
+
+                <!-- tab content -->
+                <ContentControl Content="{Binding CurrentPage}" />
+            </DockPanel>
+
+            <!-- Action status bar -->
+            <controls:ProgressStatusBar HorizontalAlignment="Center"
+                                        VerticalAlignment="Bottom"
+                                        Progress="{Binding ProgressData}"
+                                        Margin="0,0,0,5" />
+        </Grid>
+    </Border>
+</UserControl>

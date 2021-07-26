@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace Minecraft_Launcher_2.Updater
 {
@@ -16,8 +16,8 @@ namespace Minecraft_Launcher_2.Updater
         public FileObj(JProperty p)
         {
             FilePath = p.Name;
-            Hash = (string) p.Value["hash"];
-            Size = (long) p.Value["size"];
+            Hash = (string)p.Value["hash"];
+            Size = (long)p.Value["size"];
         }
 
         public string FilePath { get; set; }
@@ -197,7 +197,7 @@ namespace Minecraft_Launcher_2.Updater
                     var path = Path.Combine(parentFolder, folder);
                     if (!Directory.Exists(path))
                         continue;
-                    ProcessFileSyncDelete((JObject) objects, parentFolder, path);
+                    ProcessFileSyncDelete((JObject)objects, parentFolder, path);
                 }
             }
 
@@ -207,7 +207,7 @@ namespace Minecraft_Launcher_2.Updater
             try
             {
                 Parallel.ForEach(files,
-                    new ParallelOptions {MaxDegreeOfParallelism = 10, CancellationToken = _tknSrc.Token},
+                    new ParallelOptions { MaxDegreeOfParallelism = 10, CancellationToken = _tknSrc.Token },
                     file => DownloadFile(parentFolder, file));
             }
             catch (OperationCanceledException)

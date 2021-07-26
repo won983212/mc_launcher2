@@ -27,12 +27,12 @@ namespace Minecraft_Launcher_2
 
         public bool CanExecute(object parameter)
         {
-            return canExecute == null || parameter == null || canExecute((T) parameter);
+            return canExecute == null || parameter == null || canExecute((T)parameter);
         }
 
         public void Execute(object parameter)
         {
-            execute((T) parameter);
+            execute((T)parameter);
         }
     }
 

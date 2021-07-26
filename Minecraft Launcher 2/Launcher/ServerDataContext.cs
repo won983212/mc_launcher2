@@ -1,7 +1,7 @@
-﻿using System.IO;
-using Minecraft_Launcher_2.Properties;
+﻿using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater.ServerConnections;
+using System.IO;
 
 namespace Minecraft_Launcher_2.Launcher
 {

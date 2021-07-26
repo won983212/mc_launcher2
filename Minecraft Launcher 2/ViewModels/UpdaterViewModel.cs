@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows;
-using Minecraft_Launcher_2.Controls;
+﻿using Minecraft_Launcher_2.Controls;
 using Minecraft_Launcher_2.Launcher;
 using Minecraft_Launcher_2.Properties;
+using System;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace Minecraft_Launcher_2.Updater
 {

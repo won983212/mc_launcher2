@@ -11,7 +11,7 @@ namespace Minecraft_Launcher_2.Converters
         {
             if (targetType != typeof(bool))
                 throw new InvalidOperationException("The target must be a boolean");
-            return !(bool) value;
+            return !(bool)value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
