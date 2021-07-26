@@ -90,7 +90,7 @@ namespace Minecraft_Launcher_2.Pages.ViewModels.ServerSetting
             {
                 var serverHtmlPath = Settings.Default.APIServerDirectory;
 
-                var minecraftDir = CommonUtils.SelectDirectory("추출할 마인크래프트 폴더 선택",
+                var minecraftDir = CommonUtils.SelectDirectory("추출할 마인크래프트 폴더 선택", null,
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft"));
 
                 if (minecraftDir == null)

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Minecraft_Launcher_2.ViewModels
 {
@@ -161,6 +162,7 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
+        // TODO Animation이 안나온다
         private async void GoStartingScreen()
         {
             IsSplashActive = true;
@@ -184,7 +186,7 @@ namespace Minecraft_Launcher_2.ViewModels
                 return;
             }
 
-            Application.Current.Shutdown(0);
+            Dispatcher.CurrentDispatcher.BeginInvoke((Action) delegate() { Application.Current.Shutdown(0); });
         }
 
         private bool CanStart(object parameter)

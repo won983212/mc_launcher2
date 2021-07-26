@@ -53,7 +53,7 @@ namespace Minecraft_Launcher_2.Pages.ViewModels.Dialogs
 
         public ICommand FindMCDirectory => new RelayCommand(() =>
         {
-            var path = CommonUtils.SelectDirectory("마인크래프트 폴더 선택", Settings.Default.MinecraftDir);
+            var path = CommonUtils.SelectDirectory("마인크래프트 폴더 선택", null, Settings.Default.MinecraftDir);
             if (path != null)
                 Settings.Default.MinecraftDir = path;
         });

@@ -39,6 +39,9 @@
             <DataTemplate DataType="{x:Type dialogvm:ComboMessageBoxVM}">
                 <dialogs:ComboMessageBox />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type dialogvm:PromptMessageBoxVM}">
+                <dialogs:PromptMessageBox />
+            </DataTemplate>
 
             <!-- DataTemplates - ServerSettingPanels -->
             <DataTemplate DataType="{x:Type serverSetting:GeneralTabVM}">

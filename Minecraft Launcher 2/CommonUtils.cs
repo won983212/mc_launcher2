@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Minecraft_Launcher_2
@@ -16,10 +17,34 @@ namespace Minecraft_Launcher_2
         public delegate void DialogCompleteEventHandler<T>(T vm, DialogClosingEventArgs eventArgs)
             where T : ObservableObject;
 
+        public delegate void FilterSelector(CommonFileDialogFilterCollection filters);
+
+
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
+        private static readonly string hashChars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+        private static readonly Random random = new Random();
 
+
+        public static string GenerateHashUnique(int len, string directoryPath)
+        {
+            string filename;
+            do
+            {
+                filename = GenerateHash(len);
+            } 
+            while (File.Exists(Path.Combine(directoryPath, filename)));
+            return filename;
+        }
+
+        public static string GenerateHash(int len)
+        {
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < len; i++)
+                sb.Append(hashChars[random.Next(hashChars.Length)]);
+            return sb.ToString();
+        }
 
         public static int GetTotalMemorySizeGB()
         {
@@ -58,12 +83,25 @@ namespace Minecraft_Launcher_2
             }
         }
 
-        public static string SelectDirectory(string title, string initialPath = "C:/users")
+        public static string SelectFile(string title, FilterSelector filterSelector = null, string initialPath = "C:/users")
+        {
+            return SelectFileWithDialog(title, filterSelector, initialPath, false);
+        }
+
+        public static string SelectDirectory(string title, FilterSelector filterSelector = null, string initialPath = "C:/users")
+        {
+            return SelectFileWithDialog(title, filterSelector, initialPath, true);
+        }
+
+        private static string SelectFileWithDialog(string title, FilterSelector filterSelector, string initialPath, bool isDir)
         {
             var dialog = new CommonOpenFileDialog();
             dialog.Title = title;
             dialog.InitialDirectory = initialPath;
-            dialog.IsFolderPicker = true;
+            dialog.IsFolderPicker = isDir;
+
+            if (filterSelector != null)
+                filterSelector(dialog.Filters);
 
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok || string.IsNullOrWhiteSpace(dialog.FileName))
                 return null;
