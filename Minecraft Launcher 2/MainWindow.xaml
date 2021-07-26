@@ -19,33 +19,24 @@
         Height="480">
     <Window.Resources>
         <Storyboard x:Key="Storyboard1">
-            <DoubleAnimationUsingKeyFrames
-                Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"
-                Storyboard.TargetName="stackPanel">
-                <EasingDoubleKeyFrame KeyTime="0"
-                                      Value="-450">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <QuadraticEase EasingMode="EaseInOut" />
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.5"
-                                      Value="0">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <QuarticEase EasingMode="EaseOut" />
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                           Storyboard.TargetName="stackPanel">
-                <EasingDoubleKeyFrame KeyTime="0"
-                                      Value="0.3" />
-                <EasingDoubleKeyFrame KeyTime="0:0:0.5"
-                                      Value="1">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <QuadraticEase EasingMode="EaseOut" />
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                             Storyboard.TargetName="stackPanel"
+                             Duration="0:0:0.5"
+                             From="0"
+                             To="1">
+                <DoubleAnimation.EasingFunction>
+                    <QuarticEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                             Storyboard.TargetName="stackPanel"
+                             Duration="0:0:0.5"
+                             From="0"
+                             To="1">
+                <DoubleAnimation.EasingFunction>
+                    <QuarticEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
         </Storyboard>
     </Window.Resources>
     <Window.Triggers>
@@ -74,7 +65,7 @@
                         <ScaleTransform />
                         <SkewTransform />
                         <RotateTransform />
-                        <TranslateTransform Y="-450" />
+                        <TranslateTransform />
                     </TransformGroup>
                 </StackPanel.RenderTransform>
                 <StackPanel.Effect>

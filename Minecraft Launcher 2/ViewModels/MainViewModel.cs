@@ -162,7 +162,6 @@ namespace Minecraft_Launcher_2.ViewModels
             }
         }
 
-        // TODO Animation이 안나온다
         private async void GoStartingScreen()
         {
             IsSplashActive = true;
@@ -186,7 +185,7 @@ namespace Minecraft_Launcher_2.ViewModels
                 return;
             }
 
-            Dispatcher.CurrentDispatcher.BeginInvoke((Action) delegate() { Application.Current.Shutdown(0); });
+            Dispatcher.CurrentDispatcher.BeginInvoke((Action)delegate () { Application.Current.Shutdown(0); });
         }
 
         private bool CanStart(object parameter)

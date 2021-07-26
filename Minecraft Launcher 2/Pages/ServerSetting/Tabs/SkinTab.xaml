@@ -4,43 +4,90 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:tabvm="clr-namespace:Minecraft_Launcher_2.Pages.ViewModels.ServerSetting"
              mc:Ignorable="d"
              d:DesignHeight="350"
              d:DesignWidth="800">
     <DockPanel>
-        <StackPanel DockPanel.Dock="Right"
-                    VerticalAlignment="Center"
-                    Width="230">
-            <StackPanel.Style>
-                <Style TargetType="StackPanel">
-                    <Setter Property="Visibility"
-                            Value="Visible" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding SelectedIndex, ElementName=listSkins}"
-                                     Value="-1">
-                            <Setter Property="Visibility"
-                                    Value="Hidden" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </StackPanel.Style>
-            <Image Width="64"
-                   Height="64"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor"
-                   Source="{Binding ElementName=listSkins, Path=SelectedItem.SkinHeadImage}" />
-            <TextBlock HorizontalAlignment="Center"
+        <Grid DockPanel.Dock="Left"
+              VerticalAlignment="Center"
+              Margin="80,0">
+            <TextBlock FontSize="12pt"
                        Foreground="{StaticResource TextColor}"
-                       Margin="0,16"
-                       Text="{Binding ElementName=listSkins, Path=SelectedItem.PlayerName}" />
-            <StackPanel Orientation="Horizontal"
+                       VerticalAlignment="Center">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility"
+                                Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedIndex, ElementName=listSkins}"
+                                         Value="-1">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+                유저 스킨을 선택해주세요.
+            </TextBlock>
+            <StackPanel>
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility"
+                                Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedIndex, ElementName=listSkins}"
+                                         Value="-1">
+                                <Setter Property="Visibility"
+                                        Value="Hidden" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Border BorderThickness="1"
+                        BorderBrush="{StaticResource TextColor}"
                         HorizontalAlignment="Center">
-                <Button Margin="0,0,16,0">변경</Button>
-                <Button>삭제</Button>
+                    <Image Width="64"
+                           Height="64"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Source="{Binding ElementName=listSkins, Path=SelectedItem.SkinHeadImage}" />
+                </Border>
+                <TextBlock HorizontalAlignment="Center"
+                           Foreground="{StaticResource TextColor}"
+                           Margin="0,8,0,32"
+                           Text="{Binding ElementName=listSkins, Path=SelectedItem.PlayerName}" />
+
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Margin="0,0,0,8">스킨 이미지 변경</TextBlock>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,16">
+                        <Button Margin="0,0,8,0"
+                                Command="{Binding ChangeSkinCommand}"
+                                CommandParameter="{x:Static tabvm:SkinType.Skin}">스킨</Button>
+                        <Button Margin="0,0,8,0"
+                                Command="{Binding ChangeSkinCommand}"
+                                CommandParameter="{x:Static tabvm:SkinType.Cape}">망토</Button>
+                        <Button Command="{Binding ChangeSkinCommand}"
+                                CommandParameter="{x:Static tabvm:SkinType.Elytra}">날개</Button>
+                    </StackPanel>
+
+                    <TextBlock Margin="0,0,0,8">유저 정보</TextBlock>
+                    <UniformGrid Rows="1"
+                                 Columns="2">
+                        <Button Command="{Binding RenameUserCommand}" Margin="0,0,8,0">이름 변경</Button>
+                        <Button Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                                Command="{Binding RemoveSkinCommand}"
+                                FontSize="9pt"
+                                md:ButtonAssist.CornerRadius="0">프로필 삭제</Button>
+                    </UniformGrid>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </Grid>
         <Grid>
             <ListBox x:Name="listSkins"
                      ItemsSource="{Binding Skins}"
+                     SelectedIndex="{Binding SelectedSkinIndex}"
                      BorderBrush="{x:Static SystemColors.ActiveBorderBrush}"
                      BorderThickness="1">
                 <ListBox.ItemTemplate>

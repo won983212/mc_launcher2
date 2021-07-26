@@ -27,13 +27,20 @@ namespace Minecraft_Launcher_2
         private static readonly Random random = new Random();
 
 
+        public static string GetOrCreateDirectory(string path)
+        {
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            return path;
+        }
+
         public static string GenerateHashUnique(int len, string directoryPath)
         {
             string filename;
             do
             {
                 filename = GenerateHash(len);
-            } 
+            }
             while (File.Exists(Path.Combine(directoryPath, filename)));
             return filename;
         }
@@ -41,7 +48,7 @@ namespace Minecraft_Launcher_2
         public static string GenerateHash(int len)
         {
             StringBuilder sb = new StringBuilder();
-            for(int i = 0; i < len; i++)
+            for (int i = 0; i < len; i++)
                 sb.Append(hashChars[random.Next(hashChars.Length)]);
             return sb.ToString();
         }
