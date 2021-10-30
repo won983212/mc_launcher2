@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Minecraft_Launcher_2.Properties;
 using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater;
 using System;
@@ -9,6 +10,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Minecraft_Launcher_2
 {
@@ -88,6 +90,26 @@ namespace Minecraft_Launcher_2
             {
                 return false;
             }
+        }
+
+        public static APIServerInfoRetriever ResetAPIServerDirectory()
+        {
+            var setting = Settings.Default;
+            var path = SelectDirectory("API Server의 Root폴더 선택");
+
+            if (path == null)
+                return null;
+
+            APIServerInfoRetriever retriever = new APIServerInfoRetriever();
+            if (!retriever.RetrieveFromAPIServerDirectory(path))
+            {
+                MessageBox.Show("선택한 폴더는 올바른 API Server폴더가 아닙니다.");
+                return null;
+            }
+
+            setting.APIServerDirectory = path;
+            setting.Save();
+            return retriever;
         }
 
         public static string SelectFile(string title, FilterSelector filterSelector = null, string initialPath = "C:/users")

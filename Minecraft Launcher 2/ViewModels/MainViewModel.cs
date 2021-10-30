@@ -127,7 +127,11 @@ namespace Minecraft_Launcher_2.ViewModels
         public ICommand StartCommand => new RelayCommand(OnStartClick, CanStart);
 
         public ICommand OpenSettingDialogCommand => new RelayCommand(() =>
-            CommonUtils.ShowDialog(new SettingDialogVM(), (vm, a) => UpdateStartButton(vm.UseForceUpdate)));
+            CommonUtils.ShowDialog(new SettingDialogVM(), (vm, a) =>
+            {
+                UpdateStartButton(vm.UseForceUpdate);
+                UpdateManageAPIServerButton();
+            }));
 
         public ICommand OpenServerSettingPanelCommand => new RelayCommand(ServerSettingPanelViewModel.Open);
 
@@ -185,7 +189,7 @@ namespace Minecraft_Launcher_2.ViewModels
                 return;
             }
 
-            Dispatcher.CurrentDispatcher.BeginInvoke((Action)delegate () { Application.Current.Shutdown(0); });
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
 
         private bool CanStart(object parameter)
@@ -202,7 +206,13 @@ namespace Minecraft_Launcher_2.ViewModels
             OnPropertyChanged(nameof(ConnectionState));
             UpdateStartButton(false);
             Application.Current.Dispatcher.Invoke(CommandManager.InvalidateRequerySuggested);
-            CommonUtils.IsActiveHttpServer(URLs.LocalInfoFile).ContinueWith(t => IsManagementButtonActive = t.Result);
+            UpdateManageAPIServerButton();
+        }
+
+        private void UpdateManageAPIServerButton()
+        {
+            APIServerInfoRetriever retriever = new APIServerInfoRetriever();
+            IsManagementButtonActive = retriever.RetrieveFromAPIServerDirectory(Settings.Default.APIServerDirectory);
         }
 
         private void UpdateStartButton(bool useForceUpdate)

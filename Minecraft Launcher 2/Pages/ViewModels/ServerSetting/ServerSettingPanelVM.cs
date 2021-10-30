@@ -1,5 +1,6 @@
 ﻿using Minecraft_Launcher_2.Controls;
 using Minecraft_Launcher_2.Properties;
+using Minecraft_Launcher_2.ServerConnections;
 using Minecraft_Launcher_2.Updater;
 using Newtonsoft.Json.Linq;
 using System;
@@ -24,7 +25,6 @@ namespace Minecraft_Launcher_2.Pages.ViewModels.ServerSetting
             AddTab(new SkinTabVM(this));
             SelectedTabItemIndex = 0;
         }
-
 
         public string Version
         {
@@ -65,52 +65,6 @@ namespace Minecraft_Launcher_2.Pages.ViewModels.ServerSetting
             Version = Version.Split(new[] { '@' }, 2)[0] + '@' + DateTime.Now.ToString("yyMMdd");
         }
 
-        private bool IsVaildAPIServerDirectory(string path)
-        {
-            var infoFilePath = Path.Combine(path, URLs.InfoFilename);
-            if (!string.IsNullOrWhiteSpace(path) && File.Exists(infoFilePath))
-            {
-                try
-                {
-                    LoadServerInfo(infoFilePath);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-
-                return Version != null && WelcomeMessage != null;
-            }
-
-            return false;
-        }
-
-        public bool ResetAPIServerDirectory()
-        {
-            var setting = Settings.Default;
-            var path = CommonUtils.SelectDirectory("API Server의 Root폴더 선택");
-
-            if (path == null)
-                return false;
-
-            if (!IsVaildAPIServerDirectory(path))
-            {
-                MessageBox.Show("선택한 폴더는 올바른 API Server폴더가 아닙니다.");
-                return false;
-            }
-
-            setting.APIServerDirectory = path;
-            setting.Save();
-            return true;
-        }
-
-        private void LoadServerInfo(string infoFilePath)
-        {
-            var json = JObject.Parse(File.ReadAllText(infoFilePath));
-            Version = json.Value<string>("patchVersion");
-            WelcomeMessage = json.Value<string>("notice");
-        }
-
         private void SaveServerInfo()
         {
             var path = Settings.Default.APIServerDirectory;
@@ -118,12 +72,28 @@ namespace Minecraft_Launcher_2.Pages.ViewModels.ServerSetting
             File.WriteAllText(Path.Combine(path, URLs.InfoFilename), json.ToString());
         }
 
+        public bool ResetAPIServerDirectory()
+        {
+            APIServerInfoRetriever retriever = CommonUtils.ResetAPIServerDirectory();
+            if (retriever == null)
+                return false;
+
+            Version = retriever.PatchVersion;
+            WelcomeMessage = retriever.Notice;
+            return true;
+        }
+
         public void Open()
         {
             if (!IsShow)
             {
-                if (!IsVaildAPIServerDirectory(Settings.Default.APIServerDirectory) && !ResetAPIServerDirectory())
+                APIServerInfoRetriever retriever = new APIServerInfoRetriever();
+                if (!retriever.RetrieveFromAPIServerDirectory(Settings.Default.APIServerDirectory) && (retriever = CommonUtils.ResetAPIServerDirectory()) == null)
                     return;
+
+                Version = retriever.PatchVersion;
+                WelcomeMessage = retriever.Notice;
+
                 PanelOpened?.Invoke(this, null);
                 IsShow = true;
             }

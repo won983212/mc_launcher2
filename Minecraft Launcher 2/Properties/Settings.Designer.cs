@@ -25,7 +25,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://won983212.iptime.org")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://web.won983212.synology.me")]
         public string APIServerLocation {
             get {
                 return ((string)(this["APIServerLocation"]));
@@ -154,7 +154,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("12654")]
+        [global::System.Configuration.DefaultSettingValueAttribute("80")]
         public string APIServerPort {
             get {
                 return ((string)(this["APIServerPort"]));

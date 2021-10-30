@@ -1,4 +1,5 @@
 ﻿using Minecraft_Launcher_2.Properties;
+using Minecraft_Launcher_2.ServerConnections;
 using System.Windows;
 using System.Windows.Input;
 
@@ -49,6 +50,15 @@ namespace Minecraft_Launcher_2.Pages.ViewModels.Dialogs
             UseForceUpdate = true;
             MessageBox.Show("강제 업데이트가 적용되었습니다. 이제 설정창을 나가서 업데이트를 누르면 됩니다. ", "안내"
                 , MessageBoxButton.OK, MessageBoxImage.Information);
+        });
+
+        public ICommand SetAPIServerDirectory => new RelayCommand(() =>
+        {
+            if(CommonUtils.ResetAPIServerDirectory() == null)
+            {
+                Settings.Default.APIServerDirectory = "";
+                Settings.Default.Save();
+            }
         });
 
         public ICommand FindMCDirectory => new RelayCommand(() =>

@@ -12,7 +12,6 @@ namespace Minecraft_Launcher_2.Updater
         public static readonly string ResourceFolderName = "resources";
         public static readonly string SkinFolderName = "skin";
 
-        public static readonly string LocalInfoFile = "http://127.0.0.1:" + settings.APIServerPort + "/" + InfoFilename;
         public static readonly string AssetsResourceUrl = "http://resources.download.minecraft.net/";
 
         public static string APIServerUrl => settings.APIServerLocation + ":" + settings.APIServerPort;

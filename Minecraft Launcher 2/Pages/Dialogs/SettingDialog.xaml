@@ -171,7 +171,7 @@
 
                 <TextBlock Grid.Row="3"
                            Style="{StaticResource LabelTextBlock}">
-                    업데이트
+                    업데이트 서버
                 </TextBlock>
                 <DockPanel Grid.Row="3"
                            Grid.Column="1"
@@ -182,12 +182,19 @@
                                Foreground="{StaticResource TextColor}">
                         강제 업데이트는 일회용입니다. 클릭후 최초 한번만 적용됩니다.
                     </TextBlock>
-                    <Button HorizontalAlignment="Left"
-                            Width="160"
-                            materialDesign:ButtonAssist.CornerRadius="0"
-                            Command="{Binding SetForceUpdate}">
-                        강제로 업데이트
-                    </Button>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Width="160"
+                                Margin="0,0,16,0"
+                                materialDesign:ButtonAssist.CornerRadius="0"
+                                Command="{Binding SetForceUpdate}">
+                            강제로 업데이트
+                        </Button>
+                        <Button Width="200"
+                                materialDesign:ButtonAssist.CornerRadius="0"
+                                Command="{Binding SetAPIServerDirectory}">
+                            관리서버 폴더 위치 설정
+                        </Button>
+                    </StackPanel>
                 </DockPanel>
             </Grid>
         </DockPanel>
