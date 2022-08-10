@@ -128,7 +128,7 @@ namespace Minecraft_Launcher_2.Launcher
                 var p = new Process();
                 var info = new ProcessStartInfo();
 
-                info.FileName = "java";
+                info.FileName = settings.JavaCommand;
                 info.Arguments = GetArguments();
                 info.WorkingDirectory = settings.MinecraftDir;
                 info.CreateNoWindow = true;

@@ -14,7 +14,7 @@ namespace Minecraft_Launcher_2.Updater
 
         public static readonly string AssetsResourceUrl = "http://resources.download.minecraft.net/";
 
-        public static string APIServerUrl => settings.APIServerLocation + ":" + settings.APIServerPort;
+        public static string APIServerUrl => settings.APIServerLocation;
         public static string InfoFilePath => APIServerUrl + "/" + InfoFilename;
         public static string IndexFilePath => APIServerUrl + "/" + IndexFilename;
         public static string LauncherConfigPath => APIServerUrl + "/" + LauncherConfigFilename;

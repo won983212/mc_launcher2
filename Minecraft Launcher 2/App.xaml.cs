@@ -1,5 +1,6 @@
 ﻿using Minecraft_Launcher_2.Pages.ViewModels.Dialogs;
 using Minecraft_Launcher_2.ViewModels;
+using System.Net;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -24,6 +25,8 @@ namespace Minecraft_Launcher_2
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             Console = new ConsoleWindow();
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
     }
 }

@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="APIServerLocation" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http://web.won983212.synology.me</Value>
+      <Value Profile="(Default)">http://web.won983212.synology.me/mc-update</Value>
     </Setting>
     <Setting Name="APIServerDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -35,8 +35,8 @@
     <Setting Name="UseAutoRefreshVersion" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="APIServerPort" Type="System.String" Scope="User">
-      <Value Profile="(Default)">80</Value>
+    <Setting Name="JavaCommand" Type="System.String" Scope="User">
+      <Value Profile="(Default)">java</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -52,6 +52,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.Resources>
                     <Style x:Key="LabelTextBlock"
@@ -59,15 +60,15 @@
                         <Setter Property="FontSize"
                                 Value="10pt" />
                         <Setter Property="Margin"
-                                Value="0,8,30,0" />
+                                Value="0,0,30,0" />
                         <Setter Property="VerticalAlignment"
-                                Value="Top" />
+                                Value="Center" />
                     </Style>
                 </Grid.Resources>
 
                 <TextBlock Style="{StaticResource LabelTextBlock}">마인크래프트 폴더 위치</TextBlock>
                 <DockPanel Grid.Column="1"
-                           VerticalAlignment="Top">
+                           VerticalAlignment="Center">
                     <Button DockPanel.Dock="Right"
                             Content="..."
                             materialDesign:ButtonAssist.CornerRadius="0"
@@ -91,12 +92,39 @@
                 </DockPanel>
 
                 <TextBlock Grid.Row="1"
+                           Style="{StaticResource LabelTextBlock}">자바 커맨드</TextBlock>
+                <DockPanel Grid.Column="1"
+                           Grid.Row="1"
+                           VerticalAlignment="Center">
+                    <Button DockPanel.Dock="Right"
+                            Content="..."
+                            materialDesign:ButtonAssist.CornerRadius="0"
+                            Command="{Binding FindJavaDirectory}"
+                            Margin="8,0,0,0" />
+                    <TextBox HorizontalAlignment="Stretch"
+                             VerticalAlignment="Center"
+                             BorderThickness="1"
+                             BorderBrush="{StaticResource TextColor}"
+                             Padding="4,2">
+                        <TextBox.Text>
+                            <Binding Path="JavaCommand"
+                                     Source="{x:Static properties:Settings.Default}"
+                                     UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:StringValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </DockPanel>
+
+                <TextBlock Grid.Row="2"
                            Style="{StaticResource LabelTextBlock}">
                     메모리 할당량
                 </TextBlock>
-                <DockPanel Grid.Row="1"
+                <DockPanel Grid.Row="2"
                            Grid.Column="1"
-                           VerticalAlignment="Top">
+                           VerticalAlignment="Center">
                     <TextBlock DockPanel.Dock="Bottom"
                                FontSize="8pt"
                                Foreground="{StaticResource WarningColor}"
@@ -143,11 +171,11 @@
                             Margin="0,0,16,0" />
                 </DockPanel>
 
-                <TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="3"
                            Style="{StaticResource LabelTextBlock}">
                     실행시 동작
                 </TextBlock>
-                <DockPanel Grid.Row="2"
+                <DockPanel Grid.Row="3"
                            Grid.Column="1"
                            VerticalAlignment="Top">
                     <TextBlock DockPanel.Dock="Bottom"
@@ -169,19 +197,13 @@
                     </StackPanel>
                 </DockPanel>
 
-                <TextBlock Grid.Row="3"
+                <TextBlock Grid.Row="4"
                            Style="{StaticResource LabelTextBlock}">
                     업데이트 서버
                 </TextBlock>
-                <DockPanel Grid.Row="3"
+                <DockPanel Grid.Row="4"
                            Grid.Column="1"
-                           VerticalAlignment="Top">
-                    <TextBlock DockPanel.Dock="Bottom"
-                               FontSize="8pt"
-                               Margin="0,8,0,0"
-                               Foreground="{StaticResource TextColor}">
-                        강제 업데이트는 일회용입니다. 클릭후 최초 한번만 적용됩니다.
-                    </TextBlock>
+                           VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <Button Width="160"
                                 Margin="0,0,16,0"

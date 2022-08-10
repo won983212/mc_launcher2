@@ -25,7 +25,7 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://web.won983212.synology.me")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://web.won983212.synology.me/mc-update")]
         public string APIServerLocation {
             get {
                 return ((string)(this["APIServerLocation"]));
@@ -154,13 +154,13 @@ namespace Minecraft_Launcher_2.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("80")]
-        public string APIServerPort {
+        [global::System.Configuration.DefaultSettingValueAttribute("java")]
+        public string JavaCommand {
             get {
-                return ((string)(this["APIServerPort"]));
+                return ((string)(this["JavaCommand"]));
             }
             set {
-                this["APIServerPort"] = value;
+                this["JavaCommand"] = value;
             }
         }
     }
